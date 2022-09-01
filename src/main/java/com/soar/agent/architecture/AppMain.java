@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
 
 import org.jsoar.debugger.util.SwingTools;
 
@@ -15,7 +16,7 @@ import org.jsoar.debugger.util.SwingTools;
 public class AppMain extends JPanel {
 
     public AppMain() throws IOException {
-
+        super(new BorderLayout());
     }
     public static void main(String[] args) {
         initSwing();
