@@ -1,5 +1,85 @@
 package com.soar.agent.architecture.robot;
 
+import java.io.File;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.Callable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.jsoar.kernel.Agent;
+import org.jsoar.kernel.DebuggerProvider;
+import org.jsoar.kernel.RunType;
+import org.jsoar.kernel.SoarException;
+import org.jsoar.kernel.DebuggerProvider.CloseAction;
+import org.jsoar.kernel.io.CycleCountInput;
+import org.jsoar.kernel.io.InputOutput;
+import org.jsoar.kernel.io.InputWme;
+import org.jsoar.kernel.io.beans.SoarBeanExceptionHandler;
+import org.jsoar.kernel.io.beans.SoarBeanOutputContext;
+import org.jsoar.kernel.io.beans.SoarBeanOutputHandler;
+import org.jsoar.kernel.io.beans.SoarBeanOutputManager;
+import org.jsoar.kernel.io.commands.OutputCommandHandler;
+import org.jsoar.kernel.io.commands.OutputCommandManager;
+import org.jsoar.kernel.io.quick.DefaultQMemory;
+import org.jsoar.kernel.io.quick.QMemory;
+import org.jsoar.kernel.io.quick.SoarQMemoryAdapter;
+import org.jsoar.kernel.memory.Wme;
+import org.jsoar.kernel.symbols.Identifier;
+import org.jsoar.kernel.symbols.SymbolFactory;
+import org.jsoar.runtime.LegilimensStarter;
+import org.jsoar.runtime.ThreadedAgent;
+import org.jsoar.util.commands.SoarCommands;
+
 public class RobotAgent {
-    
+    private Robot robot;
+    private final ThreadedAgent threadedAgent;
+
+    private final QMemory qMemory = DefaultQMemory.create();
+
+    public RobotAgent() {
+        this.threadedAgent = ThreadedAgent.create();
+        
+        SoarQMemoryAdapter.attach(getThreadedAgent().getAgent(), getQMemory());
+        new CycleCountInput(getThreadedAgent().getInputOutput());
+    }
+
+    private Robot getRobot() {
+        return robot;
+    }
+
+    private ThreadedAgent getThreadedAgent() {
+        return threadedAgent;
+    }
+
+    private QMemory getQMemory() {
+        return qMemory;
+    }
+
+    public void setRobot(Robot robot){
+        this.robot = robot;
+        this.getThreadedAgent().setName(robot.getName());
+
+        this.getThreadedAgent().initialize(); // Do an init-soar
+        
+        File source = new File("C:/Users/c7270670/Downloads/Soar-Agent-Architecture/soar-agent-architecture/src/resources/rules/move-north.soar");
+
+        if(source != null)
+        {
+            final Callable<Void> call = () ->
+            {
+                SoarCommands.source(getThreadedAgent().getInterpreter(), source);
+                return null;
+            };
+            this.getThreadedAgent().execute(call, null);
+        }
+    }
+
 }
