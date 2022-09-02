@@ -1,4 +1,4 @@
-package com.soar.world;
+package com.soar.agent.architecture.world;
 
 import javax.swing.JPanel;
 

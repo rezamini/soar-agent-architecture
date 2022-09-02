@@ -2,7 +2,7 @@ package com.soar.agent.architecture.robot;
 
 import java.awt.geom.Ellipse2D;
 
-import com.soar.world.World;
+import com.soar.agent.architecture.world.World;
 
 /**
  * @author ray

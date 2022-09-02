@@ -51,6 +51,25 @@ public class RobotAgent {
         new CycleCountInput(getThreadedAgent().getInputOutput());
     }
 
+    public void setRobot(Robot robot){
+        this.robot = robot;
+        this.getThreadedAgent().setName(robot.getName());
+
+        this.getThreadedAgent().initialize(); // Do an init-soar
+        
+        File source = new File("C:/Users/c7270670/Downloads/Soar-Agent-Architecture/soar-agent-architecture/src/main/resources/rules/move-north.soar");
+
+        if(source != null)
+        {
+            final Callable<Void> call = () ->
+            {
+                SoarCommands.source(getThreadedAgent().getInterpreter(), source);
+                return null;
+            };
+            this.getThreadedAgent().execute(call, null);
+        }
+    }
+
     private Robot getRobot() {
         return robot;
     }
@@ -63,23 +82,36 @@ public class RobotAgent {
         return qMemory;
     }
 
-    public void setRobot(Robot robot){
-        this.robot = robot;
-        this.getThreadedAgent().setName(robot.getName());
+    public void start()
+    {
+        this.getThreadedAgent().runForever();
+    }
 
-        this.getThreadedAgent().initialize(); // Do an init-soar
-        
-        File source = new File("C:/Users/c7270670/Downloads/Soar-Agent-Architecture/soar-agent-architecture/src/resources/rules/move-north.soar");
-
-        if(source != null)
-        {
-            final Callable<Void> call = () ->
-            {
-                SoarCommands.source(getThreadedAgent().getInterpreter(), source);
-                return null;
-            };
-            this.getThreadedAgent().execute(call, null);
+    public void step()
+    {
+        this.getThreadedAgent().runFor(1, RunType.DECISIONS);
+    }
+    
+    public void stop()
+    {
+        this.getThreadedAgent().stop();
+    }
+    
+    public void debug()
+    {
+        try
+        {           
+            this.getThreadedAgent().openDebugger();
         }
+        catch (SoarException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void dispose()
+    {
+        this.getThreadedAgent().detach();
     }
 
 }
