@@ -9,14 +9,22 @@ import java.awt.BorderLayout;
 
 import org.jsoar.debugger.util.SwingTools;
 
+import com.soar.world.World;
+import com.soar.world.WorldPanel;
+
 /**
  * Hello world!
  *
  */
 public class AppMain extends JPanel {
 
+    private WorldPanel worldPanel;
+    private World world;
+
+
     public AppMain() throws IOException {
         super(new BorderLayout());
+        this.worldPanel = new WorldPanel();
     }
     public static void main(String[] args) {
         initSwing();
