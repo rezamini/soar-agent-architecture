@@ -2,6 +2,7 @@ package com.soar.agent.architecture.robot;
 
 import java.io.File;
 import java.io.OutputStreamWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,32 +42,32 @@ import org.jsoar.util.commands.SoarCommands;
 public class RobotAgent {
     private Robot robot;
     private final ThreadedAgent threadedAgent;
-
     private final QMemory qMemory = DefaultQMemory.create();
+    private File source = null;
 
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
-        
+
         SoarQMemoryAdapter.attach(getThreadedAgent().getAgent(), getQMemory());
         new CycleCountInput(getThreadedAgent().getInputOutput());
     }
 
-    public void setRobot(Robot robot){
-        this.robot = robot;
-        this.getThreadedAgent().setName(robot.getName());
+    public void setRobot(Robot robot) {
+        try {
+            this.robot = robot;
+            this.getThreadedAgent().setName(robot.getName());
 
-        this.getThreadedAgent().initialize(); // Do an init-soar
-        
-        File source = new File("C:/Users/c7270670/Downloads/Soar-Agent-Architecture/soar-agent-architecture/src/main/resources/rules/move-north.soar");
-
-        if(source != null)
-        {
-            final Callable<Void> call = () ->
-            {
-                SoarCommands.source(getThreadedAgent().getInterpreter(), source);
-                return null;
-            };
-            this.getThreadedAgent().execute(call, null);
+            this.getThreadedAgent().initialize(); // Do an init-soar
+            source = new File(getClass().getResource("/rules/move-north.soar").toURI());
+            if (source != null) {
+                final Callable<Void> call = () -> {
+                    SoarCommands.source(getThreadedAgent().getInterpreter(), source);
+                    return null;
+                };
+                this.getThreadedAgent().execute(call, null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -82,35 +83,27 @@ public class RobotAgent {
         return qMemory;
     }
 
-    public void start()
-    {
+    public void start() {
         this.getThreadedAgent().runForever();
     }
 
-    public void step()
-    {
+    public void step() {
         this.getThreadedAgent().runFor(1, RunType.DECISIONS);
     }
-    
-    public void stop()
-    {
+
+    public void stop() {
         this.getThreadedAgent().stop();
     }
-    
-    public void debug()
-    {
-        try
-        {           
+
+    public void debug() {
+        try {
             this.getThreadedAgent().openDebugger();
-        }
-        catch (SoarException e)
-        {
+        } catch (SoarException e) {
             e.printStackTrace();
         }
     }
 
-    public void dispose()
-    {
+    public void dispose() {
         this.getThreadedAgent().detach();
     }
 

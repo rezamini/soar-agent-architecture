@@ -13,8 +13,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.*;
-
 import org.jsoar.debugger.util.SwingTools;
 
 import com.soar.agent.architecture.loader.MapLoader;
@@ -37,7 +35,7 @@ public class AppMain extends JPanel {
     public AppMain() throws IOException {
         super(new BorderLayout());
         this.worldPanel = new WorldPanel();
-        loadMap(new MapLoader().load(AppMain.class.getResource("/map/map.txt")));
+        loadMap(new MapLoader().load(getClass().getResource("/map/map.txt")));
         setSimulationToolbar(getWorldPanel());
 
     }
