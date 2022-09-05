@@ -12,9 +12,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.soar.agent.architecture.beans.Move;
+import com.soar.agent.architecture.events.MoveListenerEvent;
+
 import org.jsoar.kernel.Agent;
 import org.jsoar.kernel.DebuggerProvider;
 import org.jsoar.kernel.RunType;
@@ -32,7 +37,6 @@ import org.jsoar.kernel.io.commands.OutputCommandManager;
 import org.jsoar.kernel.io.quick.DefaultQMemory;
 import org.jsoar.kernel.io.quick.QMemory;
 import org.jsoar.kernel.io.quick.SoarQMemoryAdapter;
-import org.jsoar.kernel.memory.Wme;
 import org.jsoar.kernel.symbols.Identifier;
 import org.jsoar.kernel.symbols.SymbolFactory;
 import org.jsoar.runtime.LegilimensStarter;
@@ -44,6 +48,7 @@ public class RobotAgent {
     private final ThreadedAgent threadedAgent;
     private final QMemory qMemory = DefaultQMemory.create();
     private File source = null;
+    private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
 
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
@@ -52,13 +57,19 @@ public class RobotAgent {
         new CycleCountInput(getThreadedAgent().getInputOutput());
     }
 
+    public void addListener(MoveListenerEvent toAdd) {
+        moveListeners.add(toAdd);
+    }
+
     public void setRobot(Robot robot) {
         try {
             this.robot = robot;
-            this.getThreadedAgent().setName(robot.getName());
+            getThreadedAgent().setName(robot.getName());
 
-            this.getThreadedAgent().initialize(); // Do an init-soar
-            source = new File(getClass().getResource("/rules/move-north.soar").toURI());
+            initMoveCommandListenerObject(); //initialize the output command listener for later use
+
+            getThreadedAgent().initialize(); // Do an init-soar
+            source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
             if (source != null) {
                 final Callable<Void> call = () -> {
                     SoarCommands.source(getThreadedAgent().getInterpreter(), source);
@@ -68,6 +79,58 @@ public class RobotAgent {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void initMoveCommandListenerObject() {
+        final SoarBeanOutputManager manager = new SoarBeanOutputManager(threadedAgent.getEvents());
+        final SoarBeanOutputHandler<Move> handler = new SoarBeanOutputHandler<Move>() {
+
+            @Override
+            public void setExceptionHandler(SoarBeanExceptionHandler handler) {
+                super.setExceptionHandler(handler);
+            }
+
+            @Override
+            public void handleOutputCommand(SoarBeanOutputContext context, Move bean) {
+                // we can do something with bean.direction etc ...
+                // added other related command data that might be used elsewhere
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                bean.setAttribute(context.getCommand().getAttribute());
+                bean.setTimeTag(context.getCommand().getTimetag());
+                bean.setChildren(context.getCommand().getChildren());
+                bean.setIdentifier(context.getCommand().getIdentifier());
+                bean.setPreference(context.getCommand().getPreferences());
+
+                context.setStatus("complete");
+
+                // notify the listers that are outside of the agent listening
+                for (MoveListenerEvent listener : moveListeners) {
+                    listener.moveCompleted(bean, robot);
+                    updateRobotMemory();
+                }
+
+            }
+        };
+        manager.registerHandler("move", handler, Move.class);
+    }
+
+    public void updateRobotMemory() {
+
+        synchronized (qMemory) {
+            qMemory.setString("self.name", robot.getName());
+            qMemory.setDouble("self.radius", robot.getRadius());
+
+            final double x = robot.getShape().getCenterX();
+            final double y = robot.getShape().getCenterY();
+            qMemory.setDouble("self.pose.x", x);
+            qMemory.setDouble("self.pose.y", y);
+            qMemory.setDouble("self.pose.yaw", Math.toDegrees(robot.getYaw()));
         }
     }
 

@@ -15,6 +15,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import org.jsoar.debugger.util.SwingTools;
 
+import com.soar.agent.architecture.events.MoveResponder;
 import com.soar.agent.architecture.loader.MapLoader;
 import com.soar.agent.architecture.loader.MapLoader.Result;
 import com.soar.agent.architecture.robot.Robot;
@@ -28,15 +29,16 @@ import com.soar.agent.architecture.world.WorldPanel;
  */
 public class AppMain extends JPanel {
 
-    private WorldPanel worldPanel;
+    public static WorldPanel worldPanel;
     private World world;
     private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
+    private MoveResponder moveResponder = new MoveResponder();
 
     public AppMain() throws IOException {
         super(new BorderLayout());
         this.worldPanel = new WorldPanel();
         loadMap(new MapLoader().load(getClass().getResource("/map/map.txt")));
-        setSimulationToolbar(getWorldPanel());
+        setSimulationToolbar(worldPanel);
 
     }
 
@@ -114,24 +116,21 @@ public class AppMain extends JPanel {
     private void startAgent(){
         for(RobotAgent agent : agents.values())
         {
+            agent.updateRobotMemory();
+            agent.addListener(moveResponder);
             agent.start();
-
         }
+        worldPanel.repaint();
     }
 
     private void stepAgent(){
         for(RobotAgent agent : agents.values())
         {
+            agent.updateRobotMemory();
+            agent.addListener(moveResponder);
             agent.step();
-
         }
+        worldPanel.repaint();
     }
 
-    public WorldPanel getWorldPanel() {
-        return worldPanel;
-    }
-
-    public World getWorld() {
-        return world;
-    }
 }
