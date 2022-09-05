@@ -66,7 +66,7 @@ public class RobotAgent {
             this.robot = robot;
             getThreadedAgent().setName(robot.getName());
 
-            initMoveCommandListenerObject(); //initialize the output command listener for later use
+            initMoveCommandListenerObject(); // initialize the output command listener for later use
 
             getThreadedAgent().initialize(); // Do an init-soar
             source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
@@ -95,24 +95,38 @@ public class RobotAgent {
             public void handleOutputCommand(SoarBeanOutputContext context, Move bean) {
                 // we can do something with bean.direction etc ...
                 // added other related command data that might be used elsewhere
+
+                /* -> Other ways of delaying the agent for UI updates:
+
+                 * int delay = 100; // number of milliseconds to sleep
+                 * long start = System.currentTimeMillis();
+                 * while(start >= System.currentTimeMillis() - delay); // do nothing
+                 * do {
+                 * } while (System.currentTimeMillis() < timestamp + timeInMilliSeconds);
+                 */
+
                 try {
-                    TimeUnit.MILLISECONDS.sleep(100);
+                    //utilise the agent thread to synchronized and make 100 milisecond pause before every move. much more realistic ui
+                    synchronized (threadedAgent.getAgent()) {
+                        threadedAgent.getAgent().wait(100);
+
+                        bean.setAttribute(context.getCommand().getAttribute());
+                        bean.setTimeTag(context.getCommand().getTimetag());
+                        bean.setChildren(context.getCommand().getChildren());
+                        bean.setIdentifier(context.getCommand().getIdentifier());
+                        bean.setPreference(context.getCommand().getPreferences());
+
+                        context.setStatus("complete");
+
+                        // notify the listers that are outside of the agent listening
+                        for (MoveListenerEvent listener : moveListeners) {
+                            listener.moveCompleted(bean, robot);
+                            updateRobotMemory();
+                        }
+                    }
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
-
-                bean.setAttribute(context.getCommand().getAttribute());
-                bean.setTimeTag(context.getCommand().getTimetag());
-                bean.setChildren(context.getCommand().getChildren());
-                bean.setIdentifier(context.getCommand().getIdentifier());
-                bean.setPreference(context.getCommand().getPreferences());
-
-                context.setStatus("complete");
-
-                // notify the listers that are outside of the agent listening
-                for (MoveListenerEvent listener : moveListeners) {
-                    listener.moveCompleted(bean, robot);
-                    updateRobotMemory();
                 }
 
             }
