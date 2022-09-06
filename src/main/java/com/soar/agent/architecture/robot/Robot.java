@@ -14,7 +14,7 @@ public class Robot {
     private double yaw;
     private double speed;
     private double turnRate;
-    private final double radius = 0.5;
+    private final double radius = 0.4;
 
     public Robot(World game, String name) {
         this.world = game;
