@@ -149,16 +149,14 @@ public class WorldPanel extends JPanel {
             g2d.fill(sel);
         }
 
-        final double r = robot.getRadius();
-        double widthMultiplier = 4.0;
-        double heightMultiplier = 1.5;
+        final double r = robot.getShapeStartingPoint();
         // final Ellipse2D body = new Ellipse2D.Double(-r, -r, r * 2.0, r * 2.0);
         // drawShape(g2d, body, Color.WHITE, Color.BLACK);
 
-        Rectangle2D.Double body = new Rectangle2D.Double(-r, -r , r * widthMultiplier, r * heightMultiplier);
+        Rectangle2D.Double body = new Rectangle2D.Double(-r, -r , r * robot.getWidthMultiplier(), r * robot.getHeightMultiplier());
         Ellipse2D firstWheel = new Ellipse2D.Double(-r + 0.2, -r -0.2, 0.3, 0.3);
         Ellipse2D secondWheel = new Ellipse2D.Double(-r + 1, -r -0.2, 0.3, 0.3);
-        Rectangle2D.Double roof = new Rectangle2D.Double(-r + 0.2, -r + 0.6, r * widthMultiplier/1.5, r * heightMultiplier/2);
+        Rectangle2D.Double roof = new Rectangle2D.Double(-r + 0.2, -r + 0.6, r * robot.getWidthMultiplier()/1.5, r * robot.getHeightMultiplier()/2);
         
         drawCar(g2d, body, firstWheel, secondWheel, roof, Color.YELLOW, Color.BLACK);
 

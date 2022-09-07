@@ -1,20 +1,22 @@
 package com.soar.agent.architecture.robot;
 
-import java.awt.geom.Ellipse2D;
-
 import com.soar.agent.architecture.world.World;
+import java.awt.geom.*;
 
 /**
  * @author ray
  */
 public class Robot {
+    public final double widthMultiplier = 4.0;
+    public final double heightMultiplier = 1.5;
+    public final double shapeStartingPoint = 0.4;
+    public final Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4,  shapeStartingPoint * widthMultiplier, shapeStartingPoint * heightMultiplier);
     private final World world;
     private final String name;
-    private final Ellipse2D shape = new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0);
     private double yaw;
     private double speed;
     private double turnRate;
-    private final double radius = 0.4;
+    public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
 
     public Robot(World game, String name) {
         this.world = game;
@@ -53,7 +55,7 @@ public class Robot {
         return name;
     }
 
-    public Ellipse2D getShape() {
+    public Rectangle2D getShape() {
         return shape;
     }
 
@@ -83,6 +85,18 @@ public class Robot {
 
     public double getRadius() {
         return radius;
+    }
+
+    public double getWidthMultiplier() {
+        return widthMultiplier;
+    }
+
+    public double getHeightMultiplier() {
+        return heightMultiplier;
+    }
+
+    public double getShapeStartingPoint() {
+        return shapeStartingPoint;
     }
 
 }
