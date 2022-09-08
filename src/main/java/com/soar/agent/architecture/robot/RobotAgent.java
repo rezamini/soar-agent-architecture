@@ -122,8 +122,10 @@ public class RobotAgent {
                         context.setStatus("complete");
 
                         // notify the listers that are outside of the agent listening
+                        
                         for (MoveListenerEvent listener : moveListeners) {
-                            listener.moveCompleted(bean, robot);
+                            listener.moveCompleted(bean, robot, RobotAgent.this);
+                            
                             updateRobotMemory();
                         }
                     }
@@ -149,14 +151,12 @@ public class RobotAgent {
             qMemory.setDouble("self.pose.y", y);
             qMemory.setDouble("self.pose.yaw", Math.toDegrees(robot.getYaw()));
 
-            //add surrounding view memory
-            for(DirectionEnum directionEnum: DirectionEnum.values()){
-                final QMemory sub = qMemory.subMemory("view." + directionEnum.getName() + "");
-                sub.setString("type", "none");
-                sub.setInteger("obstacle", 0); // 0=false 1=true
-            }
-            
-            System.out.println(qMemory);
+            // //add surrounding view memory
+            // for(DirectionEnum directionEnum: DirectionEnum.values()){
+            //     final QMemory sub = qMemory.subMemory("view." + directionEnum.getName() + "");
+            //     sub.setString("type", "none");
+            //     sub.setInteger("obstacle", 0); // 0=false 1=true
+            // }
         }
     }
 
@@ -168,7 +168,7 @@ public class RobotAgent {
         return threadedAgent;
     }
 
-    private QMemory getQMemory() {
+    public QMemory getQMemory() {
         return qMemory;
     }
 

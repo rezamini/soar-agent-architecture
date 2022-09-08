@@ -52,9 +52,9 @@ public class World {
         return obstacles;
     }
 
-    public void update(double dt) {
+    public void updateAndMoveAgents(double dt) {
         for (Robot robot : robots) {
-            robot.update(dt);
+            robot.updateAndMove(dt);
         }
     }
 

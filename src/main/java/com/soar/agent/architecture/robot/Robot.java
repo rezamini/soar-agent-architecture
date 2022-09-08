@@ -1,5 +1,6 @@
 package com.soar.agent.architecture.robot;
 
+import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.world.World;
 import java.awt.geom.*;
 
@@ -10,10 +11,12 @@ public class Robot {
     public final double widthMultiplier = 4.0;
     public final double heightMultiplier = 1.5;
     public final double shapeStartingPoint = 0.4;
-    public final Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4,  shapeStartingPoint * widthMultiplier, shapeStartingPoint * heightMultiplier);
+    public final Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4, shapeStartingPoint * widthMultiplier,
+            shapeStartingPoint * heightMultiplier);
     private final World world;
     private final String name;
     private double yaw;
+    private double tempYaw; // for checking agent temp surrounding
     private double speed;
     private double turnRate;
     public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
@@ -27,7 +30,7 @@ public class Robot {
         shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
     }
 
-    public void update(double dt) {
+    public void updateAndMove(double dt) {
         yaw += dt * turnRate;
         // yaw += dt;
 
@@ -44,7 +47,28 @@ public class Robot {
         if (!world.willCollide(this, newX, newY)) {
             move(newX, newY);
         }
+    }
 
+    public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
+
+        tempYaw = Math.toRadians(currentDirection.getAngle());
+        tempYaw += dt * turnRate;
+
+        while (tempYaw < 0.0)
+            tempYaw += 2.0 * Math.PI;
+        while (tempYaw > 2.0 * Math.PI)
+            tempYaw -= 2.0 * Math.PI;
+
+        final double dx = Math.cos(tempYaw) * speed;
+        final double dy = Math.sin(tempYaw) * speed;
+
+        final double newX = shape.getCenterX() + dx;
+        final double newY = shape.getCenterY() + dy;
+
+        // check to see if it will collide in every enum direction
+        boolean isObstacle = world.willCollide(this, newX, newY);
+
+        return isObstacle;
     }
 
     public World getWorld() {
