@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.soar.agent.architecture.beans.Move;
+import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
 
 import org.jsoar.kernel.Agent;
@@ -55,6 +56,8 @@ public class RobotAgent {
 
         SoarQMemoryAdapter.attach(getThreadedAgent().getAgent(), getQMemory());
         new CycleCountInput(getThreadedAgent().getInputOutput());
+
+        debug();
     }
 
     public void addListener(MoveListenerEvent toAdd) {
@@ -145,6 +148,15 @@ public class RobotAgent {
             qMemory.setDouble("self.pose.x", x);
             qMemory.setDouble("self.pose.y", y);
             qMemory.setDouble("self.pose.yaw", Math.toDegrees(robot.getYaw()));
+
+            //add surrounding view memory
+            for(DirectionEnum directionEnum: DirectionEnum.values()){
+                final QMemory sub = qMemory.subMemory("view." + directionEnum.getName() + "");
+                sub.setString("type", "none");
+                sub.setInteger("obstacle", 0); // 0=false 1=true
+            }
+            
+            System.out.println(qMemory);
         }
     }
 
