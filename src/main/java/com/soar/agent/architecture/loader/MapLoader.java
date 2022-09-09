@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.jsoar.util.ByRef;
 
+import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.world.World;
 
@@ -78,7 +79,11 @@ public class MapLoader {
                     r.setSpeed(0.5);
                     r.setTurnRate(Math.toRadians(25));
                     world.addRobot(r);
-                } 
+
+                }else if(Character.isLetter(c) && Character.isLowerCase(c)){
+                    Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy));
+                    world.addLandmark(landmark);
+                }
             }
         }
     }

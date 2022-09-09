@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.jsoar.util.events.SoarEventManager;
 
+import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.robot.Robot;
 
 public class World {
@@ -15,6 +16,8 @@ public class World {
     public final Rectangle2D extents = new Rectangle2D.Double(-5.0, -5.0, 10.0, 10.0);
     private final List<Robot> robots = new ArrayList<Robot>();
     private final List<Shape> obstacles = new ArrayList<Shape>();
+    private final List<Landmark> landmarks = new ArrayList<Landmark>();
+
 
     public World() {
 
@@ -50,6 +53,14 @@ public class World {
 
     public List<Shape> getObstacles() {
         return obstacles;
+    }
+
+    public void addLandmark(Landmark landmark) {
+        this.landmarks.add(landmark);
+    }
+
+    public List<Landmark> getLandmarks() {
+        return landmarks;
     }
 
     public void updateAndMoveAgents(double dt) {

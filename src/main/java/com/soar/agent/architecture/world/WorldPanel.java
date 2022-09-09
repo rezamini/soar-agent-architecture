@@ -2,6 +2,7 @@ package com.soar.agent.architecture.world;
 
 import javax.swing.JPanel;
 
+import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.robot.Robot;
 
 import java.awt.BasicStroke;
@@ -89,10 +90,9 @@ public class WorldPanel extends JPanel {
             drawRobot(g2d, robot);
         }
 
-        // for(Waypoint w : world.getWaypoints())
-        // {
-        // drawWaypoint(g2d, w);
-        // }
+        for (Landmark w : world.getLandmarks()) {
+            drawLandmark(g2d, w);
+        }
 
         for (Shape s : world.getObstacles()) {
             drawObstacle(g2d, s);
@@ -153,26 +153,32 @@ public class WorldPanel extends JPanel {
         // final Ellipse2D body = new Ellipse2D.Double(-r, -r, r * 2.0, r * 2.0);
         // drawShape(g2d, body, Color.WHITE, Color.BLACK);
 
-        Rectangle2D.Double body = new Rectangle2D.Double(-r, -r , r * robot.getWidthMultiplier(), r * robot.getHeightMultiplier());
-        Ellipse2D firstWheel = new Ellipse2D.Double(-r + 0.2, -r -0.2, 0.3, 0.3);
-        Ellipse2D secondWheel = new Ellipse2D.Double(-r + 1, -r -0.2, 0.3, 0.3);
-        Rectangle2D.Double roof = new Rectangle2D.Double(-r + 0.2, -r + 0.6, r * robot.getWidthMultiplier()/1.5, r * robot.getHeightMultiplier()/2);
-        
+        Rectangle2D.Double body = new Rectangle2D.Double(-r, -r, r * robot.getWidthMultiplier(),
+                r * robot.getHeightMultiplier());
+        Ellipse2D firstWheel = new Ellipse2D.Double(-r + 0.2, -r - 0.2, 0.3, 0.3);
+        Ellipse2D secondWheel = new Ellipse2D.Double(-r + 1, -r - 0.2, 0.3, 0.3);
+        Rectangle2D.Double roof = new Rectangle2D.Double(-r + 0.2, -r + 0.6, r * robot.getWidthMultiplier() / 1.5,
+                r * robot.getHeightMultiplier() / 2);
+
         drawCar(g2d, body, firstWheel, secondWheel, roof, Color.YELLOW, Color.BLACK);
 
         final double dirR = r / 4.0;
         // final double dirR = r / 5.0;
-        // final Ellipse2D dir = new Ellipse2D.Double(r - dirR, -dirR, dirR * 2.0, dirR * 2.0);
-        final Ellipse2D dir = new Ellipse2D.Double(body.getMaxX() - dirR, body.getCenterY()-dirR , dirR * 2.0, dirR * 2.0);
+        // final Ellipse2D dir = new Ellipse2D.Double(r - dirR, -dirR, dirR * 2.0, dirR
+        // * 2.0);
+        final Ellipse2D dir = new Ellipse2D.Double(body.getMaxX() - dirR, body.getCenterY() - dirR, dirR * 2.0,
+                dirR * 2.0);
         drawShape(g2d, dir, Color.RED, Color.BLACK);
 
         g2d.rotate(follow == null ? -robot.getYaw() : Math.toRadians(-90.0));
 
         // final double fontHeight = robot.getRadius() * 1.5;
         // prepareFont(g2d, fontHeight);
-        // final Rectangle2D bounds = g2d.getFont().getStringBounds(robot.getName(), g2d.getFontRenderContext());
+        // final Rectangle2D bounds = g2d.getFont().getStringBounds(robot.getName(),
+        // g2d.getFontRenderContext());
         // g2d.setColor(Color.BLACK);
-        // g2d.drawString(robot.getName(), (float) (-bounds.getWidth() / 2.0), (float) (-(fontHeight / 3.0)));
+        // g2d.drawString(robot.getName(), (float) (-bounds.getWidth() / 2.0), (float)
+        // (-(fontHeight / 3.0)));
 
         g2d.dispose();
     }
@@ -202,34 +208,33 @@ public class WorldPanel extends JPanel {
     // }
     // }
 
-    // private void drawWaypoint(Graphics2D g2dIn, Waypoint waypoint)
-    // {
-    // final Graphics2D g2d = (Graphics2D) g2dIn.create();
-    // final Point2D p = waypoint.point;
-    // final double r = 0.2;
-    // final Ellipse2D circle1 = new Ellipse2D.Double(p.getX() - r, p.getY() - r, 2
-    // * r, 2 * r);
+    private void drawLandmark(Graphics2D g2dIn, Landmark landmark) {
+        final Graphics2D g2d = (Graphics2D) g2dIn.create();
+        final Point2D p = landmark.getLocation();
+        final double r = 0.2;
+        final Ellipse2D circle1 = new Ellipse2D.Double(p.getX() - r, p.getY() - r, 2
+                * r, 2 * r);
 
-    // drawShape(g2d, circle1, Color.ORANGE, Color.BLACK);
+        drawShape(g2d, circle1, Color.ORANGE, Color.BLACK);
 
-    // final double r2 = r * 1.4;
-    // final Ellipse2D circle2 = new Ellipse2D.Double(p.getX() - r2, p.getY() - r2,
-    // 2 * r2, 2 * r2);
-    // g2d.draw(circle2);
+        final double r2 = r * 1.4;
+        final Ellipse2D circle2 = new Ellipse2D.Double(p.getX() - r2, p.getY() - r2,
+                2 * r2, 2 * r2);
+        g2d.draw(circle2);
 
-    // final double fontHeight = r * 1.5;
-    // prepareFont(g2d, fontHeight);
-    // final Rectangle2D bounds = g2d.getFont().getStringBounds(waypoint.name,
-    // g2d.getFontRenderContext());
-    // g2d.setColor(Color.BLACK);
-    // g2d.drawString(waypoint.name, (float) (p.getX() - bounds.getWidth() / 2.0),
-    // (float) (p.getY() - fontHeight / 3.0));
+        final double fontHeight = r * 1.5;
+        prepareFont(g2d, fontHeight);
+        final Rectangle2D bounds = g2d.getFont().getStringBounds(landmark.name,
+                g2d.getFontRenderContext());
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(landmark.name, (float) (p.getX() - bounds.getWidth() / 2.0),
+                (float) (p.getY() - fontHeight / 3.0));
 
-    // g2d.dispose();
-    // //g2d.draw(new Line2D.Double(p.getX(), p.getY() - 1.5 * r, p.getX(), p.getY()
-    // + 1.5 * r));
-    // //g2d.draw(new Line2D.Double(p.getX() - 1.5 * r, p.getY(), p.getX() + 1.5 *
-    // r, p.getY()));
-    // }
+        g2d.dispose();
+        // g2d.draw(new Line2D.Double(p.getX(), p.getY() - 1.5 * r, p.getX(), p.getY()+
+        // 1.5 * r));
+        // g2d.draw(new Line2D.Double(p.getX() - 1.5 * r, p.getY(), p.getX() + 1.5 *r,
+        // p.getY()));
+    }
 
 }
