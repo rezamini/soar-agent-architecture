@@ -22,7 +22,7 @@ public class SurroundResponder extends SurroundListener {
                 boolean isObstacle = robot.tempUpdate(0, directionEnum);
 
                 final QMemory sub = qMemory.subMemory("view." + directionEnum.getName() + "");
-                sub.setString("type", "normalCell");
+                sub.setString("type", "normal");
                 sub.setInteger("obstacle", isObstacle ? 1 : 0); // 0=false 1=true
             }
         }

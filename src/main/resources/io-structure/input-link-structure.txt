@@ -1,0 +1,25 @@
+^input-link
+    ^cycle-count <int> numberof time the agent run or step
+    ^self
+        ^name <string> name of the agent/robot
+        ^radius <float> radius or the area of the agent
+        ^pose
+            ^x <float> current grid column
+            ^y <float> current grid row
+            ^yaw <float> direction the agent is facing
+    ^view the surrounding of the agent by 0.5 cell - based on the agent speed
+        ^north
+            ^type [none normal]
+            ^obstacle [true false] is the next cell obstacle?
+        ^south
+            ^type [none normal]
+            ^wall [true false]
+        ^east
+            ^type [none normal]
+            ^wall [true false]
+        ^west
+            ^type [none normal]
+            ^wall [true false]	
+        	
+	
+		
