@@ -71,6 +71,7 @@ public class World {
 
     public boolean willCollide(Robot r, double newX, double newY) {
         final double radius = r.getRadius();
+        
         if (!extents.contains(newX + radius, newY + radius) ||
                 !extents.contains(newX + radius, newY - radius) ||
                 !extents.contains(newX - radius, newY - radius) ||
@@ -79,6 +80,7 @@ public class World {
         }
 
         for (Shape s : obstacles) {
+            
             if (s.contains(newX + radius, newY + radius) ||
                     s.contains(newX + radius, newY - radius) ||
                     s.contains(newX - radius, newY - radius) ||
@@ -86,6 +88,22 @@ public class World {
                 return true;
             }
         }
+
+        // System.out.println(landmarks.get(0).getLocation().distance(newX+radius, newY+radius));
+        // for (Landmark landmark : landmarks) {
+        //     // pose is x=5, y=11 for the north obstacle
+            
+        //     if (landmark.getLocation().distance(newX + radius, newY + radius) < Double.valueOf(1.40) 
+        //     // || 
+        //     //         landmark.getLocation().distance(newX + radius, newY - radius) < Double.valueOf(1.40) ||
+        //     //         landmark.getLocation().distance(newX - radius, newY - radius)  < Double.valueOf(1.40)||
+        //     //         landmark.getLocation().distance(newX - radius, newY + radius)< Double.valueOf(1.40) 
+                    
+        //             )  {
+        //         return true;
+        //     }
+        // }
+
         final Point2D newPoint = new Point2D.Double(newX, newY);
         for (Robot other : robots) {
             if (r != other) {

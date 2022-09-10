@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
+import com.soar.agent.architecture.events.SurroundResponder;
 
 import org.jsoar.kernel.Agent;
 import org.jsoar.kernel.DebuggerProvider;
@@ -43,6 +44,7 @@ import org.jsoar.kernel.symbols.SymbolFactory;
 import org.jsoar.runtime.LegilimensStarter;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.commands.SoarCommands;
+import org.jsoar.util.events.SoarEventManager;
 
 public class RobotAgent {
     private Robot robot;
@@ -50,7 +52,9 @@ public class RobotAgent {
     private final QMemory qMemory = DefaultQMemory.create();
     private File source = null;
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
-
+    private SurroundResponder surroundResponder;
+    public final SoarEventManager events = new SoarEventManager();
+    
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
 
@@ -67,12 +71,13 @@ public class RobotAgent {
     public void setRobot(Robot robot) {
         try {
             this.robot = robot;
+            
             getThreadedAgent().setName(robot.getName());
 
             initMoveCommandListenerObject(); // initialize the output command listener for later use
 
             getThreadedAgent().initialize(); // Do an init-soar
-            source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-to-food.soar").toURI());
             if (source != null) {
                 final Callable<Void> call = () -> {
                     SoarCommands.source(getThreadedAgent().getInterpreter(), source);
@@ -122,10 +127,8 @@ public class RobotAgent {
                         context.setStatus("complete");
 
                         // notify the listers that are outside of the agent listening
-                        
                         for (MoveListenerEvent listener : moveListeners) {
                             listener.moveCompleted(bean, robot, RobotAgent.this);
-                            
                             updateRobotMemory();
                         }
                     }
@@ -140,7 +143,7 @@ public class RobotAgent {
     }
 
     public void updateRobotMemory() {
-
+        surroundResponder = new SurroundResponder(robot, this);
         synchronized (qMemory) {
             qMemory.setString("self.name", robot.getName());
             qMemory.setDouble("self.radius", robot.getRadius());
@@ -150,6 +153,9 @@ public class RobotAgent {
             qMemory.setDouble("self.pose.x", x);
             qMemory.setDouble("self.pose.y", y);
             qMemory.setDouble("self.pose.yaw", Math.toDegrees(robot.getYaw()));
+            
+            
+            events.fireEvent(surroundResponder);
 
             // //add surrounding view memory
             // for(DirectionEnum directionEnum: DirectionEnum.values()){

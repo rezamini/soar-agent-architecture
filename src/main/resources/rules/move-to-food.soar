@@ -13,13 +13,30 @@
 #    propose move-to-food in the direction of that cell
 #    and indicate that this operator can be selected randomly.
 
+# sp {propose*move-to-food
+#    (state <s> ^io.input-link.my-location.<dir>.content 
+#                  << normalfood bonusfood >>)
+# -->
+#    (<s> ^operator <o> + =)
+#    (<o> ^name move-to-food
+#         ^direction <dir>)}
+
+# sp {propose*move-to-food
+#    (state <s> ^io.input-link.view.<direction>.type << normal >>
+#               ^io.input-link.self.pose <e>)
+#    (<e> ^x <x> ^y <y>)
+# -->
+#    (<s> ^operator <o> + =)
+#    (<o> ^name move-to-food
+#         ^direction <direction>)}
+
 sp {propose*move-to-food
-   (state <s> ^io.input-link.my-location.<dir>.content 
-                 << normalfood bonusfood >>)
+   (state <s> ^io.input-link.view.<direction>.type 
+                 << normal >>)
 -->
    (<s> ^operator <o> + =)
    (<o> ^name move-to-food
-        ^direction <dir>)}
+        ^direction <direction>)}
 
 # Apply*move-to-food
 # If the move-to-food operator for a direction is selected,
@@ -29,9 +46,9 @@ sp {apply*move-to-food
    (state <s> ^io.output-link <ol>
               ^operator <o>)
    (<o> ^name move-to-food
-        ^direction <dir>)
+        ^direction <direction>)
 -->
-   (<ol> ^move.direction <dir>)}
+   (<ol> ^move.direction <direction>)}
 
 # Apply*move-to-food*remove-move:
 # If the move-to-food operator is selected,
@@ -45,4 +62,10 @@ sp {apply*move-to-food*remove-move
    (<move> ^status complete)
 -->
    (<ol> ^move <move> -)}
+
+sp {monitor*move-to-food 
+   (state <s> ^operator <o>) 
+   (<o> ^name move-to-food ^direction <direction>) 
+--> 
+   (write |Direction: | <direction>)}
 
