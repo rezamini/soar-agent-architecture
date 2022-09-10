@@ -19,10 +19,12 @@ public class SurroundResponder extends SurroundListener {
     public void updateSurroundingMemory() {
         QMemory qMemory = robotAgent.getQMemory();
         Random randomizer = new Random();
-        DirectionEnum enumTest = DirectionEnum.values()[randomizer.nextInt(DirectionEnum.values().length)];
+        // DirectionEnum enumTest =
+        // DirectionEnum.values()[randomizer.nextInt(DirectionEnum.values().length)];
 
-        qMemory.subMemory(getSurroundingSubMemoryPath(null)).setString("type", "");
-        // sub.setString("test", "aaa");
+        qMemory.subMemory(getSurroundingSubMemoryPath(null)).setString("type", "none");
+        double currentYawDegree = Math.toDegrees(robot.getYaw());
+
         for (DirectionEnum directionEnum : DirectionEnum.values()) {
 
             synchronized (qMemory) {
@@ -33,7 +35,10 @@ public class SurroundResponder extends SurroundListener {
                 QMemory sub = qMemory.subMemory(getSurroundingSubMemoryPath(directionEnum.getName()));
 
                 // sub2.setString("type", isObstacle ? "none" : "normal");
-                sub.setString("type", enumTest.getName().equals(directionEnum.getName()) ? "same" : "normal");
+                // sub.setString("type", enumTest.getName().equals(directionEnum.getName()) ?
+                // "same" : "normal");
+                sub.setString("type",
+                        isObstacle ? "obstacleCell" : currentYawDegree == directionEnum.getAngle() ? "none" : "normal");
                 sub.setInteger("obstacle", isObstacle ? 1 : 0); // 0=false 1=true
             }
         }
