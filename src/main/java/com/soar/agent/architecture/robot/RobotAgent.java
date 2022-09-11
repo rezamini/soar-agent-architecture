@@ -53,7 +53,7 @@ public class RobotAgent {
     private File source = null;
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
     private AreaResponder areaResponder;
-    public final SoarEventManager events = new SoarEventManager();
+    // public final SoarEventManager events = new SoarEventManager();
     
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
@@ -154,8 +154,8 @@ public class RobotAgent {
             qMemory.setDouble("self.pose.y", y);
             qMemory.setDouble("self.pose.yaw", Math.toDegrees(robot.getYaw()));
             
-            
-            events.fireEvent(areaResponder);
+            areaResponder.updateAreaMemory();
+            // events.fireEvent(areaResponder);
 
             // //add surrounding view memory
             // for(DirectionEnum directionEnum: DirectionEnum.values()){

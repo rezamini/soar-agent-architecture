@@ -8,15 +8,15 @@ import com.soar.agent.architecture.robot.RobotAgent;
 /**
  * SurroundingListener
  */
-public abstract class SurroundListener implements SoarEvent{
+public abstract class AreaListener implements SoarEvent{
     public final RobotAgent robotAgent;
     public final Robot robot;
 
-    public SurroundListener(Robot robot, RobotAgent robotAgent){
+    public AreaListener(Robot robot, RobotAgent robotAgent){
         this.robotAgent = robotAgent;
         this.robot = robot;
     }
 
-    public abstract void updateSurroundingMemory();
+    public abstract void updateAreaMemory();
     
 }
