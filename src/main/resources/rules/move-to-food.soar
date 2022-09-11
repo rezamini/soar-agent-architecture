@@ -31,7 +31,7 @@
 #         ^direction <direction>)}
 
 sp {propose*move-to-food
-   (state <s> ^io.input-link.view.<direction>.type 
+   (state <s> ^io.input-link.area.view.<direction>.type 
                  << normal >>)
 -->
    (<s> ^operator <o> + =)

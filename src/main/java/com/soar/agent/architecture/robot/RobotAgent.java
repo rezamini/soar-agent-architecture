@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
-import com.soar.agent.architecture.events.SurroundResponder;
+import com.soar.agent.architecture.events.AreaResponder;
 
 import org.jsoar.kernel.Agent;
 import org.jsoar.kernel.DebuggerProvider;
@@ -52,7 +52,7 @@ public class RobotAgent {
     private final QMemory qMemory = DefaultQMemory.create();
     private File source = null;
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
-    private SurroundResponder surroundResponder;
+    private AreaResponder areaResponder;
     public final SoarEventManager events = new SoarEventManager();
     
     public RobotAgent() {
@@ -143,7 +143,7 @@ public class RobotAgent {
     }
 
     public void updateRobotMemory() {
-        surroundResponder = new SurroundResponder(robot, this);
+        areaResponder = new AreaResponder(robot, this);
         synchronized (qMemory) {
             qMemory.setString("self.name", robot.getName());
             qMemory.setDouble("self.radius", robot.getRadius());
@@ -155,7 +155,7 @@ public class RobotAgent {
             qMemory.setDouble("self.pose.yaw", Math.toDegrees(robot.getYaw()));
             
             
-            events.fireEvent(surroundResponder);
+            events.fireEvent(areaResponder);
 
             // //add surrounding view memory
             // for(DirectionEnum directionEnum: DirectionEnum.values()){

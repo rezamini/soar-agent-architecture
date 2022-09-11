@@ -7,20 +7,24 @@
             ^x <float> current grid column
             ^y <float> current grid row
             ^yaw <float> direction the agent is facing
-    ^view the surrounding of the agent by 0.5 cell - based on the agent speed
-        ^type current type of cell the agent is at
-        ^north
-            ^type [none normal, obstacleCell]
-            ^obstacle [true false] is the next cell obstacle?
-        ^south
-            ^type [none normal, obstacleCell]
-            ^wall [true false]
-        ^east
-            ^type [none normal, obstacleCell]
-            ^wall [true false]
-        ^west
-            ^type [none normal, obstacleCell]
-            ^wall [true false]	
+            
+    ^area the area information of the agent
+        ^locale current cell info the agent is at
+            ^type current type of cell the agent is at
+
+        ^view the surrounding of the agent or the next cell - based on the agent speed of 0.5
+            ^north
+                ^type [none normal, obstacleCell]
+                ^obstacle [true false] is the next cell obstacle?
+            ^south
+                ^type [none normal, obstacleCell]
+                ^wall [true false]
+            ^east
+                ^type [none normal, obstacleCell]
+                ^wall [true false]
+            ^west
+                ^type [none normal, obstacleCell]
+                ^wall [true false]	
         	
 	
 		
