@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -65,6 +66,17 @@ public class AppMain extends JPanel {
                 stepAgent();
             }
         });
+
+        JCheckBox debuggerCheckBox = new JCheckBox("Open Debugger");
+        debuggerCheckBox.addActionListener((event) -> {
+            if (debuggerCheckBox.isSelected()) {
+                openDebugger();
+            } else {
+                closeDebugger();
+            }
+        });
+        bar.add(debuggerCheckBox);
+
     }
 
     public void loadMap(Result loadResult) throws IOException {
@@ -113,9 +125,8 @@ public class AppMain extends JPanel {
         }
     }
 
-    private void startAgent(){
-        for(RobotAgent agent : agents.values())
-        {
+    private void startAgent() {
+        for (RobotAgent agent : agents.values()) {
             agent.updateRobotMemory();
             agent.addListener(moveResponder);
             agent.start();
@@ -123,9 +134,8 @@ public class AppMain extends JPanel {
         worldPanel.repaint();
     }
 
-    private void stepAgent(){
-        for(RobotAgent agent : agents.values())
-        {
+    private void stepAgent() {
+        for (RobotAgent agent : agents.values()) {
             agent.updateRobotMemory();
             agent.addListener(moveResponder);
             agent.step();
@@ -133,4 +143,21 @@ public class AppMain extends JPanel {
         worldPanel.repaint();
     }
 
+    private void openDebugger() {
+        // open a signle debugger if any agent exists
+        if (agents != null && agents.size() > 0){
+            RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
+            agent.openDebugger();
+        }
+
+    }
+
+    private void closeDebugger() {
+        // close a signle debugger if any agent exists
+        if (agents != null && agents.size() > 0) {
+            RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
+            agent.closeDebugger();
+        }
+
+    }
 }

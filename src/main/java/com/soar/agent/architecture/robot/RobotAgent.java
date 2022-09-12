@@ -61,7 +61,7 @@ public class RobotAgent {
         SoarQMemoryAdapter.attach(getThreadedAgent().getAgent(), getQMemory());
         new CycleCountInput(getThreadedAgent().getInputOutput());
 
-        debug();
+        //debug();
     }
 
     public void addListener(MoveListenerEvent toAdd) {
@@ -190,9 +190,19 @@ public class RobotAgent {
         this.getThreadedAgent().stop();
     }
 
-    public void debug() {
+    public void openDebugger() {
         try {
             this.getThreadedAgent().openDebugger();
+        } catch (SoarException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeDebugger() {
+        try {
+            this.getThreadedAgent().closeDebugger();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } catch (SoarException e) {
             e.printStackTrace();
         }
