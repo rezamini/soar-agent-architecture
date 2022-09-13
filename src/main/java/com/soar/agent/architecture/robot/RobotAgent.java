@@ -54,14 +54,14 @@ public class RobotAgent {
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
     private AreaResponder areaResponder;
     // public final SoarEventManager events = new SoarEventManager();
-    
+
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
 
         SoarQMemoryAdapter.attach(getThreadedAgent().getAgent(), getQMemory());
         new CycleCountInput(getThreadedAgent().getInputOutput());
 
-        //debug();
+        // debug();
     }
 
     public void addListener(MoveListenerEvent toAdd) {
@@ -71,13 +71,14 @@ public class RobotAgent {
     public void setRobot(Robot robot) {
         try {
             this.robot = robot;
-            
+
             getThreadedAgent().setName(robot.getName());
 
             initMoveCommandListenerObject(); // initialize the output command listener for later use
+            initCommandListener("move");
 
             getThreadedAgent().initialize(); // Do an init-soar
-            source = new File(getClass().getResource("/rules/move-to-food.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
             if (source != null) {
                 final Callable<Void> call = () -> {
                     SoarCommands.source(getThreadedAgent().getInterpreter(), source);
@@ -104,8 +105,9 @@ public class RobotAgent {
                 // we can do something with bean.direction etc ...
                 // added other related command data that might be used elsewhere
 
-                /* -> Other ways of delaying the agent for UI updates:
-
+                /*
+                 * -> Other ways of delaying the agent for UI updates:
+                 * 
                  * int delay = 100; // number of milliseconds to sleep
                  * long start = System.currentTimeMillis();
                  * while(start >= System.currentTimeMillis() - delay); // do nothing
@@ -114,7 +116,8 @@ public class RobotAgent {
                  */
 
                 try {
-                    //utilise the agent thread to synchronized and make 100 milisecond pause before every move. much more realistic ui
+                    // utilise the agent thread to synchronized and make 100 milisecond pause before
+                    // every move. much more realistic ui
                     synchronized (threadedAgent.getAgent()) {
                         threadedAgent.getAgent().wait(100);
 
@@ -142,6 +145,25 @@ public class RobotAgent {
         manager.registerHandler("move", handler, Move.class);
     }
 
+    private void initCommandListener(String commandNameToListen) {
+        OutputCommandManager outputManager = new OutputCommandManager(threadedAgent.getEvents());
+        OutputCommandHandler handler = new OutputCommandHandler() {
+            @Override
+            public void onCommandRemoved(String commandName, Identifier commandId) {
+
+            }
+
+            @Override
+            public void onCommandAdded(String commandName, Identifier commandId) {
+                // synchronized (qMemory) {
+                //     qMemory.remove("self.pose");
+                //     System.out.println(qMemory.getString("self.pose.x"));
+                // }
+            }
+        };
+        outputManager.registerHandler(commandNameToListen, handler);
+    }
+
     public void updateRobotMemory() {
         areaResponder = new AreaResponder(robot, this);
         synchronized (qMemory) {
@@ -153,15 +175,16 @@ public class RobotAgent {
             qMemory.setDouble("self.pose.x", x);
             qMemory.setDouble("self.pose.y", y);
             qMemory.setDouble("self.pose.yaw", Math.toDegrees(robot.getYaw()));
-            
+
             areaResponder.updateAreaMemory();
             // events.fireEvent(areaResponder);
 
             // //add surrounding view memory
             // for(DirectionEnum directionEnum: DirectionEnum.values()){
-            //     final QMemory sub = qMemory.subMemory("view." + directionEnum.getName() + "");
-            //     sub.setString("type", "none");
-            //     sub.setInteger("obstacle", 0); // 0=false 1=true
+            // final QMemory sub = qMemory.subMemory("view." + directionEnum.getName() +
+            // "");
+            // sub.setString("type", "none");
+            // sub.setInteger("obstacle", 0); // 0=false 1=true
             // }
         }
     }

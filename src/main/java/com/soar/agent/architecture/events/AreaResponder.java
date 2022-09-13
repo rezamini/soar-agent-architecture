@@ -21,7 +21,8 @@ public class AreaResponder extends AreaListener {
         QMemory qMemory = robotAgent.getQMemory();
 
         double currentYawDegree = Math.toDegrees(robot.getYaw());
-        // qMemory.remove("area.view");
+        //  qMemory.remove("area.view");
+        qMemory.setString("area.view.type", "none");
         for (DirectionEnum directionEnum : DirectionEnum.values()) {
 
             synchronized (qMemory) {
@@ -36,7 +37,11 @@ public class AreaResponder extends AreaListener {
 
                 if (currentYawDegree == directionEnum.getAngle()) {
                     // set former cell info before changing the cell type
-                    setFormerLocaleInfo(qMemory, currentType);
+                    String formerDirection = setFormerLocaleInfo(qMemory, currentType);
+
+                    if(formerDirection != null){
+                        qMemory.subMemory(getAreaSubMemoryPath("view", formerDirection, null)).setString("type", "none");;
+                    }
 
                     // update current cell info
                     currentType = CellTypeEnum.NONE.getName();
@@ -45,7 +50,7 @@ public class AreaResponder extends AreaListener {
                 } else if (isObstacle) {
                     currentType = CellTypeEnum.BLOCK.getName();
                 }
-
+                
                 sub.setString("type", currentType);
                 sub.setInteger("obstacle", isObstacle ? 1 : 0); // 0=false 1=true
 
@@ -54,16 +59,20 @@ public class AreaResponder extends AreaListener {
         }
     }
 
-    private void setFormerLocaleInfo(QMemory qMemory, String formerType) {
+    private String setFormerLocaleInfo(QMemory qMemory, String formerType) {
+        String formerDirection;
         synchronized (qMemory) {
-            String formerDirection = qMemory.getString(getAreaSubMemoryPath("locale", null, "direction"));
+            formerDirection = qMemory.getString(getAreaSubMemoryPath("locale", null, "direction"));
             // String formerType = qMemory.getString(getAreaSubMemoryPath("view", formerDirection, "type"));
 
             QMemory subFormerMemory = qMemory.subMemory(getAreaSubMemoryPath("former-locale", null, null));
             subFormerMemory.setString("type", formerType);
             subFormerMemory.setString("direction", formerDirection);
         }
+
+        return formerDirection;
     }
+    
 
     private void setLocaleInfo(QMemory qMemory, String directionName, String currentType) {
 

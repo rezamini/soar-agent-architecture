@@ -30,6 +30,15 @@
 #    (<o> ^name move-to-food
 #         ^direction <direction>)}
 
+# sp {propose*move-to-food
+#    (state <s> ^io.input-link.area.view.<direction>.type 
+#                  { <type> <> block })
+# -->
+#    (<s> ^operator <o> + =)
+#    (<o> ^name move-to-food
+#         ^direction <direction>
+#         ^type <type>)}
+
 sp {propose*move-to-food
    (state <s> ^io.input-link.area.view.<direction>.type 
                  << normal >>)
