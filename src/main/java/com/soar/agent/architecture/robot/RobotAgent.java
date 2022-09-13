@@ -79,6 +79,7 @@ public class RobotAgent {
 
             getThreadedAgent().initialize(); // Do an init-soar
             source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             if (source != null) {
                 final Callable<Void> call = () -> {
                     SoarCommands.source(getThreadedAgent().getInterpreter(), source);
@@ -132,7 +133,7 @@ public class RobotAgent {
                         // notify the listers that are outside of the agent listening
                         for (MoveListenerEvent listener : moveListeners) {
                             listener.moveCompleted(bean, robot, RobotAgent.this);
-                            updateRobotMemory();
+                            // updateRobotMemory();
                         }
                     }
 
@@ -155,13 +156,16 @@ public class RobotAgent {
 
             @Override
             public void onCommandAdded(String commandName, Identifier commandId) {
-                // synchronized (qMemory) {
-                //     qMemory.remove("self.pose");
-                //     System.out.println(qMemory.getString("self.pose.x"));
-                // }
+                removeMemoryPath("area.view");
             }
         };
         outputManager.registerHandler(commandNameToListen, handler);
+    }
+
+    private void removeMemoryPath(String path) {
+        synchronized (qMemory) {
+            qMemory.remove(path);
+        }
     }
 
     public void updateRobotMemory() {
@@ -206,7 +210,7 @@ public class RobotAgent {
     }
 
     public void step() {
-        this.getThreadedAgent().runFor(1, RunType.DECISIONS);
+        this.getThreadedAgent().runFor(2, RunType.DECISIONS);
     }
 
     public void stop() {
