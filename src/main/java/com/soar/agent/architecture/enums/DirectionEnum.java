@@ -6,12 +6,15 @@ package com.soar.agent.architecture.enums;
  * 90 degrees if going to the left / north
  * 180 degrees if turning back / west
  * 270 degrees if going to the right / south
+ * 
+ * Note: The order of the enum is important for the opposite direction method.
  */
 public enum DirectionEnum {
     NORTH("north", 90),
     EAST("east", 0),
-    WEST("west", 180),
-    SOUTH("south", 270);
+    SOUTH("south", 270),
+    WEST("west", 180);
+    
 
     private String name;
     private int angle;
@@ -30,6 +33,23 @@ public enum DirectionEnum {
                 break;
             }
         }
+        return result;
+    }
+
+    //get the opposit direction of the current direction
+    public DirectionEnum getOppositeDirection() {
+        DirectionEnum[] array = values();
+    
+        return array[(ordinal() + 2) % array.length];
+    }
+    //Method overloading: get the opposit direction of the current direction with enum argument
+    public static DirectionEnum getOppositeDirection(DirectionEnum currentDirectionEnum) {
+        DirectionEnum result = null;
+        if(currentDirectionEnum != null){
+            DirectionEnum[] array = values();
+            result = array[(currentDirectionEnum.ordinal() + 2) % array.length];
+        }
+
         return result;
     }
 

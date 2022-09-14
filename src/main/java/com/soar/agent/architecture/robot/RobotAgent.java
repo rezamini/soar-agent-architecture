@@ -78,7 +78,7 @@ public class RobotAgent {
             initCommandListener("move");
 
             getThreadedAgent().initialize(); // Do an init-soar
-            source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             if (source != null) {
                 final Callable<Void> call = () -> {
@@ -210,7 +210,7 @@ public class RobotAgent {
     }
 
     public void step() {
-        this.getThreadedAgent().runFor(2, RunType.DECISIONS);
+        this.getThreadedAgent().runFor(1, RunType.DECISIONS);
     }
 
     public void stop() {
