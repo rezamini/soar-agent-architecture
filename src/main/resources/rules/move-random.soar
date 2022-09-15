@@ -1,3 +1,10 @@
+# sp {propose*move-random
+#    (state <s> ^io.input-link.area.view.<direction>.type 
+#                   << normal >>  )
+# -->
+#    (<s> ^operator <o> + =)
+#    (<o> ^name move-random
+#         ^direction <direction>)}
 
 sp {propose*move-random
    (state <s> ^io.input-link.area.view.<direction>.type 
@@ -9,21 +16,21 @@ sp {propose*move-random
         ^type <type>)}
 
 sp {apply*move-random
-   (state <s> ^io.output-link <ol>
-              ^operator <o>)
+   (state <s> ^operator <o> 
+              ^io.output-link <ol>)
    (<o> ^name move-random
         ^direction <direction>)
 -->
    (<ol> ^move.direction <direction>)}  
 
 
-# sp {apply*move-random*remove-move
-#    (state <s> ^io.output-link <ol>
-#               ^operator.name move-random)
-#    (<ol> ^move <move>)
-#    (<move> ^status complete)
-# -->
-#    (<ol> ^move <move> -)}
+sp {apply*move-random*remove-move
+   (state <s> ^io.output-link <ol>
+              ^operator.name move-random)
+   (<ol> ^move <move>)
+   (<move> ^status complete)
+-->
+   (<ol> ^move <move> -)}
 
 sp {monitor*move-to-food 
    (state <s> ^operator <o>) 

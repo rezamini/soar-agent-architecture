@@ -27,6 +27,8 @@ import org.jsoar.kernel.DebuggerProvider;
 import org.jsoar.kernel.RunType;
 import org.jsoar.kernel.SoarException;
 import org.jsoar.kernel.DebuggerProvider.CloseAction;
+import org.jsoar.kernel.events.InputEvent;
+import org.jsoar.kernel.events.OutputEvent;
 import org.jsoar.kernel.io.CycleCountInput;
 import org.jsoar.kernel.io.InputOutput;
 import org.jsoar.kernel.io.InputWme;
@@ -44,6 +46,8 @@ import org.jsoar.kernel.symbols.SymbolFactory;
 import org.jsoar.runtime.LegilimensStarter;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.commands.SoarCommands;
+import org.jsoar.util.events.SoarEvent;
+import org.jsoar.util.events.SoarEventListener;
 import org.jsoar.util.events.SoarEventManager;
 
 public class RobotAgent {
@@ -76,10 +80,14 @@ public class RobotAgent {
 
             initMoveCommandListenerObject(); // initialize the output command listener for later use
             initCommandListener("move");
+            initInputEventListener();
+
 
             getThreadedAgent().initialize(); // Do an init-soar
+            // source = new
+            // File(getClass().getResource("/rules/move-north-2.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-to-food.soar").toURI());
             source = new File(getClass().getResource("/rules/move-random.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             if (source != null) {
                 final Callable<Void> call = () -> {
                     SoarCommands.source(getThreadedAgent().getInterpreter(), source);
@@ -146,20 +154,34 @@ public class RobotAgent {
         manager.registerHandler("move", handler, Move.class);
     }
 
+    // it will listen to specific commands upon remove/add. for example move command
     private void initCommandListener(String commandNameToListen) {
         OutputCommandManager outputManager = new OutputCommandManager(threadedAgent.getEvents());
         OutputCommandHandler handler = new OutputCommandHandler() {
             @Override
             public void onCommandRemoved(String commandName, Identifier commandId) {
-
+                
             }
 
             @Override
             public void onCommandAdded(String commandName, Identifier commandId) {
                 removeMemoryPath("area.view");
+
             }
         };
         outputManager.registerHandler(commandNameToListen, handler);
+    }
+
+    //a general method for all type of input events listners.
+    private void initInputEventListener(){
+        threadedAgent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
+
+            @Override
+            public void onEvent(SoarEvent event) {
+                //update the robot memory for every input event
+                updateRobotMemory();
+            }
+        });
     }
 
     private void removeMemoryPath(String path) {
