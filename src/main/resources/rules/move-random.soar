@@ -32,11 +32,11 @@ sp {apply*move-random*remove-move
 -->
    (<ol> ^move <move> -)}
 
-sp {monitor*move-to-food 
-   (state <s> ^operator <o>) 
-   (<o> ^name move-random ^direction <direction>) 
---> 
-   (write |Direction of the agent is: | <direction>)}
+# sp {monitor*move-to-food 
+#    (state <s> ^operator <o>) 
+#    (<o> ^name move-random ^direction <direction>) 
+# --> 
+#    (write |Direction of the agent is: | <direction>)}
 
 # Select*move*bonusfood-better-than-normalfood
 # If there is a proposed operator to move to a cell with bonusfood and 
@@ -44,7 +44,7 @@ sp {monitor*move-to-food
 #    has normalfood
 #    prefer the first operator.
 
-# sp {select*move*bonusfood-better-than-normalfood-empty
+# sp {select*move-random*bonusfood-better-than-normalfood-empty
 #    (state <s> ^operator <o1> +
 #               ^operator <o2> +)
 #    (<o1> ^name move 
@@ -53,6 +53,16 @@ sp {monitor*move-to-food
 #          ^content << normalfood empty >>)
 # -->
 #    (<s> ^operator <o1> > <o2>)}
+
+sp {select*move-random*normal-better-than-empty-none
+   (state <s> ^operator <o1> +
+              ^operator <o2> +)
+   (<o1> ^name move-random 
+         ^type normal)
+   (<o2> ^name move-random 
+         ^type << none >>)
+-->
+   (<s> ^operator <o1> > <o2>)}
 
 # # Select*move*avoid-empty-eater
 # # If there is a proposed operator to move to an empty cell or a cell with 
@@ -65,3 +75,10 @@ sp {monitor*move-to-food
 #          ^content << empty eater >>)
 # -->
 #    (<s> ^operator <o1> <)}
+
+sp {select*move-random*avoid-empty-eater
+   (state <s> ^operator <o1> +)
+   (<o1> ^name move-random 
+         ^type << empty >>)
+-->
+   (<s> ^operator <o1> <)}
