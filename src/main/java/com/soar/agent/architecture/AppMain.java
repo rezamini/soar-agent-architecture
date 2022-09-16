@@ -60,6 +60,16 @@ public class AppMain extends JPanel {
             }
         });
 
+        bar.add(new AbstractAction("Stop") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopAgent();
+
+            }
+
+        });
+
         bar.add(new AbstractAction("Step") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -134,6 +144,13 @@ public class AppMain extends JPanel {
         worldPanel.repaint();
     }
 
+    private void stopAgent() {
+        for (RobotAgent agent : agents.values()) {
+            agent.stop();
+        }
+        // worldPanel.repaint();
+    }
+
     private void stepAgent() {
         for (RobotAgent agent : agents.values()) {
             agent.updateRobotMemory();
@@ -145,7 +162,7 @@ public class AppMain extends JPanel {
 
     private void openDebugger() {
         // open a signle debugger if any agent exists
-        if (agents != null && agents.size() > 0){
+        if (agents != null && agents.size() > 0) {
             RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
             agent.openDebugger();
         }
