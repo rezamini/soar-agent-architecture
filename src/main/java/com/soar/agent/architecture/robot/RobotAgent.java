@@ -87,7 +87,9 @@ public class RobotAgent {
             // source = new
             // File(getClass().getResource("/rules/move-north-2.soar").toURI());
             // source = new File(getClass().getResource("/rules/move-to-food.soar").toURI());
-            source = new File(getClass().getResource("/rules/move-random.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
+            source = new File(getClass().getResource("/rules/advanced-move.soar").toURI());
+
             if (source != null) {
                 final Callable<Void> call = () -> {
                     SoarCommands.source(getThreadedAgent().getInterpreter(), source);
