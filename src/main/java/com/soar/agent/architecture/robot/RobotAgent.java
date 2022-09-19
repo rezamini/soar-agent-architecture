@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import com.soar.agent.architecture.beans.Move;
+import com.soar.agent.architecture.enums.CellTypeEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
 import com.soar.agent.architecture.events.AreaResponder;
 
@@ -59,11 +60,10 @@ public class RobotAgent {
             initInputEventListener();
 
             threadedAgent.initialize(); // Do an init-soar
-            // source = new
-            // File(getClass().getResource("/rules/move-north-2.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
             // source = new File(getClass().getResource("/rules/move-to-food.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
-            source = new File(getClass().getResource("/rules/advanced-move.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-random.soar").toURI());
+            // source = new File(getClass().getResource("/rules/advanced-move.soar").toURI());
 
             if (source != null) {
                 final Callable<Void> call = () -> {
@@ -119,6 +119,8 @@ public class RobotAgent {
                         for (MoveListenerEvent listener : moveListeners) {
                             listener.moveCompleted(bean, robot, RobotAgent.this);
                             // updateRobotMemory();
+                            areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
+                            areaResponder.setLocaleInfo(qMemory, bean.getDirection(), CellTypeEnum.NORMAL.getName());
                         }
                     }
 

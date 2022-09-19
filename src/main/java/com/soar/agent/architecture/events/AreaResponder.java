@@ -28,17 +28,17 @@ public class AreaResponder extends AreaListener {
                 boolean isObstacle = robot.tempUpdate(0, directionEnum);
 
                 // initiate every cell as normal and change if required
-                String currentType = CellTypeEnum.NORMAL.getName();
+                //String currentType = CellTypeEnum.NORMAL.getName();
 
                 // set former cell info before changing the cell type
-                setFormerLocaleInfo(qMemory, currentType);
+                //setFormerLocaleInfo(qMemory, currentType);
                 // updateOppositeCell(qMemory, formerDirection, directionEnum, isObstacle);
 
                 if (currentYawDegree == directionEnum.getAngle()) {
 
-                    setLocaleInfo(qMemory, directionEnum.getName(), currentType);
+                    //setLocaleInfo(qMemory, directionEnum.getName(), currentType);
                     updateOppositeCell(qMemory, directionEnum, isObstacle);
-                    setViewMemory(qMemory, directionEnum.getName(), CellTypeEnum.NONE.getName(), isObstacle);
+                    setViewMemory(qMemory, directionEnum.getName(), CellTypeEnum.NORMAL.getName(), isObstacle);
 
                 } else if (isObstacle) {
                     // currentType = CellTypeEnum.BLOCK.getName();
@@ -101,7 +101,7 @@ public class AreaResponder extends AreaListener {
     // // return result;
     // }
 
-    private String setFormerLocaleInfo(QMemory qMemory, String formerType) {
+    public String setFormerLocaleInfo(QMemory qMemory, String formerType) {
         String formerDirection;
         synchronized (qMemory) {
             formerDirection = qMemory.getString(getAreaSubMemoryPath("locale", null, "direction"));
@@ -116,8 +116,9 @@ public class AreaResponder extends AreaListener {
 
         return formerDirection;
     }
+    
 
-    private void setLocaleInfo(QMemory qMemory, String directionName, String currentType) {
+    public void setLocaleInfo(QMemory qMemory, String directionName, String currentType) {
 
         synchronized (qMemory) {
             // String currentType = qMemory.getString(getAreaSubMemoryPath("view",
