@@ -18,7 +18,6 @@ public class World {
     private final List<Shape> obstacles = new ArrayList<Shape>();
     private final List<Landmark> landmarks = new ArrayList<Landmark>();
 
-
     public World() {
 
     }
@@ -32,11 +31,11 @@ public class World {
     }
 
     public void addRobot(Robot robot) {
-        this.robots.add(robot);
+        robots.add(robot);
     }
 
     public void removeRobot(Robot robot) {
-        this.robots.remove(robot);
+        robots.remove(robot);
     }
 
     public List<Robot> getRobots() {
@@ -44,11 +43,11 @@ public class World {
     }
 
     public void addObstacle(Shape shape) {
-        this.obstacles.add(shape);
+        obstacles.add(shape);
     }
 
     public void removeObstacle(Shape shape) {
-        this.obstacles.remove(shape);
+        obstacles.remove(shape);
     }
 
     public List<Shape> getObstacles() {
@@ -56,7 +55,7 @@ public class World {
     }
 
     public void addLandmark(Landmark landmark) {
-        this.landmarks.add(landmark);
+        landmarks.add(landmark);
     }
 
     public List<Landmark> getLandmarks() {
@@ -71,7 +70,7 @@ public class World {
 
     public boolean willCollide(Robot r, double newX, double newY) {
         final double radius = r.getRadius();
-        
+
         if (!extents.contains(newX + radius, newY + radius) ||
                 !extents.contains(newX + radius, newY - radius) ||
                 !extents.contains(newX - radius, newY - radius) ||
@@ -80,7 +79,7 @@ public class World {
         }
 
         for (Shape s : obstacles) {
-            
+
             if (s.contains(newX + radius, newY + radius) ||
                     s.contains(newX + radius, newY - radius) ||
                     s.contains(newX - radius, newY - radius) ||
@@ -89,19 +88,24 @@ public class World {
             }
         }
 
-        // System.out.println(landmarks.get(0).getLocation().distance(newX+radius, newY+radius));
+        // System.out.println(landmarks.get(0).getLocation().distance(newX+radius,
+        // newY+radius));
         // for (Landmark landmark : landmarks) {
-        //     // pose is x=5, y=11 for the north obstacle
-            
-        //     if (landmark.getLocation().distance(newX + radius, newY + radius) < Double.valueOf(1.40) 
-        //     // || 
-        //     //         landmark.getLocation().distance(newX + radius, newY - radius) < Double.valueOf(1.40) ||
-        //     //         landmark.getLocation().distance(newX - radius, newY - radius)  < Double.valueOf(1.40)||
-        //     //         landmark.getLocation().distance(newX - radius, newY + radius)< Double.valueOf(1.40) 
-                    
-        //             )  {
-        //         return true;
-        //     }
+        // // pose is x=5, y=11 for the north obstacle
+
+        // if (landmark.getLocation().distance(newX + radius, newY + radius) <
+        // Double.valueOf(1.40)
+        // // ||
+        // // landmark.getLocation().distance(newX + radius, newY - radius) <
+        // Double.valueOf(1.40) ||
+        // // landmark.getLocation().distance(newX - radius, newY - radius) <
+        // Double.valueOf(1.40)||
+        // // landmark.getLocation().distance(newX - radius, newY + radius)<
+        // Double.valueOf(1.40)
+
+        // ) {
+        // return true;
+        // }
         // }
 
         final Point2D newPoint = new Point2D.Double(newX, newY);

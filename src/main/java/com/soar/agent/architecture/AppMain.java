@@ -37,7 +37,7 @@ public class AppMain extends JPanel {
 
     public AppMain() throws IOException {
         super(new BorderLayout());
-        this.worldPanel = new WorldPanel();
+        worldPanel = new WorldPanel();
         loadMap(new MapLoader().load(getClass().getResource("/map/map.txt")));
         setSimulationToolbar(worldPanel);
 
@@ -90,9 +90,9 @@ public class AppMain extends JPanel {
     }
 
     public void loadMap(Result loadResult) throws IOException {
-        this.world = loadResult.world;
-        this.worldPanel.setWorld(this.world);
-        this.worldPanel.fit();
+        world = loadResult.world;
+        worldPanel.setWorld(world);
+        worldPanel.fit();
         updateAgents();
     }
 
@@ -107,7 +107,7 @@ public class AppMain extends JPanel {
                 f.setContentPane(content);
                 f.setSize(640, 640);
                 f.setVisible(true);
-                content.worldPanel.fit();
+                AppMain.worldPanel.fit();
 
             } catch (IOException e) {
                 e.printStackTrace();

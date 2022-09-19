@@ -17,7 +17,7 @@ public class MoveResponder implements MoveListenerEvent{
         if(currentDirection != null){
             robot.setYaw(Math.toRadians(currentDirection.getAngle()));
             robot.getWorld().updateAndMoveAgents(0);
-            // robotAgent.updateRobotMemory();
+    
             AppMain.worldPanel.repaint();
             
         }else{
