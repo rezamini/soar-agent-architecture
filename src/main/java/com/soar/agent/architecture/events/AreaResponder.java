@@ -1,7 +1,5 @@
 package com.soar.agent.architecture.events;
 
-import java.util.Random;
-
 import org.jsoar.kernel.io.quick.QMemory;
 
 import com.soar.agent.architecture.enums.CellTypeEnum;
@@ -33,12 +31,13 @@ public class AreaResponder extends AreaListener {
                 String currentType = CellTypeEnum.NORMAL.getName();
 
                 // set former cell info before changing the cell type
-                String formerDirection = setFormerLocaleInfo(qMemory, currentType);
-                updateOppositeCell(qMemory, formerDirection, directionEnum, isObstacle);
+                setFormerLocaleInfo(qMemory, currentType);
+                // updateOppositeCell(qMemory, formerDirection, directionEnum, isObstacle);
 
                 if (currentYawDegree == directionEnum.getAngle()) {
 
                     setLocaleInfo(qMemory, directionEnum.getName(), currentType);
+                    updateOppositeCell(qMemory, directionEnum, isObstacle);
                     setViewMemory(qMemory, directionEnum.getName(), CellTypeEnum.NONE.getName(), isObstacle);
 
                 } else if (isObstacle) {
@@ -67,27 +66,40 @@ public class AreaResponder extends AreaListener {
         }
     }
 
-    private void updateOppositeCell(QMemory qMemory, String formerDirection,
-            DirectionEnum currentDirectionEnum, boolean isObstacle) {
-        // DirectionEnum result = null;
-
-        if (formerDirection != null) {
-
-            DirectionEnum formerDirectionOpposite = DirectionEnum
-                    .getOppositeDirection(DirectionEnum.findByName(formerDirection));
-            DirectionEnum currentDirectionOpposite = currentDirectionEnum.getOppositeDirection();
-
-            if (formerDirectionOpposite != null
-                    && formerDirectionOpposite.getName().equalsIgnoreCase(currentDirectionOpposite.getName())) {
-
-                setViewMemory(qMemory, formerDirectionOpposite.getName(), CellTypeEnum.NONE.getName(), isObstacle);
-
-                // result = formerDirectionOpposite;
-            }
+    //update opposit direction of the current cell to None.
+    private void updateOppositeCell(QMemory qMemory, DirectionEnum currentDirectionEnum, boolean isObstacle) {
+        DirectionEnum currentDirectionOpposite = currentDirectionEnum.getOppositeDirection();
+        
+        if (currentDirectionOpposite.getName() != null) {
+            setViewMemory(qMemory, currentDirectionOpposite.getName(), CellTypeEnum.NONE.getName(), isObstacle);
         }
-
-        // return result;
     }
+
+        // private void updateOppositeCell(QMemory qMemory, String formerDirection,
+    // DirectionEnum currentDirectionEnum, boolean isObstacle) {
+    // // DirectionEnum result = null;
+
+    // if (formerDirection != null) {
+
+    // DirectionEnum formerDirectionOpposite = DirectionEnum
+    // .getOppositeDirection(DirectionEnum.findByName(formerDirection));
+    // DirectionEnum currentDirectionOpposite =
+    // currentDirectionEnum.getOppositeDirection();
+
+    // if (formerDirectionOpposite != null
+    // &&
+    // formerDirectionOpposite.getName().equalsIgnoreCase(currentDirectionOpposite.getName()))
+    // {
+
+    // setViewMemory(qMemory, formerDirectionOpposite.getName(),
+    // CellTypeEnum.NONE.getName(), isObstacle);
+
+    // // result = formerDirectionOpposite;
+    // }
+    // }
+
+    // // return result;
+    // }
 
     private String setFormerLocaleInfo(QMemory qMemory, String formerType) {
         String formerDirection;
@@ -95,7 +107,7 @@ public class AreaResponder extends AreaListener {
             formerDirection = qMemory.getString(getAreaSubMemoryPath("locale", null, "direction"));
             // String formerType = qMemory.getString(getAreaSubMemoryPath("view",
             // formerDirection, "type"));
-
+            
             // set former locale info
             QMemory subFormerMemory = qMemory.subMemory(getAreaSubMemoryPath("former-locale", null, null));
             subFormerMemory.setString("type", formerType);
