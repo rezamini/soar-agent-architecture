@@ -5,6 +5,7 @@ import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
+import com.soar.agent.architecture.world.PanelUI;
 
 public class MoveResponder implements MoveListenerEvent{
     
@@ -18,7 +19,8 @@ public class MoveResponder implements MoveListenerEvent{
             robot.setYaw(Math.toRadians(currentDirection.getAngle()));
             robot.getWorld().updateAndMoveAgents(0);
     
-            AppMain.worldPanel.repaint();
+            //better to get ui repaint from a method than the ui class directly. to keep them seperate at initial level for changes.
+            AppMain.PerformUIRePaint();
             
         }else{
             System.out.println("The move command direction is not found !");
