@@ -1,0 +1,53 @@
+
+sp {propose*move-forward
+    (state <s> ^io.input-link.area.view.<direction> <odr>
+                ^io.output-link <ol>)
+    (<odr> ^type { <type> <> block })
+    
+-->
+    (<s> ^operator <o> + =)
+    (<o> ^name move-forward
+           ^direction <direction>
+           ^type <type>)}
+
+sp {apply*move-forward
+    (state <s> ^operator <o>
+                ^io.output-link <ol>)
+    (<o> ^name move-forward
+        ^direction <direction>)
+-->
+ (<ol> ^move.direction <direction>)}  
+
+
+ sp {apply*move-forward*remove-move
+   (state <s> ^io.output-link <ol>
+              ^operator.name move-dorward)
+   (<ol> ^move <move>)
+   (<move> ^status complete)
+-->
+   (<ol> ^move <move> -)} 
+
+
+sp {select*move-forward*prefer-forward-than-others
+    (state <s> ^operator <o1> +
+                ^operator <o2> + )
+    (<o1> ^name move-forward
+            ^direction north )
+    (<o2> ^name move-forward
+            ^direction <direction> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+
+sp {select*move-forward*prefer-others-if-north-blocked
+       (state <s> ^operator <o1> +
+                ^operator <o2> + )
+   (<o1> ^name move-forward 
+         ^direction north 
+         ^type blocked)
+    (<o2> ^name move-forward 
+         ^direction <direction> 
+         ^type << empty none >>)
+-->
+(<s> ^operator <o1> < <o2>)}
+   

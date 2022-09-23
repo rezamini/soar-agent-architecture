@@ -1,7 +1,8 @@
 ^input-link
     ^cycle-count <int> numberof time the agent run or step
+    
     ^self
-        ^name <string> name of the agent/robot
+        ^name <string> name of the agent or robot
         ^radius <float> radius or the area of the agent
         ^pose
             ^x <float> current grid column
@@ -11,22 +12,27 @@
     ^area the area information of the agent
         ^locale current cell info the agent is at
             ^type current type of cell the agent is at
+            ^direction direction of the previous cell is at
+
         ^former-locale previous cell or location that the agent was recently on
             ^type former type of cell the agent was on
             ^direction former direction of the previous cell
+
         ^view the surrounding of the agent or the next cell - based on the agent speed of 0.5
             ^north
-                ^type [none normal, obstacleCell]
+                ^type [none normal obstacleCell]
                 ^obstacle [true false] is the next cell obstacle?
             ^south
-                ^type [none normal, obstacleCell]
+                ^type [none normal obstacleCell]
                 ^wall [true false]
             ^east
-                ^type [none normal, obstacleCell]
+                ^type [none normal obstacleCell]
                 ^wall [true false]
             ^west
-                ^type [none normal, obstacleCell]
+                ^type [none normal obstacleCell]
                 ^wall [true false]	
-        	
-	
-		
+
+^output-link
+    ^move
+        ^direction [north south east west]
+        ^status [complete error]

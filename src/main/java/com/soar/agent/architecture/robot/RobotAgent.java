@@ -62,7 +62,8 @@ public class RobotAgent {
             threadedAgent.initialize(); // Do an init-soar
             // source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
             // source = new File(getClass().getResource("/rules/move-to-food.soar").toURI());
-            source = new File(getClass().getResource("/rules/move-random.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-to-food-prefer-forward.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new File(getClass().getResource("/rules/advanced-move.soar").toURI());
 
             if (source != null) {
