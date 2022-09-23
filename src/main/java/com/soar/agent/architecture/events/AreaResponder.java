@@ -20,12 +20,17 @@ public class AreaResponder extends AreaListener {
 
         double currentYawDegree = Math.toDegrees(robot.getYaw());
         // qMemory.remove("area.view");
-        // qMemory.setString("area.view.type", "none");m
+        // qMemory.setString("area.view.type", "none");
+        String type = CellTypeEnum.NORMAL.getName();
         for (DirectionEnum directionEnum : DirectionEnum.values()) {
 
             synchronized (qMemory) {
                 // call robot to get surrounding directions with tempYaw
                 boolean isObstacle = robot.tempUpdate(0, directionEnum);
+
+                if(isObstacle){
+                    type = CellTypeEnum.BLOCK.getName();
+                }
 
                 // initiate every cell as normal and change if required
                 //String currentType = CellTypeEnum.NORMAL.getName();
@@ -37,15 +42,14 @@ public class AreaResponder extends AreaListener {
                 if (currentYawDegree == directionEnum.getAngle()) {
 
                     //setLocaleInfo(qMemory, directionEnum.getName(), currentType);
-                    updateOppositeCell(qMemory, directionEnum, isObstacle);
-                    setViewMemory(qMemory, directionEnum.getName(), CellTypeEnum.NORMAL.getName(), isObstacle);
+                    updateOppositeCell(qMemory, directionEnum.getName());
+                    setViewMemory(qMemory, directionEnum.getName(), type, isObstacle);
 
                 } else if (isObstacle) {
-                    // currentType = CellTypeEnum.BLOCK.getName();
-                    setViewMemory(qMemory, directionEnum.getName(), CellTypeEnum.BLOCK.getName(), isObstacle);
+                    setViewMemory(qMemory, directionEnum.getName(), type, isObstacle);
 
                 } else {
-                    setViewMemory(qMemory, directionEnum.getName(), CellTypeEnum.NORMAL.getName(), isObstacle);
+                    setViewMemory(qMemory, directionEnum.getName(), type, isObstacle);
                 }
 
             }
@@ -67,11 +71,21 @@ public class AreaResponder extends AreaListener {
     }
 
     //update opposit direction of the current cell to None.
-    private void updateOppositeCell(QMemory qMemory, DirectionEnum currentDirectionEnum, boolean isObstacle) {
+    public void updateOppositeCell(QMemory qMemory, DirectionEnum currentDirectionEnum) {
         DirectionEnum currentDirectionOpposite = currentDirectionEnum.getOppositeDirection();
         
         if (currentDirectionOpposite.getName() != null) {
-            setViewMemory(qMemory, currentDirectionOpposite.getName(), CellTypeEnum.NONE.getName(), isObstacle);
+            setViewMemory(qMemory, currentDirectionOpposite.getName(), CellTypeEnum.NONE.getName(), false);
+        }
+    }
+
+    public void updateOppositeCell(QMemory qMemory, String currentDirection) {
+        if(currentDirection != null && !currentDirection.equals("")){
+            DirectionEnum currentDirectionOpposite = DirectionEnum.getOppositeDirection(DirectionEnum.findByName(currentDirection));
+        
+            if (currentDirectionOpposite.getName() != null) {
+                setViewMemory(qMemory, currentDirectionOpposite.getName(), CellTypeEnum.NONE.getName(), false);
+            }
         }
     }
 
@@ -113,7 +127,8 @@ public class AreaResponder extends AreaListener {
             subFormerMemory.setString("type", formerType);
             subFormerMemory.setString("direction", formerDirection);
         }
-
+        System.out.println("XXXXXXXXXXXX FORMER : ");
+        System.out.println(formerDirection);
         return formerDirection;
     }
     

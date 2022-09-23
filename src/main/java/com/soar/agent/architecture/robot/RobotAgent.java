@@ -119,9 +119,11 @@ public class RobotAgent {
                         // notify the listers that are outside of the agent listening
                         for (MoveListenerEvent listener : moveListeners) {
                             listener.moveCompleted(bean, robot, RobotAgent.this);
-                            // updateRobotMemory();
+                            
                             areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
                             areaResponder.setLocaleInfo(qMemory, bean.getDirection(), CellTypeEnum.NORMAL.getName());
+                            areaResponder.updateOppositeCell(qMemory, bean.getDirection());
+                            
                         }
                     }
 
