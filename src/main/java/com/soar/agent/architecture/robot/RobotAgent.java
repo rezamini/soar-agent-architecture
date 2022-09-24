@@ -62,7 +62,9 @@ public class RobotAgent {
             threadedAgent.initialize(); // Do an init-soar
             // source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
             // source = new File(getClass().getResource("/rules/move-to-food.soar").toURI());
-            source = new File(getClass().getResource("/rules/move-to-food-prefer-forward.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-to-food-prefer-forward.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-forward-prefer-current-direction.soar").toURI());
+
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new File(getClass().getResource("/rules/advanced-move.soar").toURI());
 
@@ -122,7 +124,7 @@ public class RobotAgent {
                             
                             areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
                             areaResponder.setLocaleInfo(qMemory, bean.getDirection(), CellTypeEnum.NORMAL.getName());
-                            areaResponder.updateOppositeCell(qMemory, bean.getDirection());
+                            //areaResponder.updateOppositeCell(qMemory, bean.getDirection());
                             
                         }
                     }
@@ -176,7 +178,7 @@ public class RobotAgent {
         areaResponder = new AreaResponder(robot, this);
         synchronized (qMemory) {
             qMemory.setString("self.name", robot.getName());
-            qMemory.setDouble("self.radius", robot.getRadius());
+            qMemory.setDouble("self.radius", robot.getRadius()); // change to minimum bounding box - mbb
 
             final double x = robot.getShape().getCenterX();
             final double y = robot.getShape().getCenterY();
