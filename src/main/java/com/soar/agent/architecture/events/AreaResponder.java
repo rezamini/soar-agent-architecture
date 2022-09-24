@@ -18,7 +18,7 @@ public class AreaResponder extends AreaListener {
     public void updateAreaMemory() {
         QMemory qMemory = robotAgent.getQMemory();
 
-        double currentYawDegree = Math.toDegrees(robot.getYaw());
+        // double currentYawDegree = Math.toDegrees(robot.getYaw());
         // qMemory.remove("area.view");
         // qMemory.setString("area.view.type", "none");
         String type = CellTypeEnum.NORMAL.getName();
@@ -32,21 +32,14 @@ public class AreaResponder extends AreaListener {
                 // call robot to get surrounding directions with tempYaw
                 boolean isObstacle = robot.tempUpdate(0, directionEnum);
 
-                // initiate every cell as normal and change if required
-                // String currentType = CellTypeEnum.NORMAL.getName();
+                // if (currentYawDegree == directionEnum.getAngle()) {
 
-                // set former cell info before changing the cell type
-                // setFormerLocaleInfo(qMemory, currentType);
-                // updateOppositeCell(qMemory, formerDirection, directionEnum, isObstacle);
+                //     type = isObstacle ? CellTypeEnum.BLOCK.getName() : CellTypeEnum.NORMAL.getName();
+                //     setViewMemory(qMemory, directionEnum.getName(), type, isObstacle);
 
-                if (currentYawDegree == directionEnum.getAngle()) {
-
-                    // setLocaleInfo(qMemory, directionEnum.getName(), currentType);
-
-                    type = isObstacle ? CellTypeEnum.BLOCK.getName() : CellTypeEnum.NORMAL.getName();
-                    setViewMemory(qMemory, directionEnum.getName(), type, isObstacle);
-
-                } else if (isObstacle) {
+                // } 
+                
+                if (isObstacle) {
                     type = CellTypeEnum.BLOCK.getName();
                     setViewMemory(qMemory, directionEnum.getName(), type, isObstacle);
 
