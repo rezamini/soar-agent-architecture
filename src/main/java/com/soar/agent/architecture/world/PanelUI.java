@@ -103,6 +103,7 @@ public class PanelUI extends JPanel {
                 repaint();
             }
         });
+        runButton.setToolTipText("Start Agent");
         bar.add(runButton);
 
         // Stop Button
@@ -125,6 +126,7 @@ public class PanelUI extends JPanel {
                 repaint();
             }
         });
+        stopButton.setToolTipText("Stop Agent");
         bar.add(stopButton);
 
         // Step Button
@@ -135,6 +137,7 @@ public class PanelUI extends JPanel {
                 appMain.stepAgent();
             }
         });
+        stepButton.setToolTipText("Step Agent");
         bar.add(stepButton);
 
         // Debugger
@@ -142,6 +145,7 @@ public class PanelUI extends JPanel {
         debuggerButton.addActionListener((event) -> {
             appMain.openDebugger();
         });
+        debuggerButton.setToolTipText("Open Agent Debugger");
         bar.add(debuggerButton);
 
         // bar.add(new AbstractAction("Run") {
