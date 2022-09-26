@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
+import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.CellTypeEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
@@ -37,7 +39,7 @@ public class RobotAgent {
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
     private AreaResponder areaResponder;
     // public final SoarEventManager events = new SoarEventManager();
-    
+
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
 
@@ -60,13 +62,17 @@ public class RobotAgent {
             initInputEventListener();
 
             threadedAgent.initialize(); // Do an init-soar
-            // source = new File(getClass().getResource("/rules/move-north-2.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-food.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-food-prefer-forward.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-north-2.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-food.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-food-prefer-forward.soar").toURI());
             source = new File(getClass().getResource("/rules/move-forward-prefer-current-direction.soar").toURI());
 
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
-            // source = new File(getClass().getResource("/rules/advanced-move.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/advanced-move.soar").toURI());
 
             if (source != null) {
                 final Callable<Void> call = () -> {
@@ -121,11 +127,11 @@ public class RobotAgent {
                         // notify the listers that are outside of the agent listening
                         for (MoveListenerEvent listener : moveListeners) {
                             listener.moveCompleted(bean, robot, RobotAgent.this);
-                            
+
                             areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
                             areaResponder.setLocaleInfo(qMemory, bean.getDirection(), CellTypeEnum.NORMAL.getName());
-                            //areaResponder.updateOppositeCell(qMemory, bean.getDirection());
-                            
+                            // areaResponder.updateOppositeCell(qMemory, bean.getDirection());
+
                         }
                     }
 
@@ -144,7 +150,7 @@ public class RobotAgent {
         OutputCommandHandler handler = new OutputCommandHandler() {
             @Override
             public void onCommandRemoved(String commandName, Identifier commandId) {
-                
+
             }
 
             @Override
@@ -156,13 +162,13 @@ public class RobotAgent {
         outputManager.registerHandler(commandNameToListen, handler);
     }
 
-    //a general method for all type of input events listners.
-    private void initInputEventListener(){
+    // a general method for all type of input events listners.
+    private void initInputEventListener() {
         threadedAgent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
 
             @Override
             public void onEvent(SoarEvent event) {
-                //update the robot memory for every input event
+                // update the robot memory for every input event
                 updateRobotMemory();
             }
         });
@@ -196,6 +202,19 @@ public class RobotAgent {
             // sub.setString("type", "none");
             // sub.setInteger("obstacle", 0); // 0=false 1=true
             // }
+
+            addMemoryLandmarks(qMemory, robot);
+        }
+    }
+
+    private void addMemoryLandmarks(QMemory qMemory, Robot robot) {
+        synchronized(qMemory){
+            QMemory landmarks = qMemory.subMemory("landmarks");
+            for(Landmark landmark : robot.getWorld().getLandmarks()){
+                QMemory subLandmark = landmarks.subMemory(landmark.name);
+                subLandmark.setDouble("x", landmark.getLocation().getX());
+                subLandmark.setDouble("y", landmark.getLocation().getY());
+            }
         }
     }
 
