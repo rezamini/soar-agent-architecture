@@ -1,0 +1,36 @@
+sp {propose*move-to-landmark
+   (state <s> ^io.input-link.landmarks.<landmarks>.direction-command 
+                { <direction-command> <> here }
+              ^io.input-link.self.pose <e>)
+   (<e> ^x <x> ^y <y>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name move-to-landmark
+        ^landmarks <landmarks>
+        ^direction-command <direction-command>)}
+
+
+sp {apply*move-to-landmark
+   (state <s> ^operator <o>
+              ^io.output-link <ol>)
+    (<o> ^name move-to-landmark
+        ^direction-command <direction-command>)
+-->
+   (<ol> ^move.direction <direction-command> )}
+
+
+ sp {apply*move-to-landmark*remove-move
+   (state <s> ^io.output-link <ol>
+              ^operator.name move-to-landmark)
+   (<ol> ^move <move>)
+   (<move> ^status complete)
+-->
+   (<ol> ^move <move> -)} 
+
+
+sp {monitor*move-to-landmark 
+   (state <s> ^operator <o>) 
+   (<o> ^name move-to-landmark ^landmarks <landmarks> ^direction-command <direction-command>) 
+--> 
+   (write |Landmarks variable is : | <landmarks>)
+   (write | - Direction-command variable is : | <direction-command>)}

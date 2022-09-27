@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.CellTypeEnum;
+import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
 import com.soar.agent.architecture.events.AreaResponder;
 
@@ -70,6 +71,7 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-food-prefer-forward.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-forward-prefer-current-direction.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-to-landmark-1.0.soar").toURI());
 
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new
@@ -236,13 +238,13 @@ public class RobotAgent {
 
     private String calcLandmarkDirectionSimple(double agentX, double agentY, double landmarkX, double landmarkY) {
         String direction = "";
-        direction += agentY < landmarkY ? "N" : agentY > landmarkY ? "S" : "";
+        direction += agentY < landmarkY ? DirectionEnum.NORTH.getName() : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
 
         if (direction.equals("")) {
-            direction += agentX < landmarkX ? "E" : agentX > landmarkX ? "W" : "";
+            direction += agentX < landmarkX ? DirectionEnum.EAST.getName() : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
         }
 
-        return direction == "" ? "here" : direction;
+        return direction.equals("") ? "here" : direction;
     }
 
     public Robot getRobot() {
