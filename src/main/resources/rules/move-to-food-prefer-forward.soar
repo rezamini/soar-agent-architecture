@@ -21,7 +21,7 @@ sp {apply*move-forward
 
  sp {apply*move-forward*remove-move
    (state <s> ^io.output-link <ol>
-              ^operator.name move-dorward)
+              ^operator.name move-forward)
    (<ol> ^move <move>)
    (<move> ^status complete)
 -->

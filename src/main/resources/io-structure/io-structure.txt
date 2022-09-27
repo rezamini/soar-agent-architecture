@@ -36,6 +36,7 @@
             ^[name] landmark name 
                 ^x the position of landmark on x axis
                 ^y the position of landmark on y axis
+                ^direction-command the direction from the current agent position that need to be taken to this specific landmark
 
 ^output-link
     ^move

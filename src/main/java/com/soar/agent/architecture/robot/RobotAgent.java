@@ -68,7 +68,8 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-food.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-food-prefer-forward.soar").toURI());
-            source = new File(getClass().getResource("/rules/move-forward-prefer-current-direction.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-forward-prefer-current-direction.soar").toURI());
 
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new
@@ -208,14 +209,40 @@ public class RobotAgent {
     }
 
     private void addMemoryLandmarks(QMemory qMemory, Robot robot) {
-        synchronized(qMemory){
+        synchronized (qMemory) {
             QMemory landmarks = qMemory.subMemory("landmarks");
-            for(Landmark landmark : robot.getWorld().getLandmarks()){
+            for (Landmark landmark : robot.getWorld().getLandmarks()) {
+
+                // create a sub landmark with the landmark name
                 QMemory subLandmark = landmarks.subMemory(landmark.name);
-                subLandmark.setDouble("x", landmark.getLocation().getX());
-                subLandmark.setDouble("y", landmark.getLocation().getY());
+
+                // get current agent and landmark positions
+                double agentXPose = qMemory.getDouble("self.pose.x");
+                double agentYPose = qMemory.getDouble("self.pose.y");
+                double landmarkX = landmark.getLocation().getX();
+                double landmarkY = landmark.getLocation().getY();
+
+                // Calculate where and which direction the landmark is located from agent
+                // current position. Dynamic values & movements
+                String landmarkDirection = calcLandmarkDirectionSimple(agentXPose, agentYPose, landmarkX, landmarkY);
+
+                // set basic landmark information
+                subLandmark.setDouble("x", landmarkX);
+                subLandmark.setDouble("y", landmarkY);
+                subLandmark.setString("direction-command", landmarkDirection);
             }
         }
+    }
+
+    private String calcLandmarkDirectionSimple(double agentX, double agentY, double landmarkX, double landmarkY) {
+        String direction = "";
+        direction += agentY < landmarkY ? "N" : agentY > landmarkY ? "S" : "";
+
+        if (direction.equals("")) {
+            direction += agentX < landmarkX ? "E" : agentX > landmarkX ? "W" : "";
+        }
+
+        return direction == "" ? "here" : direction;
     }
 
     public Robot getRobot() {
