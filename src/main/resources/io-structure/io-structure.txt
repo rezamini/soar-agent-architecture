@@ -32,6 +32,11 @@
                 ^type [none normal obstacleCell]
                 ^obstacle [true false]	
 
+        ^landmarks all the landmark points on the map. Each sub landmark has its own name and info.
+            ^[name] landmark name 
+                ^x the position of landmark on x axis
+                ^y the position of landmark on y axis
+
 ^output-link
     ^move
         ^direction [north south east west]
