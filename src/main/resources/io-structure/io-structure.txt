@@ -33,9 +33,11 @@
                 ^obstacle [true false]	
 
         ^landmarks all the landmark points on the map. Each sub landmark has its own name and info.
-            ^[name] landmark name 
+            ^landmark-[name]-[random-number] landmark name with random number to ensure landmark originality 
+                ^name name of the landmark
                 ^x the position of landmark on x axis
                 ^y the position of landmark on y axis
+                ^distance distance between this specific landmark to the agent
                 ^direction-command the direction from the current agent position that need to be taken to this specific landmark
 
 ^output-link

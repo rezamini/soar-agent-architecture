@@ -216,7 +216,9 @@ public class RobotAgent {
             for (Landmark landmark : robot.getWorld().getLandmarks()) {
 
                 // create a sub landmark with the landmark name
-                QMemory subLandmark = landmarks.subMemory(landmark.name);
+                
+                String subName = "landmark-" + landmark.name + "-" + threadedAgent.getAgent().getRandom().nextInt(99);
+                QMemory subLandmark = landmarks.subMemory(subName);
 
                 // get current agent and landmark positions
                 double agentXPose = qMemory.getDouble("self.pose.x");
@@ -229,9 +231,17 @@ public class RobotAgent {
                 String landmarkDirection = calcLandmarkDirectionSimple(agentXPose, agentYPose, landmarkX, landmarkY);
 
                 // set basic landmark information
+                subLandmark.setString("name", landmark.name);
                 subLandmark.setDouble("x", landmarkX);
                 subLandmark.setDouble("y", landmarkY);
-                subLandmark.setString("direction-command", landmarkDirection);
+                subLandmark.setDouble("distance", landmark.getLocation().distance(agentXPose, agentYPose)); 
+                subLandmark.setString("direction-command", landmarkDirection);  
+
+                /* Note: Might need to use below code in the future */
+                // double bearing = Math.toDegrees(Math.atan2(agentYPose - landmarkY, agentXPose - landmarkX) - robot.getYaw());
+                // while(bearing <= -180.0) bearing += 180.0;
+                // while(bearing >= 180.0) bearing -= 180.0;
+                //subLandmark.setDouble("relative-bearing", bearing);
             }
         }
     }
