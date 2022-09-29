@@ -21,6 +21,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Line2D;
 import java.awt.Point;
 
 import org.jsoar.debugger.util.SwingTools;
@@ -231,6 +232,8 @@ public class WorldPanel extends JPanel {
                 (float) (p.getY() - fontHeight / 3.0));
 
         g2d.dispose();
+
+        /* This is to add + line on the landmark */
         // g2d.draw(new Line2D.Double(p.getX(), p.getY() - 1.5 * r, p.getX(), p.getY()+
         // 1.5 * r));
         // g2d.draw(new Line2D.Double(p.getX() - 1.5 * r, p.getY(), p.getX() + 1.5 *r,

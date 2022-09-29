@@ -4,6 +4,7 @@ import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jsoar.util.events.SoarEventManager;
@@ -68,6 +69,16 @@ public class World {
         }
     }
 
+    public boolean isLandmarkReached(Landmark landmark, Robot robot ) {
+        boolean result = false;
+        
+        if(robot.getShape().contains(landmark.getLocation())){
+            result = true;
+        }
+
+        return result;
+    }
+
     public boolean willCollide(Robot r, double newX, double newY) {
         final double radius = r.getRadius();
 
@@ -88,23 +99,24 @@ public class World {
             }
         }
 
-        // System.out.println(landmarks.get(0).getLocation().distance(newX+radius,
-        // newY+radius));
+        
         // for (Landmark landmark : landmarks) {
+        //     System.out.println(landmark.getLocation().distance(newX+radius,
+        //     newY+radius));
         // // pose is x=5, y=11 for the north obstacle
 
         // if (landmark.getLocation().distance(newX + radius, newY + radius) <
         // Double.valueOf(1.40)
-        // // ||
-        // // landmark.getLocation().distance(newX + radius, newY - radius) <
+        // ||
+        // landmark.getLocation().distance(newX + radius, newY - radius) <
         // Double.valueOf(1.40) ||
-        // // landmark.getLocation().distance(newX - radius, newY - radius) <
+        // landmark.getLocation().distance(newX - radius, newY - radius) <
         // Double.valueOf(1.40)||
-        // // landmark.getLocation().distance(newX - radius, newY + radius)<
+        // landmark.getLocation().distance(newX - radius, newY + radius)<
         // Double.valueOf(1.40)
 
         // ) {
-        // return true;
+        // // return true;
         // }
         // }
 

@@ -2,6 +2,7 @@ package com.soar.agent.architecture.robot;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -134,7 +135,7 @@ public class RobotAgent {
                             areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
                             areaResponder.setLocaleInfo(qMemory, bean.getDirection(), CellTypeEnum.NORMAL.getName());
                             // areaResponder.updateOppositeCell(qMemory, bean.getDirection());
-
+                            // updateRobotMemory();
                         }
                     }
 
@@ -159,6 +160,7 @@ public class RobotAgent {
             @Override
             public void onCommandAdded(String commandName, Identifier commandId) {
                 removeMemoryPath("area.view");
+                // removeMemoryPath("landmarks");
 
             }
         };
@@ -198,26 +200,24 @@ public class RobotAgent {
             areaResponder.updateAreaMemory();
             // events.fireEvent(areaResponder);
 
-            // //add surrounding view memory
-            // for(DirectionEnum directionEnum: DirectionEnum.values()){
-            // final QMemory sub = qMemory.subMemory("view." + directionEnum.getName() +
-            // "");
-            // sub.setString("type", "none");
-            // sub.setInteger("obstacle", 0); // 0=false 1=true
-            // }
-
             addMemoryLandmarks(qMemory, robot);
         }
     }
 
     private void addMemoryLandmarks(QMemory qMemory, Robot robot) {
+        // qMemory.remove("landmarks");
         synchronized (qMemory) {
             QMemory landmarks = qMemory.subMemory("landmarks");
-            for (Landmark landmark : robot.getWorld().getLandmarks()) {
+
+            for (Iterator<Landmark> iter = robot.getWorld().getLandmarks().iterator(); iter.hasNext();) {
+                Landmark landmark = iter.next();
+                boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
 
                 // create a sub landmark with the landmark name
-                
-                String subName = "landmark-" + landmark.name + "-" + threadedAgent.getAgent().getRandom().nextInt(99);
+                // String subName = "landmark-" + landmark.name + "-" +
+                // threadedAgent.getAgent().getRandom().nextInt(99);
+                String subName = "landmark-" + landmark.name;
+
                 QMemory subLandmark = landmarks.subMemory(subName);
 
                 // get current agent and landmark positions
@@ -234,24 +234,36 @@ public class RobotAgent {
                 subLandmark.setString("name", landmark.name);
                 subLandmark.setDouble("x", landmarkX);
                 subLandmark.setDouble("y", landmarkY);
-                subLandmark.setDouble("distance", landmark.getLocation().distance(agentXPose, agentYPose)); 
-                subLandmark.setString("direction-command", landmarkDirection);  
+                subLandmark.setDouble("distance", landmark.getLocation().distance(agentXPose, agentYPose));
+                subLandmark.setString("direction-command", landmarkDirection);
+
+                // if its true it means the agent reached at this specific landmark, so remove
+                // the landmark and update the direction command to Here regardless
+                if (isAgentReached) {
+                    subLandmark.setDouble("distance", 0.0);
+                    subLandmark.setString("direction-command", "here");
+
+                    iter.remove();
+                }
 
                 /* Note: Might need to use below code in the future */
-                // double bearing = Math.toDegrees(Math.atan2(agentYPose - landmarkY, agentXPose - landmarkX) - robot.getYaw());
+                // double bearing = Math.toDegrees(Math.atan2(agentYPose - landmarkY, agentXPose
+                // - landmarkX) - robot.getYaw());
                 // while(bearing <= -180.0) bearing += 180.0;
                 // while(bearing >= 180.0) bearing -= 180.0;
-                //subLandmark.setDouble("relative-bearing", bearing);
+                // subLandmark.setDouble("relative-bearing", bearing);
             }
         }
     }
 
     private String calcLandmarkDirectionSimple(double agentX, double agentY, double landmarkX, double landmarkY) {
         String direction = "";
-        direction += agentY < landmarkY ? DirectionEnum.NORTH.getName() : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
+        direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
+                : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
 
         if (direction.equals("")) {
-            direction += agentX < landmarkX ? DirectionEnum.EAST.getName() : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
+            direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
+                    : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
         }
 
         return direction.equals("") ? "here" : direction;
