@@ -73,7 +73,9 @@ public class RobotAgent {
             // source = new
             // File(getClass().getResource("/rules/move-forward-prefer-current-direction.soar").toURI());
             // source = new File(getClass().getResource("/rules/move-to-landmark-1.0.soar").toURI());
-            source = new File(getClass().getResource("/rules/move-to-landmark-1.1.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-to-landmark-1.1.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-to-landmark-2.0.soar").toURI());
+
 
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new
