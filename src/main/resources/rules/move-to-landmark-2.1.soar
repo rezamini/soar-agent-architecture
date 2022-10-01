@@ -1,3 +1,12 @@
+sp {initialize*state*directions
+   (state <ss> ^type state)
+   -->
+   (<ss> ^directions <n> <e> <s> <w>)  
+   (<n> ^value north ^opposite south)
+   (<e> ^value east  ^opposite west)
+   (<s> ^value south ^opposite north)
+   (<w> ^value west  ^opposite east)}
+
 #
 #START: MOVE TO LANDMARK RULES
 #
@@ -5,11 +14,15 @@
 sp {propose*move-to-landmark
    (state <s> ^io.input-link.landmarks.<landmarks> <lnd>     
               ^io.input-link.self.pose <e>
-              ^io.input-link.area.<view> <area-view> )
+              ^io.input-link.area.<view> <area-view> 
+              ^directions <d>
+             -^last-direction <o-dir>)
    (<e> ^x <x> ^y <y>)
    (<lnd> ^direction-command { <direction-command> <> here })
    (<lnd> ^distance <distance-agent> )
    (<area-view> ^<direction-command>.type <cell-type>)
+   (<d> ^value <direction-command>
+        ^opposite <o-dir>)
 -->
    (<s> ^operator <o> + =)
    (<o> ^name move-to-landmark
@@ -82,13 +95,33 @@ sp {propose*move-random
    (state <s> ^io.input-link.self.pose <e>
               ^io.input-link.area.view.<direction>.type 
                  { <cell-type> <> block }
-              ^io.input-link.landmarks.<landmarks> <lnd> )
+              ^io.input-link.landmarks.<landmarks> <lnd> 
+              ^directions <d>
+             -^last-direction <o-dir>)
     (<e> ^x <x> ^y <y>)
     (<lnd> ^direction-command { <direction-command> <> here })
+    (<d> ^value <direction>
+        ^opposite <o-dir>)
 -->
    (<s> ^operator <o> + =)
    (<o> ^name move-random
         ^direction-command <direction> )}
+
+sp {apply*move*create*last-direction
+   (state <s> ^operator <o>)
+   (<o> ^name { <name> << move-to-landmark move-random >> }
+        ^direction-command <direction>)
+-->
+   (<s> ^last-direction <direction>)}
+
+
+sp {apply*move*remove*last-direction
+   (state <s> ^operator <o>
+              ^last-direction <direction>)
+   (<o> ^name { <name> << move-to-landmark move-random >> }
+        ^direction-command <> <direction>)
+-->
+   (<s> ^last-direction <direction> -)}
 
 
 sp {select*move-to-landmark*pick-other-direction-if-block
@@ -117,6 +150,18 @@ sp {select*move-to-landmark*reject-move-random-if-move-to-landmark-is-normal
     
 -->
 (<s> ^operator <o2> - )}
+
+sp {select*move*reject*backward
+   (state <s> ^operator <o> +
+              ^directions <d>
+              ^last-direction <dir>)
+   (<d> ^value <dir>
+        ^opposite <o-dir>)
+   (<o> ^name << move-to-landmark move-random >>
+        ^direction <o-dir>)
+-->
+   (write | Reject | <o-dir> <dir>)
+   (<s> ^operator <o> -)} 
 
 # 
 #END: MOVE & AVOID Obstacles
