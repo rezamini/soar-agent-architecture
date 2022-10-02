@@ -77,15 +77,15 @@ sp {select*move-forward*prefer-forward-than-others
 
 
 sp {select*move-forward*prefer-others-if-north-blocked
-       (state <s> ^operator <o1> +
+    (state <s> ^operator <o1> +
                 ^operator <o2> +
                 ^last-direction <lastdirection> )
    (<o1> ^name move-forward 
          ^direction <lastdirection> 
-         ^type blocked)
+         ^type block )
     (<o2> ^name move-forward 
          ^direction <direction> 
-         ^type << empty none normal>>)
+         ^type << empty none normal >>)
 -->
 (<s> ^operator <o1> < <o2>)}
 
