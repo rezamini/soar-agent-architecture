@@ -213,7 +213,7 @@ public class RobotAgent {
         // qMemory.remove("landmarks");
         synchronized (qMemory) {
             QMemory landmarks = qMemory.subMemory("landmarks");
-
+            
             for (Iterator<Landmark> iter = robot.getWorld().getLandmarks().iterator(); iter.hasNext();) {
                 Landmark landmark = iter.next();
                 boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
@@ -258,6 +258,9 @@ public class RobotAgent {
                 // while(bearing >= 180.0) bearing -= 180.0;
                 // subLandmark.setDouble("relative-bearing", bearing);
             }
+
+            //set the status of the overal landmarks
+            landmarks.setString("status", robot.getWorld().getLandmarks().size() == 0 ? "inactive" : "active");
         }
     }
 

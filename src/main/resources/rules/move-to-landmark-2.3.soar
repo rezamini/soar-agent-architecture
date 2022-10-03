@@ -35,9 +35,9 @@ sp {propose*move-random
    (state <s> ^io.input-link.self.pose <e>
               ^io.input-link.area.view.<direction>.type 
                  { <cell-type> <> block }
-              ^io.input-link.landmarks.<landmarks> <lnd> )
+              ^io.input-link.landmarks.status 
+               { <landmarks-status> <> inactive } )
     (<e> ^x <x> ^y <y>)
-    (<lnd> ^direction-command { <direction-command> <> here })
 -->
    (<s> ^operator <o> + =)
    (<o> ^name move-random
