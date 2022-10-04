@@ -1,0 +1,194 @@
+# Main different with version 2.3 is that it does not remove move-random operator and also reject backward is commented out.
+# This helps with landmarks that are close to the obstacles (since this assumes basic directions only), it worked with current testing.
+## Agent might still have some strange movements but it reached its landmark much accurately.
+
+sp {initialize*state*directions
+   (state <ss> ^type state)
+   -->
+   (<ss> ^directions <n> <e> <s> <w>)  
+   (<n> ^value north ^opposite south)
+   (<e> ^value east  ^opposite west)
+   (<s> ^value south ^opposite north)
+   (<w> ^value west  ^opposite east)}
+
+#
+#START: Proposal Rules
+#
+#
+
+sp {propose*move-to-landmark
+   (state <s> ^io.input-link.landmarks.<landmarks> <lnd>     
+              ^io.input-link.self.pose <e>
+              ^io.input-link.area.<view> <area-view> )
+   (<e> ^x <x> ^y <y>)
+   (<lnd> ^direction-command <direction-command> )
+   (<lnd> ^distance <distance-agent> )
+   (<area-view> ^<direction-command>.type <cell-type>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name move-to-landmark
+        ^lnd <lnd>
+        ^distance-agent <distance-agent>
+        ^direction-command <direction-command>
+        ^cell-type <cell-type>)}
+
+
+sp {propose*move-random
+   (state <s> ^io.input-link.self.pose <e>
+              ^io.input-link.area.view.<direction>.type 
+                 { <cell-type> <> block }
+              ^io.input-link.landmarks.status 
+               { <landmarks-status> <> inactive } )
+    (<e> ^x <x> ^y <y>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name move-random
+        ^direction-command <direction> )}
+
+#
+#END: Proposal Rules
+#
+#
+
+#
+#START: Apply Rules
+#
+#
+
+sp {apply*move
+   (state <s> ^io.output-link <ol>
+              ^operator <o>)
+   (<o> ^name { <name> << move-to-landmark move-random >> }
+        ^direction-command <dir>)
+-->
+   (<ol> ^move.direction <dir>)} 
+
+
+sp {apply*move*remove-move
+   (state <s> ^io.output-link <ol>
+              ^operator.name <name>)
+   (<ol> ^move <direction>)
+   (<direction> ^status complete)
+-->
+   (<ol> ^move <direction> -)}
+
+
+sp {apply*move-to-landmark*create*current-landmark-direction
+    (state <s> ^operator <o>
+                ^io.output-link <ol>)
+     (<o> ^name move-to-landmark
+            ^direction-command <direction-command>)
+-->
+   (<s> ^current-landmark-direction <direction-command> )}   
+
+
+sp {apply*move-to-landmark*remove*current-landmark-direction
+   (state <s> ^operator <o>
+              ^current-landmark-direction <current-landmark-direction>)
+   (<o> ^name move-to-landmark
+        ^direction-command <> <current-landmark-direction> )
+-->
+   (<s> ^current-landmark-direction <current-landmark-direction> -)} 
+
+sp {apply*move*create*last-direction
+   (state <s> ^operator <o>)
+   (<o> ^name { <name> << move-to-landmark move-random >> }
+        ^direction-command <direction>)
+-->
+   (<s> ^last-direction <direction>)}
+
+
+sp {apply*move*remove*last-direction
+   (state <s> ^operator <o>
+              ^last-direction <direction>)
+   (<o> ^name { <name> << move-to-landmark move-random >> }
+        ^direction-command <> <direction>)
+-->
+   (<s> ^last-direction <direction> -)}    
+
+#
+#END: Apply Rules
+#
+#
+
+#
+#START: Select Rules
+#
+#
+
+sp {select*move-to-landmark*pick-landmark-with-shortest-distance
+    (state <s> ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-to-landmark
+            ^lnd.distance <distance1> )
+    (<o2> ^name move-to-landmark
+            ^lnd.distance <distance2> > <distance1> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+sp {select*move-to-landmark*pick-other-direction-if-block
+    (state <s> ^operator <o1> +
+                ^operator <o2> + )
+    (<o1> ^name move-random )
+    (<o2> ^name move-to-landmark
+            ^cell-type << block >> )
+    
+-->
+(<s> ^operator <o1> > <o2> )}
+
+sp {select*move-to-landmark*pick-original-landmark-direction
+    (state <s> ^operator <o1> + )
+    (<o1> ^name move-to-landmark 
+        ^cell-type << normal none >> )
+-->
+(<s> ^operator <o1> > )}
+
+sp {select*move-to-landmark*reject-move-random-if-move-to-landmark-is-normal
+    (state <s> ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-to-landmark
+            ^cell-type << normal none >> )
+    (<o2> ^name move-random )
+    
+-->
+(<s> ^operator <o1> > )}
+
+# sp {select*move*reject*backward
+#    (state <s> ^operator <o> +
+#               ^directions <d>
+#               ^last-direction <dir>)
+#    (<d> ^value <dir>
+#         ^opposite <o-dir>)
+#    (<o> ^name { <name> << move-to-landmark move-random >> }
+#         ^direction-command <o-dir>)
+# -->
+#    (write | Reject | <o-dir> <dir>)
+#    (<s> ^operator <o> -)} 
+
+
+sp {select*move-forward*prefer-forward-than-others
+    (state <s> ^operator <o1> +
+                ^operator <o2> +
+                ^last-direction <lastdirection> )
+    (<o1> ^name << move-random >>
+            ^direction-command <lastdirection> )
+    (<o2> ^name << move-random >>
+            ^direction-command <direction> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+#
+#END: Select Rules
+#
+#
+
+# 
+#Monitor info
+#
+#
+sp {monitor*move-to-landmark 
+   (state <s> ^operator <o>) 
+   (<o> ^name move-to-landmark ^distance-agent <distance-agent> ^lnd.name <name> ^direction-command <direction-command>) 
+--> 
+   (write | direction-command is : | <direction-command>)
+   # (write | - Direction-command variable is : | <name>)}
