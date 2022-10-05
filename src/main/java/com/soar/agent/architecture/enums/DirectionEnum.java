@@ -11,10 +11,13 @@ package com.soar.agent.architecture.enums;
  */
 public enum DirectionEnum {
     NORTH("north", 90),
+    NORTHEAST("north-east", 45),
+    NORTHWEST("north-west", 135),
     EAST("east", 0),
     SOUTH("south", 270),
+    SOUTHWEST("south-west", 225),
+    SOUTHEAST("south-east", 315),
     WEST("west", 180);
-    
 
     private String name;
     private int angle;
@@ -28,7 +31,7 @@ public enum DirectionEnum {
     public static DirectionEnum findByName(String name) {
         DirectionEnum result = null;
         for (DirectionEnum direction : values()) {
-            if (direction.name().equalsIgnoreCase(name)) {
+            if (direction.getName().equalsIgnoreCase(name)) {
                 result = direction;
                 break;
             }
@@ -40,14 +43,14 @@ public enum DirectionEnum {
     public DirectionEnum getOppositeDirection() {
         DirectionEnum[] array = values();
     
-        return array[(ordinal() + 2) % array.length];
+        return array[(ordinal() + 4) % array.length];
     }
     //Method overloading: get the opposit direction of the current direction with enum argument
     public static DirectionEnum getOppositeDirection(DirectionEnum currentDirectionEnum) {
         DirectionEnum result = null;
         if(currentDirectionEnum != null){
             DirectionEnum[] array = values();
-            result = array[(currentDirectionEnum.ordinal() + 2) % array.length];
+            result = array[(currentDirectionEnum.ordinal() + 4) % array.length];
         }
 
         return result;
