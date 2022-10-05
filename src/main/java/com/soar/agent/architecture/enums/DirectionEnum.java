@@ -11,12 +11,12 @@ package com.soar.agent.architecture.enums;
  */
 public enum DirectionEnum {
     NORTH("north", 90),
-    NORTHEAST("north-east", 45),
-    NORTHWEST("north-west", 135),
+    NORTHEAST("northeast", 45),
+    NORTHWEST("northwest", 135),
     EAST("east", 0),
     SOUTH("south", 270),
-    SOUTHWEST("south-west", 225),
-    SOUTHEAST("south-east", 315),
+    SOUTHWEST("southwest", 225),
+    SOUTHEAST("southeast", 315),
     WEST("west", 180);
 
     private String name;
