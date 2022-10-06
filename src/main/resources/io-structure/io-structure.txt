@@ -33,6 +33,7 @@
                 ^obstacle [true false]	
 
         ^landmarks all the landmark points on the map. Each sub landmark has its own name and info.
+            ^status [active inactive] overall status of the landmarks. if all is reached then it will be set to inactive
             ^landmark-[name] landmark name
                 ^name name of the landmark
                 ^x the position of landmark on x axis
