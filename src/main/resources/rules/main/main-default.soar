@@ -1,0 +1,3 @@
+pushd main-default
+source main-default_source.soar
+popd
