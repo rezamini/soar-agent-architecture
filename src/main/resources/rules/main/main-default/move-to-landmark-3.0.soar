@@ -58,8 +58,8 @@ sp {propose*move-to-landmark
         ^distance-agent <distance-agent>
         ^cell-type <cell-type>
         ^direction-command <direction-command>
-        ^actions <a>)
-   (<a> ^move.direction <direction-command> )}
+        ^actions.move.direction <direction-command>)}
+   # (<a> ^move.direction <direction-command> )}
 
 
 sp {propose*move-random
@@ -75,8 +75,8 @@ sp {propose*move-random
    (<s> ^operator <o> + =)
    (<o> ^name move-random
         ^direction-command <n-dir>
-        ^actions <a> )
-   (<a> ^move.direction <n-dir> )}
+        ^actions.move.direction <n-dir> )}
+   # (<a> ^move.direction <n-dir> )}
 
 
 sp {apply*move*create*last-direction

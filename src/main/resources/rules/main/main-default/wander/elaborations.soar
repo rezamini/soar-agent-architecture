@@ -1,0 +1,49 @@
+sp {wander*elaborate*state*create*last-direction
+    (state <s> ^name wander
+                ^operator <o>
+                ^superstate <ss>)
+    (<o> ^name move
+        ^actions <a>)
+    (<a> ^move.direction <direction1>)
+-->
+(<ss> ^last-direction <direction1>)}
+
+
+sp {wander*elaborate*state*remove*last-direction
+   (state <s> ^name wander
+              ^operator <o>
+              ^superstate <ss>
+              ^superstate.last-direction <direction>)
+   (<o> ^name move
+        ^actions <a>)
+   (<a> ^move.direction <> <direction> )
+-->
+   (<ss> ^last-direction <direction> -)}
+
+
+sp {wander*elaborate*select*prefer-forward-than-others
+    (state <s> ^name wander
+                ^operator <o1> +
+                ^operator <o2> +
+                ^superstate.last-direction <lastdirection> )
+    (<o1> ^name move
+            ^actions.move.direction <lastdirection> )
+    (<o2> ^name move
+            ^actions.move.direction <direction> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+
+# sp {wander*elaborate*select*prefer-forward-than-others
+#     (state <s> ^name wander
+#                 ^operator <o1> +
+#                 ^operator <o2> +
+#                 ^superstate.last-direction <lastdirection> )
+#     (<o1> ^name move
+#            ^actions <a> )
+#     (<a> ^move.direction <lastdirection> )
+#     (<o2> ^name move
+#           ^actions <a>)
+#      (<a> ^move.direction <direction> )
+# -->
+# (<s> ^operator <o1> > <o2>)}

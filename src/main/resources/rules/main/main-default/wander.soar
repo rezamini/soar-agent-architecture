@@ -1,0 +1,9 @@
+# Propose wander/random move operator
+
+sp {propose*wander
+    (state <s> ^name smartagent
+               ^io.input-link.self.pose <e>)
+    (<e> ^x <x> ^y <y>)
+    
+-->
+    (<s> ^operator.name wander)}

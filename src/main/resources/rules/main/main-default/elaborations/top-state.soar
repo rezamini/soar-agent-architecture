@@ -1,0 +1,9 @@
+sp {elaborate*task*smartagent
+   (state <s> ^superstate nil)
+   -->
+   (<s> ^name smartagent)}
+
+sp {elaborate*top-state*top-state
+  (state <s> ^name smartagent)
+-->
+  (<s> ^top-state <s>)}

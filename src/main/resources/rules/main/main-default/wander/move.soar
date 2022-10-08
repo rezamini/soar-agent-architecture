@@ -1,0 +1,45 @@
+
+sp {wander*propose*move
+    (state <s>  ^name wander
+                ^io.input-link.area.view.<direction> <odr>
+                ^io.output-link <ol>)
+    (<odr> ^type { <type> <> block })
+    
+-->
+    (<s> ^operator <o> + =)
+    (<o> ^name move
+           ^actions.move.direction <direction>
+           ^direction <direction>
+           ^type <type>)}
+
+
+# sp {apply*move-forward*create*last-direction
+#     (state <s> ^name wander
+#             ^operator <o>)
+#     (<o> ^name move
+#          ^direction <direction>)
+# -->
+# (<s> ^last-direction <direction>)}
+
+
+# sp {apply*move-forward*remove*last-direction
+#    (state <s> ^name wander
+#               ^operator <o>
+#               ^last-direction <direction>)
+#    (<o> ^name move
+#         ^direction <> <direction> )
+# -->
+#    (<s> ^last-direction <direction> -)}
+
+
+# sp {select*move-forward*prefer-forward-than-others
+#     (state <s> ^name wander
+#                 ^operator <o1> +
+#                 ^operator <o2> +
+#                 ^last-direction <lastdirection> )
+#     (<o1> ^name move
+#             ^direction <lastdirection> )
+#     (<o2> ^name move
+#             ^direction <direction> )
+# -->
+# (<s> ^operator <o1> > <o2>)}
