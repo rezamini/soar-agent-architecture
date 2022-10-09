@@ -9,9 +9,9 @@ public abstract class MemoryListener implements SoarEvent{
     public final RobotAgent robotAgent;
     public final Robot robot;
 
-    public MemoryListener(RobotAgent robotAgent, Robot robot){
-        this.robotAgent = robotAgent;
+    public MemoryListener(Robot robot, RobotAgent robotAgent){
         this.robot = robot;
+        this.robotAgent = robotAgent;
     }
 
     public abstract void updateRobotMemory();
