@@ -10,6 +10,7 @@ import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.CellTypeEnum;
 import com.soar.agent.architecture.enums.DirectionEnum;
+import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
 import com.soar.agent.architecture.events.AreaResponder;
 
@@ -70,15 +71,24 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-food.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-food-prefer-forward.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-forward-prefer-current-direction.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-1.0.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-1.1.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-2.0.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-2.1.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-2.2.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-2.3.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-forward-prefer-current-direction.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-1.0.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-1.1.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-2.0.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-2.1.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-2.2.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-2.3.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
             source = new File(getClass().getResource("/rules/main/main-default.soar").toURI());
 
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
@@ -215,7 +225,7 @@ public class RobotAgent {
         // qMemory.remove("landmarks");
         synchronized (qMemory) {
             QMemory landmarks = qMemory.subMemory("landmarks");
-            
+
             for (Iterator<Landmark> iter = robot.getWorld().getLandmarks().iterator(); iter.hasNext();) {
                 Landmark landmark = iter.next();
                 boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
@@ -236,7 +246,7 @@ public class RobotAgent {
                 // Calculate where and which direction the landmark is located from agent
                 // current position. Dynamic values & movements
                 String landmarkDirection = calcLandmarkDirection(agentXPose, agentYPose, landmarkX, landmarkY);
-                
+
                 // set basic landmark information
                 subLandmark.setString("name", landmark.name);
                 subLandmark.setDouble("x", landmarkX);
@@ -248,7 +258,7 @@ public class RobotAgent {
                 // the landmark and update the direction command to Here regardless
                 if (isAgentReached) {
                     subLandmark.setDouble("distance", 0.0);
-                    subLandmark.setString("direction-command", "here");
+                    subLandmark.setString("direction-command", UtilitiesEnum.REACHEDSTATUS.getName());
 
                     iter.remove();
                 }
@@ -261,8 +271,10 @@ public class RobotAgent {
                 // subLandmark.setDouble("relative-bearing", bearing);
             }
 
-            //set the status of the overal landmarks
-            landmarks.setString("status", robot.getWorld().getLandmarks().size() == 0 ? "inactive" : "active");
+            // set the status of the overal landmarks
+            landmarks.setString("status",
+                    robot.getWorld().getLandmarks().size() == 0 ? UtilitiesEnum.INACTIVESTATUS.getName()
+                            : UtilitiesEnum.ACTIVESTATUS.getName());
         }
     }
 
@@ -276,7 +288,7 @@ public class RobotAgent {
                     : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
         }
 
-        return direction.equals("") ? "here" : direction;
+        return direction.equals("") ? UtilitiesEnum.REACHEDSTATUS.getName() : direction;
     }
 
     private String calcLandmarkDirection(double agentX, double agentY, double landmarkX, double landmarkY) {
@@ -285,10 +297,9 @@ public class RobotAgent {
                 : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
 
         direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
-                    : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
-        
+                : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
 
-        return direction.equals("") ? "here" : direction;
+        return direction.equals("") ? UtilitiesEnum.REACHEDSTATUS.getName() : direction;
     }
 
     public Robot getRobot() {
