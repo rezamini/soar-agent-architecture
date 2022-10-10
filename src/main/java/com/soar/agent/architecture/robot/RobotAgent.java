@@ -43,7 +43,8 @@ public class RobotAgent {
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
     private AreaResponder areaResponder;
     private MemoryResponder memoryResponder;
-    // public final SoarEventManager events = new SoarEventManager();
+    public final SoarEventManager events = new SoarEventManager();
+    private Move move;
 
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
@@ -70,6 +71,8 @@ public class RobotAgent {
             areaResponder = new AreaResponder(robot, this);
             memoryResponder = new MemoryResponder(robot, this);
 
+            addEventListeners();
+
             threadedAgent.initialize(); // Do an init-soar
             // source = new
             // File(getClass().getResource("/rules/move-north-2.soar").toURI());
@@ -93,10 +96,10 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-2.3.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
-            // source = new
-            // File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
-            source = new File(getClass().getResource("/rules/main/main-default.soar").toURI());
-
+            
+            source = new File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
+            // source = new File(getClass().getResource("/rules/main/main-default.soar").toURI());
+            
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/advanced-move.soar").toURI());
@@ -111,6 +114,19 @@ public class RobotAgent {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void addEventListeners() {
+        events.addListener(MemoryResponder.class, event -> {
+            memoryResponder.updateRobotMemory();
+        });
+
+        events.addListener(AreaResponder.class, event -> {
+            if(move != null && move.getDirection() != null && !move.getDirection().equals("")){
+                areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
+                areaResponder.setLocaleInfo(qMemory, move.getDirection(), CellTypeEnum.NORMAL.getName());
+            }
+        });
     }
 
     public void initMoveCommandListenerObject() {
@@ -142,12 +158,14 @@ public class RobotAgent {
                     // every move. much more realistic ui
                     synchronized (threadedAgent.getAgent()) {
                         threadedAgent.getAgent().wait(100);
+                        
 
                         bean.setAttribute(context.getCommand().getAttribute());
                         bean.setTimeTag(context.getCommand().getTimetag());
                         bean.setChildren(context.getCommand().getChildren());
                         bean.setIdentifier(context.getCommand().getIdentifier());
                         bean.setPreference(context.getCommand().getPreferences());
+                        move = bean;
 
                         context.setStatus("complete");
 
@@ -155,8 +173,11 @@ public class RobotAgent {
                         for (MoveListenerEvent listener : moveListeners) {
                             listener.moveCompleted(bean, robot, RobotAgent.this);
 
-                            areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
-                            areaResponder.setLocaleInfo(qMemory, bean.getDirection(), CellTypeEnum.NORMAL.getName());
+                            events.fireEvent(areaResponder);
+
+                            //Old way of calling area responder
+                            // areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
+                            // areaResponder.setLocaleInfo(qMemory, bean.getDirection(), CellTypeEnum.NORMAL.getName());
                             // areaResponder.updateOppositeCell(qMemory, bean.getDirection());
                             // updateRobotMemory();
                         }
@@ -198,7 +219,8 @@ public class RobotAgent {
             public void onEvent(SoarEvent event) {
                 // update the robot memory for every input event
                 //updateRobotMemory(); // original call
-                memoryResponder.updateRobotMemory();
+                 //memoryResponder.updateRobotMemory();
+                events.fireEvent(memoryResponder);
             }
         });
     }

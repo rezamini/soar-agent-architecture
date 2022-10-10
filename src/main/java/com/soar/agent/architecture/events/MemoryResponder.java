@@ -18,6 +18,7 @@ public class MemoryResponder extends MemoryListener{
     public MemoryResponder(Robot robot, RobotAgent robotAgent) {
         super(robot, robotAgent);
         areaResponder = new AreaResponder(robot, robotAgent);
+        
     }
 
     @Override
