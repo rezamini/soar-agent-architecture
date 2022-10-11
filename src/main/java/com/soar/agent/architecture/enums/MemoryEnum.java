@@ -1,6 +1,6 @@
 package com.soar.agent.architecture.enums;
 
-enum MemoryEnum {
+public enum MemoryEnum {
   //General
   BASIC_NAME("name"),
   IDENTITY("self"),

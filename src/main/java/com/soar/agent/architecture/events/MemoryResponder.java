@@ -6,6 +6,7 @@ import org.jsoar.kernel.io.quick.QMemory;
 
 import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.enums.DirectionEnum;
+import com.soar.agent.architecture.enums.MemoryEnum;
 import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
@@ -25,14 +26,14 @@ public class MemoryResponder extends MemoryListener{
     public void updateRobotMemory() {
         
         synchronized (qMemory) {
-            qMemory.setString("self.name", robot.getName());
-            qMemory.setDouble("self.radius", robot.getRadius()); // change to minimum bounding box - mbb
+            qMemory.setString(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.BASIC_NAME.getName(), robot.getName());
+            qMemory.setDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.MINIMUM_BOUNDING_BOX.getName(), robot.getRadius());
 
             final double x = robot.getShape().getCenterX();
             final double y = robot.getShape().getCenterY();
-            qMemory.setDouble("self.pose.x", x);
-            qMemory.setDouble("self.pose.y", y);
-            qMemory.setDouble("self.pose.yaw", Math.toDegrees(robot.getYaw()));
+            qMemory.setDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.POSITION_X.getName(), x);
+            qMemory.setDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.POSITION_Y.getName(), y);
+            qMemory.setDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.YAW.getName(), Math.toDegrees(robot.getYaw()));
 
             areaResponder.updateAreaMemory();
             // events.fireEvent(areaResponder);
@@ -47,7 +48,7 @@ public class MemoryResponder extends MemoryListener{
     @Override
     public void updateMemoryLandmarks() {
         synchronized (qMemory) {
-            QMemory landmarks = qMemory.subMemory("landmarks");
+            QMemory landmarks = qMemory.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
 
             for (Iterator<Landmark> iter = robot.getWorld().getLandmarks().iterator(); iter.hasNext();) {
                 Landmark landmark = iter.next();
@@ -56,13 +57,13 @@ public class MemoryResponder extends MemoryListener{
                 // create a sub landmark with the landmark name
                 // String subName = "landmark-" + landmark.name + "-" +
                 // threadedAgent.getAgent().getRandom().nextInt(99);
-                String subName = "landmark-" + landmark.name;
+                String subName = MemoryEnum.LANDMARK_SUB.getName() + "-" + landmark.name;
 
                 QMemory subLandmark = landmarks.subMemory(subName);
 
                 // get current agent and landmark positions
-                double agentXPose = qMemory.getDouble("self.pose.x");
-                double agentYPose = qMemory.getDouble("self.pose.y");
+                double agentXPose = qMemory.getDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.POSITION_X.getName());
+                double agentYPose = qMemory.getDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.POSITION_Y.getName());
                 double landmarkX = landmark.getLocation().getX();
                 double landmarkY = landmark.getLocation().getY();
 
@@ -71,17 +72,17 @@ public class MemoryResponder extends MemoryListener{
                 String landmarkDirection = calcLandmarkDirection(agentXPose, agentYPose, landmarkX, landmarkY);
 
                 // set basic landmark information
-                subLandmark.setString("name", landmark.name);
-                subLandmark.setDouble("x", landmarkX);
-                subLandmark.setDouble("y", landmarkY);
-                subLandmark.setDouble("distance", landmark.getLocation().distance(agentXPose, agentYPose));
-                subLandmark.setString("direction-command", landmarkDirection);
+                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
+                subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
+                subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
+                subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), landmark.getLocation().distance(agentXPose, agentYPose));
+                subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), landmarkDirection);
 
                 // if its true it means the agent reached at this specific landmark, so remove
                 // the landmark and update the direction command to Here regardless
                 if (isAgentReached) {
-                    subLandmark.setDouble("distance", 0.0);
-                    subLandmark.setString("direction-command", UtilitiesEnum.REACHEDSTATUS.getName());
+                    subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
+                    subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), UtilitiesEnum.REACHEDSTATUS.getName());
 
                     iter.remove();
                 }
