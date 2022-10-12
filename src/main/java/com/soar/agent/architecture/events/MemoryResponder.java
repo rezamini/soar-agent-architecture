@@ -11,7 +11,7 @@ import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 
-public class MemoryResponder extends MemoryListener{
+public class MemoryResponder extends MemoryListener {
 
     QMemory qMemory = robotAgent.getQMemory();
     private AreaResponder areaResponder;
@@ -19,30 +19,40 @@ public class MemoryResponder extends MemoryListener{
     public MemoryResponder(Robot robot, RobotAgent robotAgent) {
         super(robot, robotAgent);
         areaResponder = new AreaResponder(robot, robotAgent);
-        
     }
 
     @Override
     public void updateRobotMemory() {
-        
+
         synchronized (qMemory) {
-            qMemory.setString(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.BASIC_NAME.getName(), robot.getName());
-            qMemory.setDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.MINIMUM_BOUNDING_BOX.getName(), robot.getRadius());
+            qMemory.setString(MemoryEnum.IDENTITY.getName() + UtilitiesEnum.DOTSEPERATOR.getName()
+                    + MemoryEnum.BASIC_NAME.getName(), robot.getName());
+
+            qMemory.setDouble(MemoryEnum.IDENTITY.getName() + UtilitiesEnum.DOTSEPERATOR.getName()
+                    + MemoryEnum.MINIMUM_BOUNDING_BOX.getName(), robot.getRadius());
 
             final double x = robot.getShape().getCenterX();
             final double y = robot.getShape().getCenterY();
-            qMemory.setDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.POSITION_X.getName(), x);
-            qMemory.setDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.POSITION_Y.getName(), y);
-            qMemory.setDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.YAW.getName(), Math.toDegrees(robot.getYaw()));
+            qMemory.setDouble(
+                    MemoryEnum.IDENTITY.getName() + UtilitiesEnum.DOTSEPERATOR.getName() + MemoryEnum.POSITION.getName()
+                            + UtilitiesEnum.DOTSEPERATOR.getName() + MemoryEnum.POSITION_X.getName(),
+                    x);
+
+            qMemory.setDouble(
+                    MemoryEnum.IDENTITY.getName() + UtilitiesEnum.DOTSEPERATOR.getName() + MemoryEnum.POSITION.getName()
+                            + UtilitiesEnum.DOTSEPERATOR.getName() + MemoryEnum.POSITION_Y.getName(),
+                    y);
+
+            qMemory.setDouble(
+                    MemoryEnum.IDENTITY.getName() + UtilitiesEnum.DOTSEPERATOR.getName() + MemoryEnum.POSITION.getName()
+                            + UtilitiesEnum.DOTSEPERATOR.getName() + MemoryEnum.YAW.getName(),
+                    Math.toDegrees(robot.getYaw()));
 
             areaResponder.updateAreaMemory();
             // events.fireEvent(areaResponder);
-
-            //addMemoryLandmarks(qMemory, robot);
-            // addMemoryLandmarks(qMemory, robot);
             updateMemoryLandmarks();
         }
-        
+
     }
 
     @Override
@@ -57,13 +67,20 @@ public class MemoryResponder extends MemoryListener{
                 // create a sub landmark with the landmark name
                 // String subName = "landmark-" + landmark.name + "-" +
                 // threadedAgent.getAgent().getRandom().nextInt(99);
-                String subName = MemoryEnum.LANDMARK_SUB.getName() + "-" + landmark.name;
+                String subName = MemoryEnum.LANDMARK_SUB.getName() + UtilitiesEnum.DASHSEPERATOR.getName()
+                        + landmark.name;
 
                 QMemory subLandmark = landmarks.subMemory(subName);
 
                 // get current agent and landmark positions
-                double agentXPose = qMemory.getDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.POSITION_X.getName());
-                double agentYPose = qMemory.getDouble(MemoryEnum.IDENTITY.getName() + "." + MemoryEnum.POSITION.getName() + "." + MemoryEnum.POSITION_Y.getName());
+                double agentXPose = qMemory
+                        .getDouble(MemoryEnum.IDENTITY.getName() + UtilitiesEnum.DOTSEPERATOR.getName()
+                                + MemoryEnum.POSITION.getName() + UtilitiesEnum.DOTSEPERATOR.getName()
+                                + MemoryEnum.POSITION_X.getName());
+                double agentYPose = qMemory
+                        .getDouble(MemoryEnum.IDENTITY.getName() + UtilitiesEnum.DOTSEPERATOR.getName()
+                                + MemoryEnum.POSITION.getName() + UtilitiesEnum.DOTSEPERATOR.getName()
+                                + MemoryEnum.POSITION_Y.getName());
                 double landmarkX = landmark.getLocation().getX();
                 double landmarkY = landmark.getLocation().getY();
 
@@ -75,14 +92,16 @@ public class MemoryResponder extends MemoryListener{
                 subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
                 subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
                 subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
-                subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), landmark.getLocation().distance(agentXPose, agentYPose));
+                subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
+                        landmark.getLocation().distance(agentXPose, agentYPose));
                 subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), landmarkDirection);
 
                 // if its true it means the agent reached at this specific landmark, so remove
                 // the landmark and update the direction command to Here regardless
                 if (isAgentReached) {
                     subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
-                    subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), UtilitiesEnum.REACHEDSTATUS.getName());
+                    subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                            UtilitiesEnum.REACHEDSTATUS.getName());
 
                     iter.remove();
                 }
@@ -96,11 +115,11 @@ public class MemoryResponder extends MemoryListener{
             }
 
             // set the status of the overal landmarks
-            landmarks.setString("status",
+            landmarks.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
                     robot.getWorld().getLandmarks().size() == 0 ? UtilitiesEnum.INACTIVESTATUS.getName()
                             : UtilitiesEnum.ACTIVESTATUS.getName());
         }
-        
+
     }
 
     private String calcLandmarkDirectionSimple(double agentX, double agentY, double landmarkX, double landmarkY) {
@@ -126,5 +145,5 @@ public class MemoryResponder extends MemoryListener{
 
         return direction.equals("") ? UtilitiesEnum.REACHEDSTATUS.getName() : direction;
     }
-    
+
 }

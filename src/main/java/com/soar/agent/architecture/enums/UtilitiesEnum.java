@@ -5,7 +5,10 @@ package com.soar.agent.architecture.enums;
 public enum UtilitiesEnum {
     ACTIVESTATUS("active"),
     INACTIVESTATUS("inactive"),
-    REACHEDSTATUS("here");
+    REACHEDSTATUS("here"),
+    DOTSEPERATOR("."),
+    DASHSEPERATOR("-"),
+    MEMORYSTATUS("status");
 
 
     private UtilitiesEnum(String name){
