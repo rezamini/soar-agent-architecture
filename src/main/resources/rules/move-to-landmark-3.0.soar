@@ -103,22 +103,22 @@ sp {apply*move*remove-move
    (<ol> ^move <direction> -)}
 
 
-sp {apply*move-to-landmark*create*current-landmark-direction
-    (state <s> ^operator <o>
-                ^io.output-link <ol>)
-     (<o> ^name move-to-landmark
-            ^direction-command <direction-command>)
--->
-   (<s> ^current-landmark-direction <direction-command> )}   
+# sp {apply*move-to-landmark*create*current-landmark-direction
+#     (state <s> ^operator <o>
+#                 ^io.output-link <ol>)
+#      (<o> ^name move-to-landmark
+#             ^direction-command <direction-command>)
+# -->
+#    (<s> ^current-landmark-direction <direction-command> )}   
 
 
-sp {apply*move-to-landmark*remove*current-landmark-direction
-   (state <s> ^operator <o>
-              ^current-landmark-direction <current-landmark-direction>)
-   (<o> ^name move-to-landmark
-        ^direction-command <> <current-landmark-direction> )
--->
-   (<s> ^current-landmark-direction <current-landmark-direction> -)} 
+# sp {apply*move-to-landmark*remove*current-landmark-direction
+#    (state <s> ^operator <o>
+#               ^current-landmark-direction <current-landmark-direction>)
+#    (<o> ^name move-to-landmark
+#         ^direction-command <> <current-landmark-direction> )
+# -->
+#    (<s> ^current-landmark-direction <current-landmark-direction> -)} 
 
 sp {apply*move*create*last-direction
    (state <s> ^operator <o>)

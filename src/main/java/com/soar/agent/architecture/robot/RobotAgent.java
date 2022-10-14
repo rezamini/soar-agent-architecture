@@ -17,6 +17,7 @@ import com.soar.agent.architecture.events.MemoryResponder;
 
 import org.jsoar.kernel.RunType;
 import org.jsoar.kernel.SoarException;
+import org.jsoar.kernel.events.AfterDecisionCycleEvent;
 import org.jsoar.kernel.events.InputEvent;
 import org.jsoar.kernel.io.CycleCountInput;
 import org.jsoar.kernel.io.beans.SoarBeanExceptionHandler;
@@ -97,8 +98,8 @@ public class RobotAgent {
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
             
-            source = new File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
-            // source = new File(getClass().getResource("/rules/main/main-default.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
+            source = new File(getClass().getResource("/rules/main/main-default.soar").toURI());
             
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new
@@ -213,7 +214,7 @@ public class RobotAgent {
 
     // a general method for all type of input events listners.
     private void initInputEventListener() {
-        threadedAgent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
+        threadedAgent.getEvents().addListener(AfterDecisionCycleEvent.class, new SoarEventListener() {
 
             @Override
             public void onEvent(SoarEvent event) {

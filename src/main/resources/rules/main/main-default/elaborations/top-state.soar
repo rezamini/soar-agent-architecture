@@ -7,3 +7,38 @@ sp {elaborate*top-state*top-state
   (state <s> ^name smartagent)
 -->
   (<s> ^top-state <s>)}
+
+sp {elaborate*state*directions
+   (state <ss> ^superstate nil)
+   -->
+   (<ss> ^directions <n> <ne> <nw> <e> <s> <sw> <se> <w>)  
+   (<n> ^value north ^opposite south)
+   (<ne> ^value northeast ^opposite southwest)
+   (<nw> ^value northwest ^opposite southeast)
+   (<e> ^value east  ^opposite west)
+   (<s> ^value south ^opposite north)
+   (<sw> ^value southwest ^opposite northeast)
+   (<se> ^value southeast ^opposite northwest)
+   (<w> ^value west  ^opposite east)}
+
+
+   sp {elaborate*state*preferable*directions
+   (state <ss> ^superstate nil)
+   -->
+   (<ss> ^preferable-directions <ne> <nw> <sw> <se> ) 
+   
+   (<ne> ^value northeast ^prefer northeast) 
+   (<ne> ^value northeast ^prefer east)
+   (<ne> ^value northeast ^prefer north)
+   
+   (<nw> ^value northwest ^prefer northwest)
+   (<nw> ^value northwest ^prefer west)
+   (<nw> ^value northwest ^prefer north)
+
+   (<sw> ^value southwest ^prefer southwest)
+   (<sw> ^value southwest ^prefer south)
+   (<sw> ^value southwest ^prefer west)
+
+   (<se> ^value southeast ^prefer southeast)
+   (<se> ^value southeast ^prefer south)
+   (<se> ^value southeast ^prefer east)}

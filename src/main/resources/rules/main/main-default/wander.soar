@@ -2,8 +2,7 @@
 
 sp {propose*wander
     (state <s> ^name smartagent
-               ^io.input-link.self.pose <e>)
-    (<e> ^x <x> ^y <y>)
-    
+               ^io.input-link.landmarks.status <landmarks-status>
+               {<landmarks-status> <> inactive }) 
 -->
     (<s> ^operator.name wander)}

@@ -2,7 +2,7 @@ sp {wander*elaborate*state*create*last-direction
     (state <s> ^name wander
                 ^operator <o>
                 ^superstate <ss>)
-    (<o> ^name move
+    (<o> ^name << move move-to-landmark >>
         ^actions <a>)
     (<a> ^move.direction <direction1>)
 -->
@@ -14,7 +14,7 @@ sp {wander*elaborate*state*remove*last-direction
               ^operator <o>
               ^superstate <ss>
               ^superstate.last-direction <direction>)
-   (<o> ^name move
+   (<o> ^name << move move-to-landmark >>
         ^actions <a>)
    (<a> ^move.direction <> <direction> )
 -->
@@ -34,16 +34,50 @@ sp {wander*elaborate*select*prefer-forward-than-others
 (<s> ^operator <o1> > <o2>)}
 
 
-# sp {wander*elaborate*select*prefer-forward-than-others
-#     (state <s> ^name wander
-#                 ^operator <o1> +
-#                 ^operator <o2> +
-#                 ^superstate.last-direction <lastdirection> )
-#     (<o1> ^name move
-#            ^actions <a> )
-#     (<a> ^move.direction <lastdirection> )
-#     (<o2> ^name move
-#           ^actions <a>)
-#      (<a> ^move.direction <direction> )
-# -->
-# (<s> ^operator <o1> > <o2>)}
+sp {wander*elaborate*select*pick-landmark-with-shortest-distance
+    (state <s>  ^name wander
+                ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-to-landmark
+            ^lnd.distance <distance1> )
+    (<o2> ^name move-to-landmark
+            ^lnd.distance <distance2> > <distance1> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+
+sp {wander*elaborate*select*pick-other-direction-if-block
+    (state <s> ^name wander
+                ^operator <o1> +
+                ^operator <o2> + )
+    (<o1> ^name move )
+    (<o2> ^name move-to-landmark
+            ^cell-type << block >> )
+    
+-->
+(<s> ^operator <o1> > <o2> )}
+
+sp {wander*elaborate*select*pick-original-landmark-direction
+    (state <s>  ^name wander
+                ^operator <o1> + )
+    (<o1> ^name move-to-landmark 
+        ^cell-type << normal >> )
+-->
+(<s> ^operator <o1> > )}
+
+
+sp {wander*elaborate*select*pick-prefer-directions-over-others-if-landmark-block
+    (state <s>  ^name wander
+                ^operator <o1> + 
+                ^operator <o2> +
+                ^superstate.preferable-directions <pd> 
+                ^superstate.last-direction <l-dir> )
+    (<pd> ^value <l-dir>
+        ^prefer <p-dir> )
+    (<o1> ^name move
+          ^actions.move.direction <p-dir> )
+    (<o2> ^name move-to-landmark
+            ^cell-type << block >>  )
+    
+-->
+(<s> ^operator <o1> > )}
