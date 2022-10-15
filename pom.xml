@@ -17,6 +17,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <jsoar.version>4.1.2</jsoar.version>
     <slf4j.version>1.7.21</slf4j.version>
+    <graphstream.version>2.0</graphstream.version>
   </properties>
 
   <dependencies>
@@ -45,6 +46,20 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.graphstream</groupId>
+        <artifactId>gs-core</artifactId>
+        <version>${graphstream.version}</version>
+    </dependency> 
+    <dependency>
+        <groupId>org.graphstream</groupId>
+        <artifactId>gs-ui-swing</artifactId>
+        <version>${graphstream.version}</version>
+    </dependency>           <dependency>
+        <groupId>org.graphstream</groupId>
+        <artifactId>gs-algo</artifactId>
+        <version>${graphstream.version}</version>
     </dependency>
   </dependencies>
 
