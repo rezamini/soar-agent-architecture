@@ -1,0 +1,14 @@
+sp {wander*propose*move-free-space
+    (state <s>  ^name wander
+                ^io.input-link.self.pose <e>
+                ^io.input-link.area.<view> <v-directions>
+                ^io.input-link.landmarks.status 
+               { <landmarks-status> <> inactive } )
+    (<e> ^x <x> ^y <y>)
+    (<v-directions> ^ { << north northeast northwest east west south southeast southwest >> <n-dir> } )
+    (<v-directions> ^<n-dir>.type <> block )
+    
+-->
+    (<s> ^operator <o> + =)
+    (<o> ^name move-free-space
+           ^actions.move.direction <n-dir> )}

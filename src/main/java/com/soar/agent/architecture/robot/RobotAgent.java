@@ -66,7 +66,7 @@ public class RobotAgent {
 
             initMoveCommandListenerObject(); // initialize the output command listener for later use
             initCommandListener("move");
-            initInputEventListener();
+            initAfterDecisionListener();
 
 
             areaResponder = new AreaResponder(robot, this);
@@ -213,7 +213,7 @@ public class RobotAgent {
     }
 
     // a general method for all type of input events listners.
-    private void initInputEventListener() {
+    private void initAfterDecisionListener() {
         threadedAgent.getEvents().addListener(AfterDecisionCycleEvent.class, new SoarEventListener() {
 
             @Override

@@ -16,18 +16,3 @@ sp {apply*operator*remove-command
    (<value> ^status complete)
 -->
    (<ol> ^<att> <value> -)}
-
-# sp {apply*move*create*last-direction
-#    (state <s> ^operator <o>)
-#    (<o> ^actions.move.direction <direction>)
-# -->
-#    (<s> ^last-direction <direction>)}
-
-
-# sp {apply*move*remove*last-direction
-#    (state <s> ^operator <o>
-#               ^last-direction <direction>)
-#    (<o> ^actions.move.direction <> <direction>)
-# -->
-# #    (<s> ^prior-direction <direction> )
-#    (<s> ^last-direction <direction> -)}  

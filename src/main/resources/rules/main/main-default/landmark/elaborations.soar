@@ -1,72 +1,54 @@
-sp {wander*elaborate*state*create*last-direction
-    (state <s> ^name wander
-                ^operator <o>
-                ^superstate <ss>)
-    (<o> ^name << move move-to-landmark >>
-        ^actions <a>)
-    (<a> ^move.direction <direction1>)
--->
-(<ss> ^last-direction <direction1>)}
-
-
-sp {wander*elaborate*state*remove*last-direction
-   (state <s> ^name wander
-              ^operator <o>
-              ^superstate <ss>
-              ^superstate.last-direction <direction>)
-   (<o> ^name << move move-to-landmark >>
-        ^actions <a>)
-   (<a> ^move.direction <> <direction> )
--->
-   (<ss> ^last-direction <direction> -)}
-
-
 sp {wander*elaborate*select*prefer-forward-than-others
+   :i-support
     (state <s> ^name wander
                 ^operator <o1> +
                 ^operator <o2> +
                 ^superstate.last-direction <lastdirection> )
-    (<o1> ^name move
+    (<o1> ^name move-free-space
             ^actions.move.direction <lastdirection> )
-    (<o2> ^name move
+    (<o2> ^name move-free-space
             ^actions.move.direction <direction> )
 -->
 (<s> ^operator <o1> > <o2>)}
 
 
 sp {wander*elaborate*select*pick-landmark-with-shortest-distance
+   :i-support
     (state <s>  ^name wander
                 ^operator <o1> + 
                 ^operator <o2> + )
-    (<o1> ^name move-to-landmark
+    (<o1> ^name move-landmark
             ^lnd.distance <distance1> )
-    (<o2> ^name move-to-landmark
+    (<o2> ^name move-landmark
             ^lnd.distance <distance2> > <distance1> )
 -->
 (<s> ^operator <o1> > <o2>)}
 
 
 sp {wander*elaborate*select*pick-other-direction-if-block
+   :i-support
     (state <s> ^name wander
                 ^operator <o1> +
                 ^operator <o2> + )
-    (<o1> ^name move )
-    (<o2> ^name move-to-landmark
+    (<o1> ^name move-free-space )
+    (<o2> ^name move-landmark
             ^cell-type << block >> )
     
 -->
 (<s> ^operator <o1> > <o2> )}
 
 sp {wander*elaborate*select*pick-original-landmark-direction
+   :i-support
     (state <s>  ^name wander
                 ^operator <o1> + )
-    (<o1> ^name move-to-landmark 
+    (<o1> ^name move-landmark 
         ^cell-type << normal >> )
 -->
 (<s> ^operator <o1> > )}
 
 
 sp {wander*elaborate*select*pick-prefer-directions-over-others-if-landmark-block
+   :i-support
     (state <s>  ^name wander
                 ^operator <o1> + 
                 ^operator <o2> +
@@ -74,9 +56,9 @@ sp {wander*elaborate*select*pick-prefer-directions-over-others-if-landmark-block
                 ^superstate.last-direction <l-dir> )
     (<pd> ^value <l-dir>
         ^prefer <p-dir> )
-    (<o1> ^name move
+    (<o1> ^name move-free-space
           ^actions.move.direction <p-dir> )
-    (<o2> ^name move-to-landmark
+    (<o2> ^name move-landmark
             ^cell-type << block >>  )
     
 -->

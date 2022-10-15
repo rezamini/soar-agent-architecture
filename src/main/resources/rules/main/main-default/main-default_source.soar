@@ -5,9 +5,9 @@ pushd elaborations
 source elaborations_source.soar
 popd
 
-source wander.soar
-pushd wander
-source wander_source.soar
+source landmark.soar
+pushd landmark
+source landmark_source.soar
 popd
 
 # source move-to-landmark-3.0.soar

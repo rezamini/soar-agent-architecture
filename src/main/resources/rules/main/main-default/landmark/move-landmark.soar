@@ -1,0 +1,20 @@
+sp {wander*propose*move-landmark
+   (state <s> ^name wander
+              ^io.input-link.landmarks.<landmarks> <lnd>     
+              ^io.input-link.self.pose <e>
+              ^io.input-link.area.<view> <area-view> )
+   (<e> ^x <x> ^y <y>)
+   (<lnd> ^direction-command <direction-command> )
+   (<lnd> ^distance <distance-agent> )
+   (<area-view> ^<direction-command>.type <cell-type>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name move-landmark
+        ^lnd <lnd>
+        ^distance-agent <distance-agent>
+        ^actions.move.direction <direction-command>
+        ^cell-type <cell-type>)}
+
+
+
+

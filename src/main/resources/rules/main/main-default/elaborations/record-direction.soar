@@ -1,0 +1,21 @@
+#Record and delete all the last direction for all the operator and save it in the superstate. Saving in state itself will not work
+
+sp {elaborate*state*create*last-direction
+   :o-support
+    (state <s>  ^operator <o>
+                ^superstate <ss>)
+    (<o> ^actions <a>)
+    (<a> ^move.direction <direction1>)
+-->
+(<ss> ^last-direction <direction1>)}
+
+
+sp {elaborate*state*remove*last-direction
+   :o-support
+   (state <s> ^operator <o>
+              ^superstate <ss>
+              ^superstate.last-direction <direction>)
+   (<o> ^actions <a>)
+   (<a> ^move.direction <> <direction> )
+-->
+   (<ss> ^last-direction <direction> -)}
