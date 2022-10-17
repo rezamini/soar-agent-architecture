@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import com.soar.agent.architecture.events.MoveResponder;
+import com.soar.agent.architecture.graph.NodeGraph;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 import com.soar.agent.architecture.world.PanelUI;
@@ -18,6 +19,7 @@ public class AppMain {
     private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
     private MoveResponder moveResponder = new MoveResponder();
     // private static PanelUI panelUI;
+    
 
     public static void main(String[] args) {
         // try {
@@ -91,5 +93,13 @@ public class AppMain {
 
     public static void PerformUIRePaint() {
         PanelUI.getWorldPanel().repaint();
+    }
+
+    public void startGraph(){
+        if (agents != null && agents.size() > 0) {
+            RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
+            NodeGraph graph = new NodeGraph(agent.getThreadedAgent().getInputOutput());
+            graph.main(null);
+        }
     }
 }

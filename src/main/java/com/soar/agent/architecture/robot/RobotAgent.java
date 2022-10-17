@@ -1,8 +1,10 @@
 package com.soar.agent.architecture.robot;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -29,6 +31,7 @@ import org.jsoar.kernel.io.commands.OutputCommandManager;
 import org.jsoar.kernel.io.quick.DefaultQMemory;
 import org.jsoar.kernel.io.quick.QMemory;
 import org.jsoar.kernel.io.quick.SoarQMemoryAdapter;
+import org.jsoar.kernel.memory.Wme;
 import org.jsoar.kernel.symbols.Identifier;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.commands.SoarCommands;
@@ -222,6 +225,14 @@ public class RobotAgent {
                 //updateRobotMemory(); // original call
                  //memoryResponder.updateRobotMemory();
                 events.fireEvent(memoryResponder);
+
+                // List<Wme> actualList = new ArrayList<Wme>();
+                // threadedAgent.getInputOutput().getInputLink().getWmes().forEachRemaining(actualList::add);
+
+                // System.out.println(actualList);
+
+                // for (Iterator<Wme> iter = threadedAgent.getInputOutput().getInputLink().getWmes(); iter.hasNext();) {
+                // }
             }
         });
     }

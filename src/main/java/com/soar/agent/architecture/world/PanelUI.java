@@ -148,12 +148,12 @@ public class PanelUI extends JPanel {
         debuggerButton.setToolTipText("Open Agent Debugger");
         bar.add(debuggerButton);
 
-        // bar.add(new AbstractAction("Run") {
-        // @Override
-        // public void actionPerformed(ActionEvent e) {
-        // appMain.startAgent();
-        // }
-        // });
+        bar.add(new AbstractAction("Graph") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                appMain.startGraph();
+            }
+        });
 
         // bar.add(new AbstractAction("Stop") {
 
