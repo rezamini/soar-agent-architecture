@@ -159,7 +159,7 @@ public class MemoryResponder extends MemoryListener {
                 .append(arg2 != null ? UtilitiesEnum.DOTSEPERATOR.getName() : "")
                 .append(arg2 != null ? arg2 : "")
                 .append(arg3 != null ? UtilitiesEnum.DOTSEPERATOR.getName() : "")
-                .append(arg3 != null ? arg3 : null);
+                .append(arg3 != null ? arg3 : "");
 
         return sb.toString();
     }

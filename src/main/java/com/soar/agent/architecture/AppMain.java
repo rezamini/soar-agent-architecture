@@ -98,8 +98,9 @@ public class AppMain {
     public void startGraph(){
         if (agents != null && agents.size() > 0) {
             RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
-            NodeGraph graph = new NodeGraph(agent.getThreadedAgent().getInputOutput());
-            graph.main(null);
+            NodeGraph graph = new NodeGraph(agent.getThreadedAgent());
+            // graph.main(null);
+            graph.startGraph();
         }
     }
 }
