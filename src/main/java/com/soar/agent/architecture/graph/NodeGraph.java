@@ -106,14 +106,33 @@ public class NodeGraph {
 
     }
 
+    /**
+     * Set the parent of all the nodes if required.
+     * This create a main input node and connect all the other nodes(childs) as part of this node.
+     * @param parentWme
+     * @param parentNode
+     */
+    private void setMainInputNode(Wme parentWme, Node parentNode){
+        //The main input id will be like, I2area, I2landmarks etc to make it unique 
+        String inputMainId = parentWme.getIdentifier().toString() + parentWme.getAttribute().toString();
+
+        Node inputMainNode = graph.addNode(parentWme.getIdentifier().toString());
+        inputMainNode.setAttribute("nodeValue", parentWme.getIdentifier().toString());
+
+        //this edge connects all the nodes to the main memory node which is I2
+        // this becomes the first parent of all the other nodes.
+        graph.addEdge(inputMainId, inputMainNode, parentNode, true);
+    }
+
     private void addChildrenNodes(Wme parent, Iterator<Wme> childs){
         
         //set parent node values; parent node is the one calling this method. for example I2
         //nodeValue : it is the memory value such as L1, I2 or actual value...
         //node id : it is be the actual name such as self, pose, landmark
-
         Node parentNode = graph.addNode(parent.getAttribute().toString());
         parentNode.setAttribute("nodeValue", parent.getValue().toString());
+
+        setMainInputNode(parent, parentNode);
 
         for(Iterator<Wme> iter = childs; iter.hasNext();){
             Wme current = iter.next();
