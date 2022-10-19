@@ -6,7 +6,10 @@ import java.util.List;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.ui.spriteManager.Sprite;
+import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.view.Viewer;
 import org.jsoar.kernel.events.InputEvent;
 import org.jsoar.kernel.io.InputOutput;
@@ -20,12 +23,19 @@ import com.soar.agent.architecture.robot.RobotAgent;
 public class NodeGraph {
     private static Graph graph;
     private ThreadedAgent agent;
+    private SpriteManager spriteManager;
 
     public NodeGraph(ThreadedAgent agent) {
         System.setProperty("org.graphstream.ui", "swing");
 
-        this.graph = new SingleGraph("Memory Graph");
+        this.graph = new MultiGraph("Memory Graph");
         this.agent = agent;
+        this.spriteManager = new SpriteManager(graph);
+
+        // Sprite s = spriteManager.addSprite("test");
+        // s.attachToEdge(edgeId);
+        // s.setPosition(0.5);
+        // s.detach();
     }
 
     public void startGraph() {
@@ -33,6 +43,7 @@ public class NodeGraph {
         graph.setStrict(false);
         graph.setAutoCreate(true);
         Viewer viewer = graph.display();
+        viewer.enableAutoLayout();
 
         initMemoryInputListener();
 
@@ -70,8 +81,21 @@ public class NodeGraph {
                     }
 
                     for (Node node : graph) {
-                        node.setAttribute("ui.label", node.getId());
+                        
+                        if(node.hasAttribute("nodeValue")){
+                            node.setAttribute("ui.label", node.getAttribute("nodeValue"));
+                            // node.setAttribute("ui.label", node.getId());
+
+                        }
+
+                        // node.setAttribute("xy", 1);
                     }
+
+                    // graph.edges().forEach(edge -> {
+                    //     edge.setAttribute("ui.label", "test");
+                    // });
+
+                    // explore(graph.getNode("landmarks"));
                 }
             }
 
@@ -82,14 +106,23 @@ public class NodeGraph {
 
     }
 
-    private void addChildrenNodes(Wme Parent, Iterator<Wme> childs){
+    private void addChildrenNodes(Wme parent, Iterator<Wme> childs){
+        
+        //set parent node values; parent node is the one calling this method. for example I2
+        //nodeValue : it is the memory value such as L1, I2 or actual value...
+        //node id : it is be the actual name such as self, pose, landmark
 
-        int id = 0;
+        Node parentNode = graph.addNode(parent.getAttribute().toString());
+        parentNode.setAttribute("nodeValue", parent.getValue().toString());
+
         for(Iterator<Wme> iter = childs; iter.hasNext();){
             Wme current = iter.next();
+            String edgeId = parent.getAttribute().toString() + current.getAttribute().toString();
 
-            graph.addEdge(current.getAttribute().toString()+current.getTimetag(), Parent.getAttribute().toString(), current.getAttribute().toString(), true);
-            
+            Node childNode = graph.addNode(current.getAttribute().toString());
+            childNode.setAttribute("nodeValue", current.getValue().toString());
+
+            graph.addEdge(edgeId, parentNode, childNode, true);
         }
     }
 
@@ -121,10 +154,10 @@ public class NodeGraph {
             "shadow-color: grey;" +
             "shadow-offset: 0px;" +
             "shadow-width: 5px;" +
-            "text-alignment: under;" +
-            "text-background-mode: rounded-box;" +
-            "text-background-color: gold;" +
-            "text-padding: 1px;" +
+            // "text-alignment: under;" +
+            // "text-background-mode: rounded-box;" +
+            // "text-background-color: gold;" +
+            // "text-padding: 1px;" +
             "}" +
             "node.marked {" +
             "	fill-color: blue;" +
