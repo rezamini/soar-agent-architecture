@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
@@ -85,15 +86,17 @@ public class NodeGraph {
                         if(node.hasAttribute("nodeValue")){
                             node.setAttribute("ui.label", node.getAttribute("nodeValue"));
                             // node.setAttribute("ui.label", node.getId());
-
                         }
 
                         // node.setAttribute("xy", 1);
                     }
 
-                    // graph.edges().forEach(edge -> {
-                    //     edge.setAttribute("ui.label", "test");
-                    // });
+                    graph.edges().forEach(edge -> {
+
+                        if(edge.hasAttribute("edgeValue")){
+                            edge.setAttribute("ui.label", "^" + edge.getAttribute("edgeValue"));
+                        }
+                    });
 
                     // explore(graph.getNode("landmarks"));
                 }
@@ -118,10 +121,11 @@ public class NodeGraph {
 
         Node inputMainNode = graph.addNode(parentWme.getIdentifier().toString());
         inputMainNode.setAttribute("nodeValue", parentWme.getIdentifier().toString());
-
+        
         //this edge connects all the nodes to the main memory node which is I2
         // this becomes the first parent of all the other nodes.
-        graph.addEdge(inputMainId, inputMainNode, parentNode, true);
+        Edge edge = graph.addEdge(inputMainId, inputMainNode, parentNode, true);
+        edge.setAttribute("edgeValue", parentWme.getAttribute().toString());
     }
 
     private void addChildrenNodes(Wme parent, Iterator<Wme> childs){
@@ -131,17 +135,19 @@ public class NodeGraph {
         //node id : it is be the actual name such as self, pose, landmark
         Node parentNode = graph.addNode(parent.getAttribute().toString());
         parentNode.setAttribute("nodeValue", parent.getValue().toString());
+        
 
         setMainInputNode(parent, parentNode);
 
         for(Iterator<Wme> iter = childs; iter.hasNext();){
             Wme current = iter.next();
             String edgeId = parent.getAttribute().toString() + current.getAttribute().toString();
-
+            
             Node childNode = graph.addNode(current.getAttribute().toString());
             childNode.setAttribute("nodeValue", current.getValue().toString());
-
-            graph.addEdge(edgeId, parentNode, childNode, true);
+            
+            Edge edge = graph.addEdge(edgeId, parentNode, childNode, true);
+            edge.setAttribute("edgeValue", current.getAttribute().toString());
         }
     }
 
@@ -183,8 +189,8 @@ public class NodeGraph {
             "fill-mode: dyn-plain; " +
             "}" +
             "edge {" +
-            // "shape: angle;" +
             "arrow-shape: arrow;" +
             "size: 2; " +
+            "text-size: 15;	" +
             "}";
 }
