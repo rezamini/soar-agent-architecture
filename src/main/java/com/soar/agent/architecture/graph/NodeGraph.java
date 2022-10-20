@@ -19,10 +19,11 @@ import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.events.SoarEvent;
 import org.jsoar.util.events.SoarEventListener;
 
+import com.google.common.collect.Iterators;
 import com.soar.agent.architecture.robot.RobotAgent;
 
 public class NodeGraph {
-    private static Graph graph;
+    private Graph graph;
     private ThreadedAgent agent;
     private SpriteManager spriteManager;
 
@@ -133,9 +134,9 @@ public class NodeGraph {
         //set parent node values; parent node is the one calling this method. for example I2
         //nodeValue : it is the memory value such as L1, I2 or actual value...
         //node id : it is be the actual name such as self, pose, landmark
-        Node parentNode = graph.addNode(parent.getAttribute().toString());
-        parentNode.setAttribute("nodeValue", parent.getValue().toString());
         
+        Node parentNode = graph.addNode(parent.getIdentifier().toString() + parent.getAttribute().toString());
+        parentNode.setAttribute("nodeValue", parent.getValue().toString());  
 
         setMainInputNode(parent, parentNode);
 
@@ -143,11 +144,17 @@ public class NodeGraph {
             Wme current = iter.next();
             String edgeId = parent.getAttribute().toString() + current.getAttribute().toString();
             
-            Node childNode = graph.addNode(current.getAttribute().toString());
+            Node childNode = graph.addNode(current.getIdentifier().toString() + current.getAttribute().toString());
             childNode.setAttribute("nodeValue", current.getValue().toString());
             
             Edge edge = graph.addEdge(edgeId, parentNode, childNode, true);
             edge.setAttribute("edgeValue", current.getAttribute().toString());
+
+            // if(current.getAttribute().toString().equalsIgnoreCase("landmark-a")){
+                if(Iterators.size(current.getChildren()) > 0){
+                    addChildrenNodes(current, current.getChildren());
+                }
+            // }
         }
     }
 
@@ -170,7 +177,7 @@ public class NodeGraph {
 
     protected static String styleSheet = "node {" +
             "fill-color: red;" +
-            "size: 40px;" +
+            "size: 20px;" +
             "text-size: 20;	" +
             "fill-mode: dyn-plain; " +
             "text-mode: normal; " +
