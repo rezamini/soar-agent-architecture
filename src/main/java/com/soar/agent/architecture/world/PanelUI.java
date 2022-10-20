@@ -148,12 +148,20 @@ public class PanelUI extends JPanel {
         debuggerButton.setToolTipText("Open Agent Debugger");
         bar.add(debuggerButton);
 
-        bar.add(new AbstractAction("Graph") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                appMain.startGraph();
-            }
+        // Graph
+        JToggleButton graphButton = createButton("graph", "graph-clicked", true);
+        graphButton.addActionListener((event) -> {
+            appMain.startGraph();
         });
+        graphButton.setToolTipText("Open Memory Visualisation");
+        bar.add(graphButton);
+
+        // bar.add(new AbstractAction("Graph") {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         appMain.startGraph();
+        //     }
+        // });
 
         // bar.add(new AbstractAction("Stop") {
 
