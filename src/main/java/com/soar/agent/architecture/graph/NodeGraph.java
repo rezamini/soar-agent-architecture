@@ -9,8 +9,11 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.ui.graphicGraph.stylesheet.Color;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
+import org.graphstream.ui.swing_viewer.ViewPanel;
+import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.jsoar.kernel.events.InputEvent;
 import org.jsoar.kernel.io.InputOutput;
@@ -41,54 +44,55 @@ public class NodeGraph {
     }
 
     public void startGraph() {
+        graph.setAttribute("ui.title", "Soar Working Memory Visualisation");
         graph.setAttribute("ui.stylesheet", styleSheet);
         graph.setStrict(false);
         graph.setAutoCreate(true);
+        graph.setAttribute("ui.quality");
         Viewer viewer = graph.display();
-        viewer.enableAutoLayout();
-
-        initMemoryInputListener();
-
-        // graph.addEdge("1", "A", "B", true);
-        // graph.addEdge("2", "A", "C", true);
+        // View view = viewer.getDefaultView();
+        // view.getCamera().setViewPercent(0.5);
+        ViewPanel viewPanel = (ViewPanel) viewer.getDefaultView();
+        // viewPanel.getCamera().setViewPercent(0.5);
+        viewPanel.resizeFrame(1000, 800);
         
-        // graph.addEdge("3", "C", "A", true);
-        // graph.addEdge("AD", "A", "D", true);
-        // graph.addEdge("DE", "D", "E", true);
-        // graph.addEdge("DF", "D", "F", true);
-        // graph.addEdge("EF", "E", "F", true);
-
-
+        
+        initMemoryInputListener();
     }
 
     private void initMemoryInputListener() {
         agent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
 
             @Override
-            public void onEvent(SoarEvent event) {      
+            public void onEvent(SoarEvent event) {
                 List<Wme> wmeList = new ArrayList<Wme>();
                 agent.getInputOutput().getInputLink().getWmes().forEachRemaining(wmeList::add);
 
-                if(wmeList != null && wmeList.size() > 0){
-                    
-                    for(int i=0; i<wmeList.size(); i++){
+                if (wmeList != null && wmeList.size() > 0) {
+
+                    for (int i = 0; i < wmeList.size(); i++) {
                         Wme current = wmeList.get(i);
-                        
-                        if(current.getChildren() != null){
+
+                        if (current.getChildren() != null) {
                             addTopNodesAndChildren(current, current.getChildren());
                         }
                     }
 
                     for (Node node : graph) {
                         
-                        if(node.hasAttribute("nodeValue")){
+                        if (node.hasAttribute("nodeValue")) {
                             node.setAttribute("ui.label", node.getAttribute("nodeValue"));
+
+                            if (node.hasAttribute("isLastNode")) {
+                                node.setAttribute("ui.class", "value");
+                            }
+                            
                         }
                     }
 
                     graph.edges().forEach(edge -> {
-
-                        if(edge.hasAttribute("edgeValue")){
+                        
+                        if (edge.hasAttribute("edgeValue")) {
                             edge.setAttribute("ui.label", "^" + edge.getAttribute("edgeValue"));
                         }
                     });
@@ -105,54 +109,63 @@ public class NodeGraph {
 
     /**
      * Set the parent of all the nodes if required. Which is I2.
-     * This create a main input node and connect all the other nodes(childs) as part of this node.
+     * This create a main input node and connect all the other nodes(childs) as part
+     * of this node.
+     * 
      * @param parentWme
      * @param parentNode
      */
-    private void addInputParentNode(Wme parentWme, Node parentNode){
-        //The main input id will be like, I2area, I2landmarks etc to make it unique 
+    private void addInputParentNode(Wme parentWme, Node parentNode) {
+        // The main input id will be like, I2area, I2landmarks etc to make it unique
         String inputMainId = parentWme.getIdentifier().toString() + parentWme.getAttribute().toString();
 
         Node inputMainNode = graph.addNode(parentWme.getIdentifier().toString());
         inputMainNode.setAttribute("nodeValue", parentWme.getIdentifier().toString());
+
+        //set the css property for the main node (I2)
+        inputMainNode.setAttribute("ui.class", "main");
         
-        //this edge connects all the nodes to the main memory node which is I2
+        // this edge connects all the nodes to the main memory node which is I2
         // this becomes the first parent of all the other nodes.
         Edge edge = graph.addEdge(inputMainId, inputMainNode, parentNode, true);
         edge.setAttribute("edgeValue", parentWme.getAttribute().toString());
     }
 
-    private void addTopNodesAndChildren(Wme parent, Iterator<Wme> childs){
-        //set parent node values; parent node is the one calling this method. for example I2
-        //nodeValue : it is the memory value such as L1, I2 or actual value...
-        //node id : it is be the actual name such as self, pose, landmark
-        
+    private void addTopNodesAndChildren(Wme parent, Iterator<Wme> childs) {
+        // set parent node values; parent node is the one calling this method. for
+        // example I2
+        // nodeValue : it is the memory value such as L1, I2 or actual value...
+        // node id : it is be the actual name such as self, pose, landmark
+
         Node parentNode = graph.addNode(parent.getAttribute().toString());
-        parentNode.setAttribute("nodeValue", parent.getValue().toString());  
+        parentNode.setAttribute("nodeValue", parent.getValue().toString());
 
         addInputParentNode(parent, parentNode);
         addChildNodes(parentNode, parent, childs);
     }
 
-    private void addChildNodes(Node mainNode, Wme parentWme, Iterator<Wme> childs){
-        // Node parentNode = graph.addNode(parent.getIdentifier().toString() + parent.getAttribute().toString());
-        // parentNode.setAttribute("nodeValue", parent.getValue().toString());  
+    private void addChildNodes(Node mainNode, Wme parentWme, Iterator<Wme> childs) {
+        // Node parentNode = graph.addNode(parent.getIdentifier().toString() +
+        // parent.getAttribute().toString());
+        // parentNode.setAttribute("nodeValue", parent.getValue().toString());
 
-        for(Iterator<Wme> iter = childs; iter.hasNext();){
+        for (Iterator<Wme> iter = childs; iter.hasNext();) {
             Wme current = iter.next();
 
-            //example: landmark-aname, landmarka-distance, viewnorth
+            // example: landmark-aname, landmarka-distance, viewnorth
             String edgeId = parentWme.getAttribute().toString() + current.getAttribute().toString();
-            
-            //example: L2direction-command, L2distance, S10name, V1northeast
+
+            // example: L2direction-command, L2distance, S10name, V1northeast
             Node childNode = graph.addNode(current.getIdentifier().toString() + current.getAttribute().toString());
             childNode.setAttribute("nodeValue", current.getValue().toString());
-            
+
             Edge edge = graph.addEdge(edgeId, mainNode, childNode, true);
             edge.setAttribute("edgeValue", current.getAttribute().toString());
 
-            if(Iterators.size(current.getChildren()) > 0){
+            if (Iterators.size(current.getChildren()) > 0) {
                 addChildNodes(childNode, current, current.getChildren());
+            } else {
+                childNode.setAttribute("isLastNode", true);
             }
         }
     }
@@ -175,20 +188,34 @@ public class NodeGraph {
     }
 
     protected static String styleSheet = "node {" +
-            "fill-color: red;" +
-            "size: 20px;" +
-            "text-size: 20;	" +
+            "fill-color: green, blue;" +
+            "size: 25px;" +
+            "text-size: 10;	" +
             "fill-mode: dyn-plain; " +
             "text-mode: normal; " +
             "text-alignment: center; " +
-            "shadow-mode: gradient-horizontal;" +
-            "shadow-color: grey;" +
-            "shadow-offset: 0px;" +
-            "shadow-width: 5px;" +
+            // "shadow-mode: gradient-horizontal;" +
+            // "shadow-color: grey;" +
+            // "shadow-offset: 0px;" +
+            // "shadow-width: 5px;" +
+            "}" +
+            "node.value {" +
+            "stroke-mode: dots;"+
+            "padding: 3px;"+
+            "fill-mode: dyn-plain; " +
+            "shape: box;"+
+            "size-mode: fit;" +
+            "fill-color: white;" +
             // "text-alignment: under;" +
             // "text-background-mode: rounded-box;" +
             // "text-background-color: gold;" +
             // "text-padding: 1px;" +
+            
+            "}" +
+            "node.main {" +
+            "fill-color: cyan, red;" +
+            "fill-mode: dyn-plain; " +
+            "size: 35px;" +
             "}" +
             "node.marked {" +
             "	fill-color: blue;" +
@@ -197,6 +224,6 @@ public class NodeGraph {
             "edge {" +
             "arrow-shape: arrow;" +
             "size: 2; " +
-            "text-size: 15;	" +
+            "text-size: 10;	" +
             "}";
 }
