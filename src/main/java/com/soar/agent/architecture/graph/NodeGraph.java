@@ -62,8 +62,6 @@ public class NodeGraph {
     }
 
     private void initMemoryInputListener() {
-
-
         agent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
 
             @Override
@@ -71,14 +69,13 @@ public class NodeGraph {
                 List<Wme> wmeList = new ArrayList<Wme>();
                 agent.getInputOutput().getInputLink().getWmes().forEachRemaining(wmeList::add);
 
-                
                 if(wmeList != null && wmeList.size() > 0){
                     
                     for(int i=0; i<wmeList.size(); i++){
                         Wme current = wmeList.get(i);
                         
                         if(current.getChildren() != null){
-                            addChildrenNodes(current, current.getChildren());
+                            addTopNodesAndChildren(current, current.getChildren());
                         }
                     }
 
@@ -86,10 +83,7 @@ public class NodeGraph {
                         
                         if(node.hasAttribute("nodeValue")){
                             node.setAttribute("ui.label", node.getAttribute("nodeValue"));
-                            // node.setAttribute("ui.label", node.getId());
                         }
-
-                        // node.setAttribute("xy", 1);
                     }
 
                     graph.edges().forEach(edge -> {
@@ -98,7 +92,6 @@ public class NodeGraph {
                             edge.setAttribute("ui.label", "^" + edge.getAttribute("edgeValue"));
                         }
                     });
-
                     // explore(graph.getNode("landmarks"));
                 }
             }
@@ -111,12 +104,12 @@ public class NodeGraph {
     }
 
     /**
-     * Set the parent of all the nodes if required.
+     * Set the parent of all the nodes if required. Which is I2.
      * This create a main input node and connect all the other nodes(childs) as part of this node.
      * @param parentWme
      * @param parentNode
      */
-    private void setMainInputNode(Wme parentWme, Node parentNode){
+    private void addInputParentNode(Wme parentWme, Node parentNode){
         //The main input id will be like, I2area, I2landmarks etc to make it unique 
         String inputMainId = parentWme.getIdentifier().toString() + parentWme.getAttribute().toString();
 
@@ -129,32 +122,38 @@ public class NodeGraph {
         edge.setAttribute("edgeValue", parentWme.getAttribute().toString());
     }
 
-    private void addChildrenNodes(Wme parent, Iterator<Wme> childs){
-        
+    private void addTopNodesAndChildren(Wme parent, Iterator<Wme> childs){
         //set parent node values; parent node is the one calling this method. for example I2
         //nodeValue : it is the memory value such as L1, I2 or actual value...
         //node id : it is be the actual name such as self, pose, landmark
         
-        Node parentNode = graph.addNode(parent.getIdentifier().toString() + parent.getAttribute().toString());
+        Node parentNode = graph.addNode(parent.getAttribute().toString());
         parentNode.setAttribute("nodeValue", parent.getValue().toString());  
 
-        setMainInputNode(parent, parentNode);
+        addInputParentNode(parent, parentNode);
+        addChildNodes(parentNode, parent, childs);
+    }
+
+    private void addChildNodes(Node mainNode, Wme parentWme, Iterator<Wme> childs){
+        // Node parentNode = graph.addNode(parent.getIdentifier().toString() + parent.getAttribute().toString());
+        // parentNode.setAttribute("nodeValue", parent.getValue().toString());  
 
         for(Iterator<Wme> iter = childs; iter.hasNext();){
             Wme current = iter.next();
-            String edgeId = parent.getAttribute().toString() + current.getAttribute().toString();
+
+            //example: landmark-aname, landmarka-distance, viewnorth
+            String edgeId = parentWme.getAttribute().toString() + current.getAttribute().toString();
             
+            //example: L2direction-command, L2distance, S10name, V1northeast
             Node childNode = graph.addNode(current.getIdentifier().toString() + current.getAttribute().toString());
             childNode.setAttribute("nodeValue", current.getValue().toString());
             
-            Edge edge = graph.addEdge(edgeId, parentNode, childNode, true);
+            Edge edge = graph.addEdge(edgeId, mainNode, childNode, true);
             edge.setAttribute("edgeValue", current.getAttribute().toString());
 
-            // if(current.getAttribute().toString().equalsIgnoreCase("landmark-a")){
-                if(Iterators.size(current.getChildren()) > 0){
-                    addChildrenNodes(current, current.getChildren());
-                }
-            // }
+            if(Iterators.size(current.getChildren()) > 0){
+                addChildNodes(childNode, current, current.getChildren());
+            }
         }
     }
 
