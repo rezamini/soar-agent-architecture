@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JPanel;
+
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -12,6 +14,9 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.graphicGraph.stylesheet.Color;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
+import org.graphstream.ui.swing.SwingGraphRenderer;
+import org.graphstream.ui.swing_viewer.DefaultView;
+import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
@@ -24,18 +29,22 @@ import org.jsoar.util.events.SoarEventListener;
 
 import com.google.common.collect.Iterators;
 import com.soar.agent.architecture.robot.RobotAgent;
+import java.awt.BorderLayout;
+import java.io.IOException;
 
-public class NodeGraph {
+public class NodeGraph extends JPanel{
     private Graph graph;
     private ThreadedAgent agent;
     private SpriteManager spriteManager;
 
-    public NodeGraph(ThreadedAgent agent) {
-        System.setProperty("org.graphstream.ui", "swing");
+    public NodeGraph(ThreadedAgent agent) throws IOException {
+        super(new BorderLayout());
+        // System.setProperty("org.graphstream.ui", "swing");
 
         this.graph = new MultiGraph("Memory Graph");
         this.agent = agent;
         this.spriteManager = new SpriteManager(graph);
+        startGraph();
 
         // Sprite s = spriteManager.addSprite("test");
         // s.attachToEdge(edgeId);
@@ -49,13 +58,18 @@ public class NodeGraph {
         graph.setStrict(false);
         graph.setAutoCreate(true);
         graph.setAttribute("ui.quality");
-        Viewer viewer = graph.display();
+        graph.setAttribute("ui.antialias");
+        // Viewer viewer = graph.display();
+        SwingViewer viewer = new SwingViewer(graph, SwingViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+        viewer.enableAutoLayout();
+
         // View view = viewer.getDefaultView();
         // view.getCamera().setViewPercent(0.5);
-        ViewPanel viewPanel = (ViewPanel) viewer.getDefaultView();
+        // ViewPanel viewPanel = (ViewPanel) viewer.getDefaultView();
         // viewPanel.getCamera().setViewPercent(0.5);
-        viewPanel.resizeFrame(1000, 800);
+        // viewPanel.resizeFrame(1000, 800);
         
+        add((DefaultView) viewer.addDefaultView(false, new SwingGraphRenderer()), BorderLayout.CENTER);
         
         initMemoryInputListener();
     }

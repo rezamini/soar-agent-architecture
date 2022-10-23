@@ -1,11 +1,13 @@
 package com.soar.agent.architecture;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import com.soar.agent.architecture.events.MoveResponder;
 import com.soar.agent.architecture.graph.NodeGraph;
+import com.soar.agent.architecture.graph.NodeGraphUI;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 import com.soar.agent.architecture.world.PanelUI;
@@ -98,9 +100,8 @@ public class AppMain {
     public void startGraph(){
         if (agents != null && agents.size() > 0) {
             RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
-            NodeGraph graph = new NodeGraph(agent.getThreadedAgent());
-            // graph.main(null);
-            graph.startGraph();
+            NodeGraphUI graph = new NodeGraphUI(agent.getThreadedAgent());
+            // graph.startGraph();
         }
     }
 }
