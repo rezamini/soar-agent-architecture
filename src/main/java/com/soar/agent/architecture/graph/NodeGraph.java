@@ -32,13 +32,13 @@ import com.soar.agent.architecture.robot.RobotAgent;
 import java.awt.BorderLayout;
 import java.io.IOException;
 
-public class NodeGraph extends JPanel{
+public class NodeGraph{
     private Graph graph;
     private ThreadedAgent agent;
     private SpriteManager spriteManager;
+    public SwingViewer viewer;
 
     public NodeGraph(ThreadedAgent agent) throws IOException {
-        super(new BorderLayout());
         // System.setProperty("org.graphstream.ui", "swing");
 
         this.graph = new MultiGraph("Memory Graph");
@@ -60,7 +60,7 @@ public class NodeGraph extends JPanel{
         graph.setAttribute("ui.quality");
         graph.setAttribute("ui.antialias");
         // Viewer viewer = graph.display();
-        SwingViewer viewer = new SwingViewer(graph, SwingViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+        viewer = new SwingViewer(graph, SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
 
         // View view = viewer.getDefaultView();
@@ -69,7 +69,7 @@ public class NodeGraph extends JPanel{
         // viewPanel.getCamera().setViewPercent(0.5);
         // viewPanel.resizeFrame(1000, 800);
         
-        add((DefaultView) viewer.addDefaultView(false, new SwingGraphRenderer()), BorderLayout.CENTER);
+        // add((DefaultView) viewer.addDefaultView(false, new SwingGraphRenderer()), BorderLayout.CENTER);
         
         initMemoryInputListener();
     }
