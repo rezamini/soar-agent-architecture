@@ -4,7 +4,11 @@ import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -28,16 +32,18 @@ public class NodeGraphUI extends JPanel {
 
     private ThreadedAgent agent;
     private NodeGraph nodeGraph;
+    private JToolBar nodesToolbar;
 
     public NodeGraphUI(ThreadedAgent agent) {
         super(new BorderLayout());
 
         this.agent = agent;
         initGraphUI();
-        
+        initGraphMenu();
+        initGraphToolbar();
     }
 
-    private void initGraphUI(){
+    private void initGraphUI() {
         SwingTools.initializeLookAndFeel();
         SwingUtilities.invokeLater(() -> {
             JFrame f = new JFrame();
@@ -51,9 +57,10 @@ public class NodeGraphUI extends JPanel {
                 f.setTitle("Soar Working Memory Visualisation");
                 f.setLocationRelativeTo(null);
 
-                //call and add the viewer to UI from this class.
+                // call and add the viewer to UI from this class.
                 nodeGraph = new NodeGraph(agent);
-                add((DefaultView) nodeGraph.viewer.addDefaultView(false, new SwingGraphRenderer()), BorderLayout.CENTER);
+                add((DefaultView) nodeGraph.viewer.addDefaultView(false, new SwingGraphRenderer()),
+                        BorderLayout.CENTER);
 
             } catch (IOException e) {
                 System.err.println("****** ERROR in graph init *****");
@@ -62,4 +69,42 @@ public class NodeGraphUI extends JPanel {
         });
     }
 
+    private void initGraphMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Menu");
+
+        // JMenuItem menuItem = new JMenuItem("Enable Node Menu");
+        JCheckBox nodeCheckBox = new JCheckBox(" Enable Nodes Menu ");
+        nodeCheckBox.addActionListener((event) -> {
+            if (nodeCheckBox.isSelected()) {
+                nodesToolbar.setVisible(true);
+            } else {
+                nodesToolbar.setVisible(false);
+            }
+        });
+
+        menu.add(nodeCheckBox);
+        menuBar.add(menu);
+
+        add(menuBar, BorderLayout.NORTH);
+
+    }
+
+    private void initGraphToolbar() {
+        nodesToolbar = new JToolBar("Draggable Toolbar");
+
+        //initially set the visibility to false unless it is enabled from the menu
+        nodesToolbar.setVisible(false);
+        nodesToolbar.setFloatable(true);
+        add(nodesToolbar, BorderLayout.WEST);
+
+        nodesToolbar.add(new AbstractAction("Graph") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+    }
 }
