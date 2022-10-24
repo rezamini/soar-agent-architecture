@@ -71,54 +71,6 @@ public class NodeGraph{
         
         // add((DefaultView) viewer.addDefaultView(false, new SwingGraphRenderer()), BorderLayout.CENTER);
         
-        initMemoryInputListener();
-    }
-
-    private void initMemoryInputListener() {
-        agent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
-
-            @Override
-            public void onEvent(SoarEvent event) {
-                List<Wme> wmeList = new ArrayList<Wme>();
-                agent.getInputOutput().getInputLink().getWmes().forEachRemaining(wmeList::add);
-
-                if (wmeList != null && wmeList.size() > 0) {
-
-                    for (int i = 0; i < wmeList.size(); i++) {
-                        Wme current = wmeList.get(i);
-
-                        if (current.getChildren() != null) {
-                            addTopNodesAndChildren(current, current.getChildren());
-                        }
-                    }
-
-                    for (Node node : graph) {
-                        
-                        if (node.hasAttribute("nodeValue")) {
-                            node.setAttribute("ui.label", node.getAttribute("nodeValue"));
-
-                            if (node.hasAttribute("isLastNode")) {
-                                node.setAttribute("ui.class", "value");
-                            }
-                            
-                        }
-                    }
-
-                    graph.edges().forEach(edge -> {
-                        
-                        if (edge.hasAttribute("edgeValue")) {
-                            edge.setAttribute("ui.label", "^" + edge.getAttribute("edgeValue"));
-                        }
-                    });
-                    // explore(graph.getNode("landmarks"));
-                }
-            }
-
-        });
-    }
-
-    public static void main(String[] args) {
-
     }
 
     /**
@@ -145,7 +97,28 @@ public class NodeGraph{
         edge.setAttribute("edgeValue", parentWme.getAttribute().toString());
     }
 
-    private void addTopNodesAndChildren(Wme parent, Iterator<Wme> childs) {
+    void setGraphNodeAndEdgeNames(){
+        for (Node node : graph) {
+                        
+            if (node.hasAttribute("nodeValue")) {
+                node.setAttribute("ui.label", node.getAttribute("nodeValue"));
+
+                if (node.hasAttribute("isLastNode")) {
+                    node.setAttribute("ui.class", "value");
+                }
+                
+            }
+        }
+
+        graph.edges().forEach(edge -> {
+            
+            if (edge.hasAttribute("edgeValue")) {
+                edge.setAttribute("ui.label", "^" + edge.getAttribute("edgeValue"));
+            }
+        });
+    }
+
+    void addTopNodesAndChildren(Wme parent, Iterator<Wme> childs) {
         // set parent node values; parent node is the one calling this method. for
         // example I2
         // nodeValue : it is the memory value such as L1, I2 or actual value...
