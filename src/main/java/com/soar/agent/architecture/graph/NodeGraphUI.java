@@ -13,6 +13,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -43,6 +44,7 @@ import org.graphstream.algorithm.generator.DorogovtsevMendesGenerator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -116,17 +118,27 @@ public class NodeGraphUI extends JPanel {
     private void initGraphToolbar() {
         nodesToolbar = new JToolBar("Draggable Toolbar");
 
-        //page_axis is to-to-bottom layouw and will place the elemnts to the left as well
-        nodesToolbar.setLayout(new BoxLayout(nodesToolbar, BoxLayout.PAGE_AXIS));
-        
+        // page_axis is to-to-bottom layouw and will place the elemnts to the left as
+        // well
+        nodesToolbar.setLayout(new BoxLayout(nodesToolbar, BoxLayout.Y_AXIS));
+
         // nodesToolbar.setOrientation(SwingConstants.VERTICAL);
-        
-        //initially set the visibility to false unless it is enabled from the menu
+
+        // initially set the visibility to false unless it is enabled from the menu
         nodesToolbar.setVisible(false);
         nodesToolbar.setFloatable(true);
         nodesToolbar.setMargin(new Insets(10, 10, 10, 10));
-        
+
         add(nodesToolbar, BorderLayout.WEST);
+
+        //set a title for the toolbar nodes
+        JLabel toolbarTitle = new JLabel("Working Memory Nodes: ");
+        toolbarTitle.setFont(new Font(toolbarTitle.getFont().getName(), toolbarTitle.getFont().getStyle(), 16));
+        // make the title bold
+        toolbarTitle.setFont(toolbarTitle.getFont().deriveFont(toolbarTitle.getFont().getStyle() | Font.BOLD));
+        nodesToolbar.add(toolbarTitle);
+        nodesToolbar.addSeparator();
+        
     }
 
     private void initMemoryInputListener() {
@@ -134,21 +146,22 @@ public class NodeGraphUI extends JPanel {
 
             @Override
             public void onEvent(SoarEvent event) {
-               
-                //add wmes to a seperate list.
-                //cant assign to a iterator and reuse; apparently the size will be 0 after a loop
-               inputList.clear();
-               agent.getInputOutput().getInputLink().getWmes().forEachRemaining(inputList::add);
+
+                // add wmes to a seperate list.
+                // cant assign to a iterator and reuse; apparently the size will be 0 after a
+                // loop
+                inputList.clear();
+                agent.getInputOutput().getInputLink().getWmes().forEachRemaining(inputList::add);
 
                 if (inputList != null) {
-                    for(int i=0; i<inputList.size(); i++){
+                    for (int i = 0; i < inputList.size(); i++) {
                         Wme current = inputList.get(i);
 
                         if (current.getChildren() != null) {
                             nodeGraph.addTopNodesAndChildren(current, current.getChildren());
                         }
                     }
-                    
+
                     nodeGraph.setGraphNodeAndEdgeNames();
                     setNodeMenuItems(inputList.iterator());
                     // explore(graph.getNode("landmarks"));
@@ -159,46 +172,48 @@ public class NodeGraphUI extends JPanel {
     }
 
     private void setNodeMenuItems(Iterator<Wme> inputs) {
-        
-        for(Iterator<Wme> iter = inputs; inputs.hasNext();){
-            
+
+        for (Iterator<Wme> iter = inputs; inputs.hasNext();) {
+
             Wme currentNode = iter.next();
 
             JCheckBox nodeCheckBox = new JCheckBox(currentNode.getAttribute().toString());
             nodeCheckBox.setFont(new Font(nodeCheckBox.getFont().getName(), nodeCheckBox.getFont().getStyle(), 16));
-            nodeCheckBox.addActionListener((event) -> {
-                // if (nodeCheckBox.isSelected()) {
-                //     nodesToolbar.setVisible(true);
-                // } else {
-                //     nodesToolbar.setVisible(false);
-                // }
-            });
+            nodeCheckBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            // nodeCheckBox.addActionListener((event) -> {
+            // // if (nodeCheckBox.isSelected()) {
+            // // nodesToolbar.setVisible(true);
+            // // } else {
+            // // nodesToolbar.setVisible(false);
+            // // }
+            // });
 
             // nodeCheckBox.setAlignmentX(FlowLayout.LEFT);
 
-            
-            if(!checboxMap.containsKey(currentNode.getAttribute().toString())){
+            if (!checboxMap.containsKey(currentNode.getAttribute().toString())) {
                 checboxMap.put(currentNode.getAttribute().toString(), nodeCheckBox);
-                
+
                 nodesToolbar.add(nodeCheckBox);
                 // nodesToolbar.add(new JSeparator());
+                nodesToolbar.addSeparator();
 
-                //refresh the toolbar
+                // refresh the toolbar
                 nodesToolbar.repaint();
                 nodesToolbar.revalidate();
-                
-            }     
-            
+
+            }
+
         }
 
         // nodesToolbar.add(list);
         // nodesToolbar.add(new AbstractAction("Graph") {
 
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         // TODO Auto-generated method stub
+        // @Override
+        // public void actionPerformed(ActionEvent e) {
+        // // TODO Auto-generated method stub
 
-        //     }
+        // }
         // });
     }
 }
