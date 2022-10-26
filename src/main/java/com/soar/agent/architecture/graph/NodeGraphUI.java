@@ -3,9 +3,11 @@ package com.soar.agent.architecture.graph;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -58,6 +60,7 @@ public class NodeGraphUI extends JPanel {
     private JToolBar nodesToolbar;
     private Map<String, JCheckBox> checboxMap = new HashMap<String, JCheckBox>();
     private List<Wme> inputList = new ArrayList<Wme>();
+    private Set<String> uncheckNodeNames = new HashSet<String>();
 
     public NodeGraphUI(ThreadedAgent agent) {
         super(new BorderLayout());
@@ -131,14 +134,14 @@ public class NodeGraphUI extends JPanel {
 
         add(nodesToolbar, BorderLayout.WEST);
 
-        //set a title for the toolbar nodes
+        // set a title for the toolbar nodes
         JLabel toolbarTitle = new JLabel("Working Memory Nodes: ");
         toolbarTitle.setFont(new Font(toolbarTitle.getFont().getName(), toolbarTitle.getFont().getStyle(), 16));
         // make the title bold
         toolbarTitle.setFont(toolbarTitle.getFont().deriveFont(toolbarTitle.getFont().getStyle() | Font.BOLD));
         nodesToolbar.add(toolbarTitle);
         nodesToolbar.addSeparator();
-        
+
     }
 
     private void initMemoryInputListener() {
@@ -153,49 +156,65 @@ public class NodeGraphUI extends JPanel {
                 inputList.clear();
                 agent.getInputOutput().getInputLink().getWmes().forEachRemaining(inputList::add);
 
-                if (inputList != null) {
-                    for (int i = 0; i < inputList.size(); i++) {
-                        Wme current = inputList.get(i);
-
-                        if (current.getChildren() != null) {
-                            nodeGraph.addTopNodesAndChildren(current, current.getChildren());
-                        }
-                    }
-
-                    nodeGraph.setGraphNodeAndEdgeNames();
-                    setNodeMenuItems(inputList.iterator());
-                    // explore(graph.getNode("landmarks"));
-                }
+                renderGraphElements();
+                setNodeMenuItems(inputList);
             }
 
         });
     }
 
-    private void setNodeMenuItems(Iterator<Wme> inputs) {
+    private void renderGraphElements() {
+        if (inputList != null) {
+            for (int i = 0; i < inputList.size(); i++) {
+                Wme current = inputList.get(i);
+                
+                //removing nodes
+                if(uncheckNodeNames.contains(current.getAttribute().toString())){
+                    //we need to remove & skip because this wme is unchecked from the UI list
+                    nodeGraph.removeTopNodesAndChildren(current, current.getChildren());
 
-        for (Iterator<Wme> iter = inputs; inputs.hasNext();) {
+                    continue;
+                }
 
-            Wme currentNode = iter.next();
+                //add the rest of the nodes, the checked nodes
+                if (current.getChildren() != null) {
+                    nodeGraph.addTopNodesAndChildren(current, current.getChildren());
+                }
+            }
 
-            JCheckBox nodeCheckBox = new JCheckBox(currentNode.getAttribute().toString());
-            nodeCheckBox.setFont(new Font(nodeCheckBox.getFont().getName(), nodeCheckBox.getFont().getStyle(), 16));
-            nodeCheckBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+            nodeGraph.setGraphNodeAndEdgeNames();
+            // explore(graph.getNode("landmarks"));
+        }
+    }
 
-            // nodeCheckBox.addActionListener((event) -> {
-            // // if (nodeCheckBox.isSelected()) {
-            // // nodesToolbar.setVisible(true);
-            // // } else {
-            // // nodesToolbar.setVisible(false);
-            // // }
-            // });
+    private void setNodeMenuItems(List<Wme> inputList) {
 
-            // nodeCheckBox.setAlignmentX(FlowLayout.LEFT);
+        for (Wme currentNode : inputList) {
+            // Wme currentNode = iter.next();
+            String nodeName = "^" + currentNode.getAttribute().toString();
 
-            if (!checboxMap.containsKey(currentNode.getAttribute().toString())) {
-                checboxMap.put(currentNode.getAttribute().toString(), nodeCheckBox);
+            if (!checboxMap.containsKey(nodeName)) {
 
+                JCheckBox nodeCheckBox = new JCheckBox(nodeName);
+                nodeCheckBox.setSelected(true);
+                nodeCheckBox.setFont(new Font(nodeCheckBox.getFont().getName(), nodeCheckBox.getFont().getStyle(), 16));
+                nodeCheckBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                nodeCheckBox.addActionListener((event) -> {
+                    if (nodeCheckBox.isSelected()) {
+                        if (uncheckNodeNames.contains(currentNode.getAttribute().toString())) {
+                            uncheckNodeNames.remove(currentNode.getAttribute().toString());
+                        }
+                    } else {
+                        uncheckNodeNames.add(currentNode.getAttribute().toString());
+                    }
+                    renderGraphElements();
+                });
+
+                // nodeCheckBox.setAlignmentX(FlowLayout.LEFT);
+
+                checboxMap.put(nodeName, nodeCheckBox);
                 nodesToolbar.add(nodeCheckBox);
-                // nodesToolbar.add(new JSeparator());
                 nodesToolbar.addSeparator();
 
                 // refresh the toolbar
@@ -203,17 +222,6 @@ public class NodeGraphUI extends JPanel {
                 nodesToolbar.revalidate();
 
             }
-
         }
-
-        // nodesToolbar.add(list);
-        // nodesToolbar.add(new AbstractAction("Graph") {
-
-        // @Override
-        // public void actionPerformed(ActionEvent e) {
-        // // TODO Auto-generated method stub
-
-        // }
-        // });
     }
 }

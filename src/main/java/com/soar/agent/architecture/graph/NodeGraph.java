@@ -33,7 +33,7 @@ import java.awt.BorderLayout;
 import java.io.IOException;
 
 public class NodeGraph{
-    private Graph graph;
+    public Graph graph;
     private ThreadedAgent agent;
     private SpriteManager spriteManager;
     public SwingViewer viewer;
@@ -123,12 +123,40 @@ public class NodeGraph{
         // example I2
         // nodeValue : it is the memory value such as L1, I2 or actual value...
         // node id : it is be the actual name such as self, pose, landmark
-
+        
         Node parentNode = graph.addNode(parent.getAttribute().toString());
         parentNode.setAttribute("nodeValue", parent.getValue().toString());
 
         addInputParentNode(parent, parentNode);
         addChildNodes(parentNode, parent, childs);
+    }
+
+    void removeTopNodesAndChildren(Wme parent, Iterator<Wme> childs) {
+        
+        //remove parent node
+        Node parentNode = graph.getNode(parent.getAttribute().toString());
+        if(graph.getNode(parent.getAttribute().toString()) != null){
+            graph.removeNode(parent.getAttribute().toString());
+        }
+
+        removeChildNodes(parentNode, parent, childs);
+    }
+
+    private void removeChildNodes(Node mainNode, Wme parentWme, Iterator<Wme> childs) {
+        for (Iterator<Wme> iter = childs; iter.hasNext();) {
+            Wme current = iter.next();
+
+            // example: L2direction-command, L2distance, S10name, V1northeast
+            Node childNode = graph.addNode(current.getIdentifier().toString() + current.getAttribute().toString());
+            
+            if(childNode != null){
+                graph.removeNode(childNode);
+            }
+
+            if (Iterators.size(current.getChildren()) > 0) {
+                removeChildNodes(childNode, current, current.getChildren());
+            }
+        }
     }
 
     private void addChildNodes(Node mainNode, Wme parentWme, Iterator<Wme> childs) {
