@@ -1,8 +1,10 @@
 package com.soar.agent.architecture.graph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import javax.swing.JPanel;
 
@@ -69,13 +71,13 @@ public class NodeGraph {
 
         view = viewer.addDefaultView(false, new SwingGraphRenderer());
 
-        //ViewPanel viewPanel = (ViewPanel) view;
+        // ViewPanel viewPanel = (ViewPanel) view;
 
         // viewPanel.addMouseWheelListener(new MouseWheelListener() {
-        //     @Override
-        //     public void mouseWheelMoved(MouseWheelEvent mwe) {
-        //         zoomGraphMouseWheelMoved(mwe, viewPanel);
-        //     }
+        // @Override
+        // public void mouseWheelMoved(MouseWheelEvent mwe) {
+        // zoomGraphMouseWheelMoved(mwe, viewPanel);
+        // }
 
         // });
 
@@ -135,7 +137,7 @@ public class NodeGraph {
         });
     }
 
-    void addTopNodesAndChildren(Wme parent, Iterator<Wme> childs) {
+    void addTopNodesAndChildren(Wme parent, List<Wme> childs) {
         // set parent node values; parent node is the one calling this method. for
         // example I2
         // nodeValue : it is the memory value such as L1, I2 or actual value...
@@ -176,13 +178,19 @@ public class NodeGraph {
         }
     }
 
-    private void addChildNodes(Node mainNode, Wme parentWme, Iterator<Wme> childs) {
+    private void addChildNodes(Node mainNode, Wme parentWme, List<Wme> childs) {
         // Node parentNode = graph.addNode(parent.getIdentifier().toString() +
         // parent.getAttribute().toString());
         // parentNode.setAttribute("nodeValue", parent.getValue().toString());
+        
+        //check if parent node is last node
+        if (childs.size() == 0) {
+            mainNode.setAttribute("isLastNode", true);
+        }
 
-        for (Iterator<Wme> iter = childs; iter.hasNext();) {
-            Wme current = iter.next();
+        for(Wme current: childs){
+        // for (Iterator<Wme> iter = childs; iter.hasNext();) {
+            // Wme current = iter.next();
 
             // example: landmark-aname, landmarka-distance, viewnorth
             String edgeId = parentWme.getAttribute().toString() + current.getAttribute().toString();
@@ -194,37 +202,39 @@ public class NodeGraph {
             Edge edge = graph.addEdge(edgeId, mainNode, childNode, true);
             edge.setAttribute("edgeValue", current.getAttribute().toString());
 
-            if (Iterators.size(current.getChildren()) > 0) {
-                addChildNodes(childNode, current, current.getChildren());
+            List<Wme> tempList = new ArrayList<Wme>();
+            current.getChildren().forEachRemaining(tempList::add);
+            if (tempList.size() > 0) {
+                addChildNodes(childNode, current, tempList);
             } else {
                 childNode.setAttribute("isLastNode", true);
             }
         }
     }
 
-    void zoomIn(){
+    void zoomIn() {
         double newViewPercent = view.getCamera().getViewPercent() - 0.09;
         view.getCamera().setViewPercent(newViewPercent);
     }
 
-    void zoomOut(){
+    void zoomOut() {
         double newViewPercent = view.getCamera().getViewPercent() + 0.09;
         view.getCamera().setViewPercent(newViewPercent);
     }
 
-
-    // public static void zoomGraphMouseWheelMoved(MouseWheelEvent mwe, ViewPanel view_panel){
-    //     if (Event.ALT_MASK != 0) {            
-    //         if (mwe.getWheelRotation() > 0) {
-    //             double new_view_percent = view_panel.getCamera().getViewPercent() + 0.05;
-    //             view_panel.getCamera().setViewPercent(new_view_percent);               
-    //         } else if (mwe.getWheelRotation() < 0) {
-    //             double current_view_percent = view_panel.getCamera().getViewPercent();
-    //             if(current_view_percent > 0.05){
-    //                 view_panel.getCamera().setViewPercent(current_view_percent - 0.05);                
-    //             }
-    //         }
-    //     }                     
+    // public static void zoomGraphMouseWheelMoved(MouseWheelEvent mwe, ViewPanel
+    // view_panel){
+    // if (Event.ALT_MASK != 0) {
+    // if (mwe.getWheelRotation() > 0) {
+    // double new_view_percent = view_panel.getCamera().getViewPercent() + 0.05;
+    // view_panel.getCamera().setViewPercent(new_view_percent);
+    // } else if (mwe.getWheelRotation() < 0) {
+    // double current_view_percent = view_panel.getCamera().getViewPercent();
+    // if(current_view_percent > 0.05){
+    // view_panel.getCamera().setViewPercent(current_view_percent - 0.05);
+    // }
+    // }
+    // }
     // }
 
     public void explore(Node source) {

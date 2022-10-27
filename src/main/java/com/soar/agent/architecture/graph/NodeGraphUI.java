@@ -227,7 +227,11 @@ public class NodeGraphUI extends JPanel {
 
                 // add the rest of the nodes, the checked nodes
                 if (current.getChildren() != null) {
-                    nodeGraph.addTopNodesAndChildren(current, current.getChildren());
+
+                    List<Wme> wmeChildrenList = new ArrayList<Wme>();
+                    current.getChildren().forEachRemaining(wmeChildrenList::add);
+
+                    nodeGraph.addTopNodesAndChildren(current, wmeChildrenList);
                 }
             }
 
