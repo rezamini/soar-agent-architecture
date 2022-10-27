@@ -30,13 +30,17 @@ import org.jsoar.util.events.SoarEventListener;
 import com.google.common.collect.Iterators;
 import com.soar.agent.architecture.robot.RobotAgent;
 import java.awt.BorderLayout;
+import java.awt.Event;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 
-public class NodeGraph{
+public class NodeGraph {
     public Graph graph;
     private ThreadedAgent agent;
     private SpriteManager spriteManager;
     public SwingViewer viewer;
+    public View view;
 
     public NodeGraph(ThreadedAgent agent) throws IOException {
         // System.setProperty("org.graphstream.ui", "swing");
@@ -63,14 +67,27 @@ public class NodeGraph{
         viewer = new SwingViewer(graph, SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
 
+        view = viewer.addDefaultView(false, new SwingGraphRenderer());
+
+        //ViewPanel viewPanel = (ViewPanel) view;
+
+        // viewPanel.addMouseWheelListener(new MouseWheelListener() {
+        //     @Override
+        //     public void mouseWheelMoved(MouseWheelEvent mwe) {
+        //         zoomGraphMouseWheelMoved(mwe, viewPanel);
+        //     }
+
+        // });
+
         // View view = viewer.getDefaultView();
         // view.getCamera().setViewPercent(0.5);
         // ViewPanel viewPanel = (ViewPanel) viewer.getDefaultView();
         // viewPanel.getCamera().setViewPercent(0.5);
         // viewPanel.resizeFrame(1000, 800);
-        
-        // add((DefaultView) viewer.addDefaultView(false, new SwingGraphRenderer()), BorderLayout.CENTER);
-        
+
+        // add((DefaultView) viewer.addDefaultView(false, new SwingGraphRenderer()),
+        // BorderLayout.CENTER);
+
     }
 
     /**
@@ -88,30 +105,30 @@ public class NodeGraph{
         Node inputMainNode = graph.addNode(parentWme.getIdentifier().toString());
         inputMainNode.setAttribute("nodeValue", parentWme.getIdentifier().toString());
 
-        //set the css property for the main node (I2)
+        // set the css property for the main node (I2)
         inputMainNode.setAttribute("ui.class", "main");
-        
+
         // this edge connects all the nodes to the main memory node which is I2
         // this becomes the first parent of all the other nodes.
         Edge edge = graph.addEdge(inputMainId, inputMainNode, parentNode, true);
         edge.setAttribute("edgeValue", parentWme.getAttribute().toString());
     }
 
-    void setGraphNodeAndEdgeNames(){
+    void setGraphNodeAndEdgeNames() {
         for (Node node : graph) {
-                        
+
             if (node.hasAttribute("nodeValue")) {
                 node.setAttribute("ui.label", node.getAttribute("nodeValue"));
 
                 if (node.hasAttribute("isLastNode")) {
                     node.setAttribute("ui.class", "value");
                 }
-                
+
             }
         }
 
         graph.edges().forEach(edge -> {
-            
+
             if (edge.hasAttribute("edgeValue")) {
                 edge.setAttribute("ui.label", "^" + edge.getAttribute("edgeValue"));
             }
@@ -123,7 +140,7 @@ public class NodeGraph{
         // example I2
         // nodeValue : it is the memory value such as L1, I2 or actual value...
         // node id : it is be the actual name such as self, pose, landmark
-        
+
         Node parentNode = graph.addNode(parent.getAttribute().toString());
         parentNode.setAttribute("nodeValue", parent.getValue().toString());
 
@@ -132,10 +149,10 @@ public class NodeGraph{
     }
 
     void removeTopNodesAndChildren(Wme parent, Iterator<Wme> childs) {
-        
-        //remove parent node
+
+        // remove parent node
         Node parentNode = graph.getNode(parent.getAttribute().toString());
-        if(graph.getNode(parent.getAttribute().toString()) != null){
+        if (graph.getNode(parent.getAttribute().toString()) != null) {
             graph.removeNode(parent.getAttribute().toString());
         }
 
@@ -148,8 +165,8 @@ public class NodeGraph{
 
             // example: L2direction-command, L2distance, S10name, V1northeast
             Node childNode = graph.addNode(current.getIdentifier().toString() + current.getAttribute().toString());
-            
-            if(childNode != null){
+
+            if (childNode != null) {
                 graph.removeNode(childNode);
             }
 
@@ -185,6 +202,31 @@ public class NodeGraph{
         }
     }
 
+    void zoomIn(){
+        double newViewPercent = view.getCamera().getViewPercent() - 0.09;
+        view.getCamera().setViewPercent(newViewPercent);
+    }
+
+    void zoomOut(){
+        double newViewPercent = view.getCamera().getViewPercent() + 0.09;
+        view.getCamera().setViewPercent(newViewPercent);
+    }
+
+
+    // public static void zoomGraphMouseWheelMoved(MouseWheelEvent mwe, ViewPanel view_panel){
+    //     if (Event.ALT_MASK != 0) {            
+    //         if (mwe.getWheelRotation() > 0) {
+    //             double new_view_percent = view_panel.getCamera().getViewPercent() + 0.05;
+    //             view_panel.getCamera().setViewPercent(new_view_percent);               
+    //         } else if (mwe.getWheelRotation() < 0) {
+    //             double current_view_percent = view_panel.getCamera().getViewPercent();
+    //             if(current_view_percent > 0.05){
+    //                 view_panel.getCamera().setViewPercent(current_view_percent - 0.05);                
+    //             }
+    //         }
+    //     }                     
+    // }
+
     public void explore(Node source) {
         Iterator<? extends Node> k = source.getBreadthFirstIterator();
 
@@ -215,17 +257,17 @@ public class NodeGraph{
             // "shadow-width: 5px;" +
             "}" +
             "node.value {" +
-            "stroke-mode: dots;"+
-            "padding: 3px;"+
+            "stroke-mode: dots;" +
+            "padding: 3px;" +
             "fill-mode: dyn-plain; " +
-            "shape: box;"+
+            "shape: box;" +
             "size-mode: fit;" +
             "fill-color: white;" +
             // "text-alignment: under;" +
             // "text-background-mode: rounded-box;" +
             // "text-background-color: gold;" +
             // "text-padding: 1px;" +
-            
+
             "}" +
             "node.main {" +
             "fill-color: cyan, red;" +

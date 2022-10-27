@@ -13,6 +13,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,6 +23,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -45,19 +47,19 @@ import com.google.common.collect.Iterators;
 import org.graphstream.algorithm.generator.DorogovtsevMendesGenerator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Insets;
+
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class NodeGraphUI extends JPanel {
-
+    private JFrame mainFrame;
     private ThreadedAgent agent;
     private NodeGraph nodeGraph;
     private JToolBar nodesToolbar;
+    private JPanel zoomControlPanel;
     private Map<String, JCheckBox> checboxMap = new HashMap<String, JCheckBox>();
     private List<Wme> inputList = new ArrayList<Wme>();
     private Set<String> uncheckNodeNames = new HashSet<String>();
@@ -70,26 +72,26 @@ public class NodeGraphUI extends JPanel {
         initGraphUI();
         initGraphMenu();
         initGraphToolbar();
+        initZoomSlider();
     }
 
     private void initGraphUI() {
         SwingTools.initializeLookAndFeel();
         SwingUtilities.invokeLater(() -> {
-            JFrame f = new JFrame();
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            mainFrame = new JFrame();
+            mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             try {
                 // add this class as the content pane instead
-                f.setContentPane(this);
-                f.setSize(1000, 800);
-                f.setVisible(true);
-                f.setTitle("Soar Working Memory Visualisation");
-                f.setLocationRelativeTo(null);
+                mainFrame.setContentPane(this);
+                mainFrame.setSize(1100, 900);
+                mainFrame.setVisible(true);
+                mainFrame.setTitle("Soar Working Memory Visualisation");
+                mainFrame.setLocationRelativeTo(null);
 
                 // call and add the viewer to UI from this class.
                 nodeGraph = new NodeGraph(agent);
-                add((DefaultView) nodeGraph.viewer.addDefaultView(false, new SwingGraphRenderer()),
-                        BorderLayout.CENTER);
+                add((DefaultView) nodeGraph.view, BorderLayout.CENTER);
 
             } catch (IOException e) {
                 System.err.println("****** ERROR in graph init *****");
@@ -102,7 +104,6 @@ public class NodeGraphUI extends JPanel {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("Menu");
 
-        // JMenuItem menuItem = new JMenuItem("Enable Node Menu");
         JCheckBox nodeEnableCheckBox = new JCheckBox(" Enable Nodes Menu ");
         nodeEnableCheckBox.addActionListener((event) -> {
             if (nodeEnableCheckBox.isSelected()) {
@@ -111,8 +112,21 @@ public class NodeGraphUI extends JPanel {
                 nodesToolbar.setVisible(false);
             }
         });
-
         menu.add(nodeEnableCheckBox);
+
+        menu.addSeparator();
+
+        JCheckBox enableZoomCheckBox = new JCheckBox(" Enable Zoom Control ");
+        enableZoomCheckBox.setSelected(true);
+        enableZoomCheckBox.addActionListener((event) -> {
+            if (enableZoomCheckBox.isSelected()) {
+                zoomControlPanel.setVisible(true);
+            } else {
+                zoomControlPanel.setVisible(false);
+            }
+        });
+
+        menu.add(enableZoomCheckBox);
         menuBar.add(menu);
 
         add(menuBar, BorderLayout.NORTH);
@@ -144,6 +158,41 @@ public class NodeGraphUI extends JPanel {
 
     }
 
+    private void initZoomSlider() {
+        JPanel containerPanel = new JPanel();
+        containerPanel.setOpaque(true);
+        containerPanel.setBackground(Color.WHITE);
+
+        zoomControlPanel = new JPanel(new BorderLayout());
+        zoomControlPanel.setOpaque(true);
+        zoomControlPanel.setBackground(Color.WHITE);
+
+        JButton zoomIn = new JButton("Zoom In +");
+        zoomIn.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nodeGraph.zoomIn();
+            }
+            
+        });
+
+        JButton zoomOut = new JButton("Zoom Out -");
+        zoomOut.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nodeGraph.zoomOut();
+            }
+            
+        });
+
+        containerPanel.add(zoomIn);
+        containerPanel.add(zoomOut);
+
+        zoomControlPanel.add(containerPanel, BorderLayout.LINE_END);
+
+        add(zoomControlPanel, BorderLayout.PAGE_END);
+    }
+
     private void initMemoryInputListener() {
         agent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
 
@@ -167,16 +216,16 @@ public class NodeGraphUI extends JPanel {
         if (inputList != null) {
             for (int i = 0; i < inputList.size(); i++) {
                 Wme current = inputList.get(i);
-                
-                //removing nodes
-                if(uncheckNodeNames.contains(current.getAttribute().toString())){
-                    //we need to remove & skip because this wme is unchecked from the UI list
+
+                // removing nodes
+                if (uncheckNodeNames.contains(current.getAttribute().toString())) {
+                    // we need to remove & skip because this wme is unchecked from the UI list
                     nodeGraph.removeTopNodesAndChildren(current, current.getChildren());
 
                     continue;
                 }
 
-                //add the rest of the nodes, the checked nodes
+                // add the rest of the nodes, the checked nodes
                 if (current.getChildren() != null) {
                     nodeGraph.addTopNodesAndChildren(current, current.getChildren());
                 }
