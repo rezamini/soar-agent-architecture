@@ -50,6 +50,7 @@ import org.graphstream.graph.implementations.MultiGraph;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -86,7 +87,7 @@ public class NodeGraphUI extends JPanel {
                 mainFrame.setContentPane(this);
                 mainFrame.setSize(1100, 900);
                 mainFrame.setVisible(true);
-                mainFrame.setTitle("Soar Working Memory Visualisation");
+                mainFrame.setTitle("Soar Working Memory Dynamic Graph (Knowledge Graph) ");
                 mainFrame.setLocationRelativeTo(null);
 
                 // call and add the viewer to UI from this class.
@@ -102,9 +103,25 @@ public class NodeGraphUI extends JPanel {
 
     private void initGraphMenu() {
         JMenuBar menuBar = new JMenuBar();
+
         JMenu menu = new JMenu("Menu");
 
-        JCheckBox nodeEnableCheckBox = new JCheckBox(" Enable Nodes Menu ");
+        menu.setOpaque(true);
+        menu.setFont(new Font(menu.getFont().getName(), menu.getFont().getStyle(), 15));
+        menu.setFont(menu.getFont().deriveFont(menu.getFont().getStyle() | Font.BOLD));
+
+        JCheckBoxMenuItem nodeEnableCheckBox = new JCheckBoxMenuItem("Enable Nodes Menu");
+
+        // Set keystroke for this checbox. this shows the label on the meue item as well
+        // as enabling the keyboard action. The action can be trigger at anytime within the window
+        //keyboard shortcut is: ALT-T
+        nodeEnableCheckBox.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK));
+
+        nodeEnableCheckBox
+                .setFont(new Font(nodeEnableCheckBox.getFont().getName(), nodeEnableCheckBox.getFont().getStyle(), 16));
+
+        nodeEnableCheckBox.setDisplayedMnemonicIndex(2);
+
         nodeEnableCheckBox.addActionListener((event) -> {
             if (nodeEnableCheckBox.isSelected()) {
                 nodesToolbar.setVisible(true);
@@ -113,10 +130,17 @@ public class NodeGraphUI extends JPanel {
             }
         });
         menu.add(nodeEnableCheckBox);
-
         menu.addSeparator();
 
-        JCheckBox enableZoomCheckBox = new JCheckBox(" Enable Zoom Control ");
+        JCheckBoxMenuItem enableZoomCheckBox = new JCheckBoxMenuItem("Enable Zoom Control");
+        // Set keystroke for this checbox. this shows the label on the meue item as well
+        // as enabling the keyboard action. The action can be trigger at anytime within the window
+        // keyboard shortcut is: ALT-Z
+        enableZoomCheckBox.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.ALT_MASK));
+
+        enableZoomCheckBox
+                .setFont(new Font(enableZoomCheckBox.getFont().getName(), enableZoomCheckBox.getFont().getStyle(), 16));
+
         enableZoomCheckBox.setSelected(true);
         enableZoomCheckBox.addActionListener((event) -> {
             if (enableZoomCheckBox.isSelected()) {
@@ -125,10 +149,9 @@ public class NodeGraphUI extends JPanel {
                 zoomControlPanel.setVisible(false);
             }
         });
-
         menu.add(enableZoomCheckBox);
-        menuBar.add(menu);
 
+        menuBar.add(menu);
         add(menuBar, BorderLayout.NORTH);
     }
 
@@ -168,21 +191,21 @@ public class NodeGraphUI extends JPanel {
         zoomControlPanel.setBackground(Color.WHITE);
 
         JButton zoomIn = new JButton("Zoom In +");
-        zoomIn.addActionListener(new ActionListener(){
+        zoomIn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 nodeGraph.zoomIn();
             }
-            
+
         });
 
         JButton zoomOut = new JButton("Zoom Out -");
-        zoomOut.addActionListener(new ActionListener(){
+        zoomOut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 nodeGraph.zoomOut();
             }
-            
+
         });
 
         containerPanel.add(zoomIn);
