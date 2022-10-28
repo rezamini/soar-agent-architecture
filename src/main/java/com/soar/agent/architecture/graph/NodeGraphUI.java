@@ -244,7 +244,10 @@ public class NodeGraphUI extends JPanel {
                 if (uncheckNodeNames.contains(current.getAttribute().toString())) {
                     // we need to remove & skip because this wme is unchecked from the UI list
                     nodeGraph.removeTopNodesAndChildren(current, current.getChildren());
+                    continue;
 
+                }else if(uncheckNodeNames.contains(current.getIdentifier().toString())){
+                    nodeGraph.removeInputParentNode(current);
                     continue;
                 }
 
@@ -264,40 +267,63 @@ public class NodeGraphUI extends JPanel {
     }
 
     private void setNodeMenuItems(List<Wme> inputList) {
+        
 
         for (Wme currentNode : inputList) {
-            // Wme currentNode = iter.next();
+            
             String nodeName = "^" + currentNode.getAttribute().toString();
+            String mainParentNodeI2 = "^" + currentNode.getIdentifier().toString();
+
+            if(!checboxMap.containsKey(mainParentNodeI2)){
+                addNewCheckbox(mainParentNodeI2, currentNode, true);
+            }
 
             if (!checboxMap.containsKey(nodeName)) {
-
-                JCheckBox nodeCheckBox = new JCheckBox(nodeName);
-                nodeCheckBox.setSelected(true);
-                nodeCheckBox.setFont(new Font(nodeCheckBox.getFont().getName(), nodeCheckBox.getFont().getStyle(), 16));
-                nodeCheckBox.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-                nodeCheckBox.addActionListener((event) -> {
-                    if (nodeCheckBox.isSelected()) {
-                        if (uncheckNodeNames.contains(currentNode.getAttribute().toString())) {
-                            uncheckNodeNames.remove(currentNode.getAttribute().toString());
-                        }
-                    } else {
-                        uncheckNodeNames.add(currentNode.getAttribute().toString());
-                    }
-                    renderGraphElements();
-                });
-
-                // nodeCheckBox.setAlignmentX(FlowLayout.LEFT);
-
-                checboxMap.put(nodeName, nodeCheckBox);
-                nodesToolbar.add(nodeCheckBox);
-                nodesToolbar.addSeparator();
-
-                // refresh the toolbar
-                nodesToolbar.repaint();
-                nodesToolbar.revalidate();
-
+                addNewCheckbox(nodeName, currentNode, false);
             }
         }
+    }
+
+    //method to add new checkbox items to the node menu items(side bar)
+    private void addNewCheckbox(String nodeName, Wme currentNode, boolean isMainNodeI2){
+
+        JCheckBox nodeCheckBox = new JCheckBox(nodeName);
+        nodeCheckBox.setSelected(true);
+        nodeCheckBox.setFont(new Font(nodeCheckBox.getFont().getName(), nodeCheckBox.getFont().getStyle(), 16));
+        nodeCheckBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        nodeCheckBox.addActionListener((event) -> {
+            if (nodeCheckBox.isSelected()) {
+
+                if (!isMainNodeI2 && uncheckNodeNames.contains(currentNode.getAttribute().toString())) {
+                    uncheckNodeNames.remove(currentNode.getAttribute().toString());
+                
+                //else if it is the parent node I2
+                }else if(isMainNodeI2 && uncheckNodeNames.contains(currentNode.getIdentifier().toString())){
+                    uncheckNodeNames.remove(currentNode.getIdentifier().toString());
+                }
+
+            } else {
+                //if it is parent node I2
+                if(isMainNodeI2){
+                    uncheckNodeNames.add(currentNode.getIdentifier().toString());
+                }else{
+                    //other nodes
+                    uncheckNodeNames.add(currentNode.getAttribute().toString());
+                }
+                
+            }
+            renderGraphElements();
+        });
+
+        // nodeCheckBox.setAlignmentX(FlowLayout.LEFT);
+
+        checboxMap.put(nodeName, nodeCheckBox);
+        nodesToolbar.add(nodeCheckBox);
+        nodesToolbar.addSeparator();
+
+        // refresh the toolbar
+        nodesToolbar.repaint();
+        nodesToolbar.revalidate();
     }
 }

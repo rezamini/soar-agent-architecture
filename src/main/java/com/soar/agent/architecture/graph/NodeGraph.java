@@ -117,6 +117,13 @@ public class NodeGraph {
         edge.setAttribute("edgeValue", parentWme.getAttribute().toString());
     }
 
+    //remove the main parent ID which is usually I2 from the graph.
+    void removeInputParentNode(Wme parentWme) {
+        if (graph.getNode(parentWme.getIdentifier().toString()) != null) {
+            graph.removeNode(parentWme.getIdentifier().toString());
+        }
+    }
+
     void setGraphNodeAndEdgeNames() {
         for (Node node : graph) {
 
