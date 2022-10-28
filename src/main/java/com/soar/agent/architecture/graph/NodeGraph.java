@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.StreamSupport;
 
 import javax.swing.JPanel;
@@ -13,7 +14,6 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.graphicGraph.stylesheet.Color;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.swing.SwingGraphRenderer;
@@ -36,6 +36,7 @@ import java.awt.Event;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.IOException;
+import java.awt.Color;
 
 public class NodeGraph {
     public Graph graph;
@@ -147,7 +148,12 @@ public class NodeGraph {
         parentNode.setAttribute("nodeValue", parent.getValue().toString());
 
         addInputParentNode(parent, parentNode);
-        addChildNodes(parentNode, parent, childs);
+
+        // Get a random color for this chunk of memory
+        Color randomColor = getRandomNodeColor();
+
+        addChildNodes(parentNode, parent, childs, randomColor);
+        // addChildNodes(parentNode, parent, childs);
     }
 
     void removeTopNodesAndChildren(Wme parent, Iterator<Wme> childs) {
@@ -182,14 +188,14 @@ public class NodeGraph {
         // Node parentNode = graph.addNode(parent.getIdentifier().toString() +
         // parent.getAttribute().toString());
         // parentNode.setAttribute("nodeValue", parent.getValue().toString());
-        
-        //check if parent node is last node
+
+        // check if parent node is last node
         if (childs.size() == 0) {
             mainNode.setAttribute("isLastNode", true);
         }
 
-        for(Wme current: childs){
-        // for (Iterator<Wme> iter = childs; iter.hasNext();) {
+        for (Wme current : childs) {
+            // for (Iterator<Wme> iter = childs; iter.hasNext();) {
             // Wme current = iter.next();
 
             // example: landmark-aname, landmarka-distance, viewnorth
@@ -206,6 +212,57 @@ public class NodeGraph {
             current.getChildren().forEachRemaining(tempList::add);
             if (tempList.size() > 0) {
                 addChildNodes(childNode, current, tempList);
+            } else {
+                childNode.setAttribute("isLastNode", true);
+            }
+        }
+    }
+
+    // method overloading: this method add a childs with a predetermined color
+    private void addChildNodes(Node mainNode, Wme parentWme, List<Wme> childs, Color color) {
+        // Node parentNode = graph.addNode(parent.getIdentifier().toString() +
+        // parent.getAttribute().toString());
+        // parentNode.setAttribute("nodeValue", parent.getValue().toString());
+
+        // check if parent node is last node
+        if (childs.size() == 0) {
+            mainNode.setAttribute("isLastNode", true);
+        } else {
+
+            // only set the color if it was not set previously otherwise the color will
+            // change on every iteration
+            if (mainNode.getAttribute("ui.color") == null) {
+                mainNode.setAttribute("ui.color", color);
+            }
+        }
+
+        for (Wme current : childs) {
+            // for (Iterator<Wme> iter = childs; iter.hasNext();) {
+            // Wme current = iter.next();
+
+            // example: landmark-aname, landmarka-distance, viewnorth
+            String edgeId = parentWme.getAttribute().toString() + current.getAttribute().toString();
+
+            // example: L2direction-command, L2distance, S10name, V1northeast
+            Node childNode = graph.addNode(current.getIdentifier().toString() + current.getAttribute().toString());
+            childNode.setAttribute("nodeValue", current.getValue().toString());
+
+            Edge edge = graph.addEdge(edgeId, mainNode, childNode, true);
+            edge.setAttribute("edgeValue", current.getAttribute().toString());
+
+            List<Wme> tempList = new ArrayList<Wme>();
+            current.getChildren().forEachRemaining(tempList::add);
+            if (tempList.size() > 0) {
+
+                // set the parent color instead of setting individually. This will avoid having
+                // different childs that would be added later on . ex: the former-locale
+                if (mainNode.getAttribute("ui.color") != null) {
+                    childNode.setAttribute("ui.color", mainNode.getAttribute("ui.color"));
+                }
+
+                // addChildNodes(childNode, current, tempList); //call the overloaded method
+                // with color argument instead
+                addChildNodes(childNode, current, tempList, color);
             } else {
                 childNode.setAttribute("isLastNode", true);
             }
@@ -245,6 +302,28 @@ public class NodeGraph {
             next.setAttribute("ui.class", "marked");
             sleep();
         }
+    }
+
+    public Color getRandomNodeColor() {
+        Random random = new Random();
+
+        // float hue = random.nextFloat();
+        // // Saturation between 0.1 and 0.3
+        // float saturation = (random.nextInt(2000) + 1000) / 10000f;
+        // float luminance = 0.9f;
+        // Color color = Color.getHSBColor(hue, saturation, luminance);
+
+        int R = (int) (Math.random() * 256);
+        int G = (int) (Math.random() * 256);
+        int B = (int) (Math.random() * 256);
+        Color color = new Color(R, G, B); // random color, but can be bright or dull
+
+        final float hue = random.nextFloat();
+        final float saturation = 0.9f;// 1.0 for brilliant, 0.0 for dull
+        final float luminance = 1.0f; // 1.0 for brighter, 0.0 for black
+        color = Color.getHSBColor(hue, saturation, luminance);
+
+        return color;
     }
 
     protected void sleep() {
