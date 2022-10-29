@@ -190,7 +190,9 @@ public class NodeGraphUI extends JPanel {
         zoomControlPanel.setOpaque(true);
         zoomControlPanel.setBackground(Color.WHITE);
 
-        JButton zoomIn = new JButton("Zoom In +");
+        JButton zoomIn = new JButton();    
+        zoomIn.setIcon(new ImageIcon(NodeGraphUI.class.getResource("/images/graph/zoom-in.png")));
+
         zoomIn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -199,7 +201,9 @@ public class NodeGraphUI extends JPanel {
 
         });
 
-        JButton zoomOut = new JButton("Zoom Out -");
+        JButton zoomOut = new JButton();
+        zoomOut.setIcon(new ImageIcon(NodeGraphUI.class.getResource("/images/graph/zoom-out.png")));
+
         zoomOut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
