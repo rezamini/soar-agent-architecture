@@ -4,49 +4,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
 import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import org.graphstream.ui.swing.SwingGraphRenderer;
 import org.graphstream.ui.swing_viewer.DefaultView;
-import org.graphstream.ui.swing_viewer.SwingViewer;
-import org.graphstream.ui.swing_viewer.ViewPanel;
-import org.graphstream.ui.view.View;
-import org.graphstream.ui.view.Viewer;
-import org.graphstream.ui.view.ViewerPipe;
 import org.jsoar.debugger.util.SwingTools;
 import org.jsoar.kernel.events.InputEvent;
 import org.jsoar.kernel.memory.Wme;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.events.SoarEvent;
 import org.jsoar.util.events.SoarEventListener;
-
-import com.google.common.collect.Iterators;
-
-import org.graphstream.algorithm.generator.DorogovtsevMendesGenerator;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.MultiGraph;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -80,7 +59,7 @@ public class NodeGraphUI extends JPanel {
         SwingTools.initializeLookAndFeel();
         SwingUtilities.invokeLater(() -> {
             mainFrame = new JFrame();
-            mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            mainFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
             try {
                 // add this class as the content pane instead
@@ -91,7 +70,7 @@ public class NodeGraphUI extends JPanel {
                 mainFrame.setLocationRelativeTo(null);
 
                 // call and add the viewer to UI from this class.
-                nodeGraph = new NodeGraph(agent);
+                nodeGraph = new NodeGraph();
                 add((DefaultView) nodeGraph.view, BorderLayout.CENTER);
 
             } catch (IOException e) {

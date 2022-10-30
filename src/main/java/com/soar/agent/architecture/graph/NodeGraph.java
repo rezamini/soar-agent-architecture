@@ -1,55 +1,35 @@
 package com.soar.agent.architecture.graph;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.StreamSupport;
-
-import javax.swing.JPanel;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.swing.SwingGraphRenderer;
-import org.graphstream.ui.swing_viewer.DefaultView;
 import org.graphstream.ui.swing_viewer.SwingViewer;
-import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.View;
-import org.graphstream.ui.view.Viewer;
-import org.jsoar.kernel.events.InputEvent;
-import org.jsoar.kernel.io.InputOutput;
 import org.jsoar.kernel.memory.Wme;
 import org.jsoar.runtime.ThreadedAgent;
-import org.jsoar.util.events.SoarEvent;
-import org.jsoar.util.events.SoarEventListener;
 
 import com.google.common.collect.Iterators;
-import com.soar.agent.architecture.robot.RobotAgent;
-import java.awt.BorderLayout;
-import java.awt.Event;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 import java.awt.Color;
 
 public class NodeGraph {
     public Graph graph;
-    private ThreadedAgent agent;
     private SpriteManager spriteManager;
     public SwingViewer viewer;
     public View view;
 
-    public NodeGraph(ThreadedAgent agent) throws IOException {
+    public NodeGraph() throws IOException {
         // System.setProperty("org.graphstream.ui", "swing");
 
         this.graph = new MultiGraph("Memory Graph");
-        this.agent = agent;
         this.spriteManager = new SpriteManager(graph);
         startGraph();
 
