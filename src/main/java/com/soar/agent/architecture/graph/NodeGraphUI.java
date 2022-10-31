@@ -35,6 +35,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class NodeGraphUI extends JPanel {
+    private static NodeGraphUI nodeGraphInstance;
     private JFrame mainFrame;
     private ThreadedAgent agent;
     private NodeGraph nodeGraph;
@@ -53,6 +54,14 @@ public class NodeGraphUI extends JPanel {
         initGraphMenu();
         initGraphToolbar();
         initZoomSlider();
+    }
+
+    public static NodeGraphUI getInstance(ThreadedAgent agent) {
+        if (nodeGraphInstance == null) {
+            nodeGraphInstance = new NodeGraphUI(agent);
+        }
+
+        return nodeGraphInstance;
     }
 
     private void initGraphUI() {
@@ -92,8 +101,9 @@ public class NodeGraphUI extends JPanel {
         JCheckBoxMenuItem nodeEnableCheckBox = new JCheckBoxMenuItem("Enable Nodes Menu");
 
         // Set keystroke for this checbox. this shows the label on the meue item as well
-        // as enabling the keyboard action. The action can be trigger at anytime within the window
-        //keyboard shortcut is: ALT-T
+        // as enabling the keyboard action. The action can be trigger at anytime within
+        // the window
+        // keyboard shortcut is: ALT-T
         nodeEnableCheckBox.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK));
 
         nodeEnableCheckBox
@@ -113,7 +123,8 @@ public class NodeGraphUI extends JPanel {
 
         JCheckBoxMenuItem enableZoomCheckBox = new JCheckBoxMenuItem("Enable Zoom Control");
         // Set keystroke for this checbox. this shows the label on the meue item as well
-        // as enabling the keyboard action. The action can be trigger at anytime within the window
+        // as enabling the keyboard action. The action can be trigger at anytime within
+        // the window
         // keyboard shortcut is: ALT-Z
         enableZoomCheckBox.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.ALT_MASK));
 
@@ -169,7 +180,7 @@ public class NodeGraphUI extends JPanel {
         zoomControlPanel.setOpaque(true);
         zoomControlPanel.setBackground(Color.WHITE);
 
-        JButton zoomIn = new JButton();    
+        JButton zoomIn = new JButton();
         zoomIn.setIcon(new ImageIcon(NodeGraphUI.class.getResource("/images/graph/zoom-in.png")));
 
         zoomIn.addActionListener(new ActionListener() {
@@ -229,7 +240,7 @@ public class NodeGraphUI extends JPanel {
                     nodeGraph.removeTopNodesAndChildren(current, current.getChildren());
                     continue;
 
-                }else if(uncheckNodeNames.contains(current.getIdentifier().toString())){
+                } else if (uncheckNodeNames.contains(current.getIdentifier().toString())) {
                     nodeGraph.removeInputParentNode(current);
                     continue;
                 }
@@ -250,14 +261,13 @@ public class NodeGraphUI extends JPanel {
     }
 
     private void setNodeMenuItems(List<Wme> inputList) {
-        
 
         for (Wme currentNode : inputList) {
-            
+
             String nodeName = "^" + currentNode.getAttribute().toString();
             String mainParentNodeI2 = "^" + currentNode.getIdentifier().toString();
 
-            if(!checboxMap.containsKey(mainParentNodeI2)){
+            if (!checboxMap.containsKey(mainParentNodeI2)) {
                 addNewCheckbox(mainParentNodeI2, currentNode, true);
             }
 
@@ -267,8 +277,8 @@ public class NodeGraphUI extends JPanel {
         }
     }
 
-    //method to add new checkbox items to the node menu items(side bar)
-    private void addNewCheckbox(String nodeName, Wme currentNode, boolean isMainNodeI2){
+    // method to add new checkbox items to the node menu items(side bar)
+    private void addNewCheckbox(String nodeName, Wme currentNode, boolean isMainNodeI2) {
 
         JCheckBox nodeCheckBox = new JCheckBox(nodeName);
         nodeCheckBox.setSelected(true);
@@ -280,21 +290,21 @@ public class NodeGraphUI extends JPanel {
 
                 if (!isMainNodeI2 && uncheckNodeNames.contains(currentNode.getAttribute().toString())) {
                     uncheckNodeNames.remove(currentNode.getAttribute().toString());
-                
-                //else if it is the parent node I2
-                }else if(isMainNodeI2 && uncheckNodeNames.contains(currentNode.getIdentifier().toString())){
+
+                    // else if it is the parent node I2
+                } else if (isMainNodeI2 && uncheckNodeNames.contains(currentNode.getIdentifier().toString())) {
                     uncheckNodeNames.remove(currentNode.getIdentifier().toString());
                 }
 
             } else {
-                //if it is parent node I2
-                if(isMainNodeI2){
+                // if it is parent node I2
+                if (isMainNodeI2) {
                     uncheckNodeNames.add(currentNode.getIdentifier().toString());
-                }else{
-                    //other nodes
+                } else {
+                    // other nodes
                     uncheckNodeNames.add(currentNode.getAttribute().toString());
                 }
-                
+
             }
             renderGraphElements();
         });

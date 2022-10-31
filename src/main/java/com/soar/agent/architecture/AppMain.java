@@ -100,8 +100,9 @@ public class AppMain {
     public void startGraph(){
         if (agents != null && agents.size() > 0) {
             RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
-            NodeGraphUI graph = new NodeGraphUI(agent.getThreadedAgent());
-            // graph.startGraph();
+
+            //only get one instance from nodeGraphui. Singleton pattern using getInstance method.
+            NodeGraphUI graph = NodeGraphUI.getInstance(agent.getThreadedAgent());
         }
     }
 }
