@@ -97,7 +97,7 @@ public class AppMain {
         PanelUI.getWorldPanel().repaint();
     }
 
-    public void startGraph(){
+    public void startGraph() throws IOException{
         if (agents != null && agents.size() > 0) {
             RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
 

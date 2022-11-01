@@ -151,7 +151,12 @@ public class PanelUI extends JPanel {
         // Graph
         JToggleButton graphButton = createButton("graph", "graph-clicked", true);
         graphButton.addActionListener((event) -> {
-            appMain.startGraph();
+            try {
+                appMain.startGraph();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
         });
         graphButton.setToolTipText("Open Memory Visualisation");
         bar.add(graphButton);

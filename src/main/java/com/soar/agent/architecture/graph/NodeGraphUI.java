@@ -36,19 +36,37 @@ import java.awt.*;
 
 public class NodeGraphUI extends JPanel {
     private static NodeGraphUI nodeGraphInstance;
-    private JFrame mainFrame;
+    private final JFrame mainFrame;
     private ThreadedAgent agent;
-    private NodeGraph nodeGraph;
+    private final NodeGraph nodeGraph;
     private JToolBar nodesToolbar;
     private JPanel zoomControlPanel;
     private Map<String, JCheckBox> checboxMap = new HashMap<String, JCheckBox>();
     private List<Wme> inputList = new ArrayList<Wme>();
     private Set<String> uncheckNodeNames = new HashSet<String>();
 
-    public NodeGraphUI(ThreadedAgent agent) {
+    public NodeGraphUI(ThreadedAgent agent) throws IOException {
         super(new BorderLayout());
-
         this.agent = agent;
+
+        mainFrame = new JFrame();
+        nodeGraph = new NodeGraph();
+
+        initialise();
+    }
+
+    public static NodeGraphUI getInstance(ThreadedAgent agent) throws IOException {
+        if (nodeGraphInstance == null) {
+            nodeGraphInstance = new NodeGraphUI(agent);
+
+        } else {
+            nodeGraphInstance.mainFrame.setVisible(true);
+        }
+
+        return nodeGraphInstance;
+    }
+
+    private void initialise() {
         initMemoryInputListener();
         initGraphUI();
         initGraphMenu();
@@ -56,33 +74,26 @@ public class NodeGraphUI extends JPanel {
         initZoomSlider();
     }
 
-    public static NodeGraphUI getInstance(ThreadedAgent agent) {
-        if (nodeGraphInstance == null) {
-            nodeGraphInstance = new NodeGraphUI(agent);
-        }
-
-        return nodeGraphInstance;
-    }
-
     private void initGraphUI() {
         SwingTools.initializeLookAndFeel();
         SwingUtilities.invokeLater(() -> {
-            mainFrame = new JFrame();
-            mainFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            // if(mainFrame == null) mainFrame = new JFrame();
+            mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             try {
                 // add this class as the content pane instead
-                mainFrame.setContentPane(this);
+                mainFrame.setContentPane(nodeGraphInstance);
                 mainFrame.setSize(1100, 900);
                 mainFrame.setVisible(true);
                 mainFrame.setTitle("Soar Working Memory Dynamic Graph (Knowledge Graph) ");
                 mainFrame.setLocationRelativeTo(null);
 
-                // call and add the viewer to UI from this class.
-                nodeGraph = new NodeGraph();
+                // call(the nodegrapg is final variable now which is initialised in the
+                // constrcutre) and add the viewer to UI from this class.
+
                 add((DefaultView) nodeGraph.view, BorderLayout.CENTER);
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.err.println("****** ERROR in graph init *****");
                 e.printStackTrace();
             }
@@ -215,7 +226,6 @@ public class NodeGraphUI extends JPanel {
 
             @Override
             public void onEvent(SoarEvent event) {
-
                 // add wmes to a seperate list.
                 // cant assign to a iterator and reuse; apparently the size will be 0 after a
                 // loop
