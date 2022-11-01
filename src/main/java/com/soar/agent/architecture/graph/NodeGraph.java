@@ -339,6 +339,8 @@ public class NodeGraph {
             "shape: box;" +
             "size-mode: fit;" +
             "fill-color: white;" +
+            "text-size: 10;" +
+            "text-style: bold;" +
             // "text-alignment: under;" +
             // "text-background-mode: rounded-box;" +
             // "text-background-color: gold;" +
@@ -351,12 +353,12 @@ public class NodeGraph {
             "size: 35px;" +
             "}" +
             "node.marked {" +
-            "	fill-color: blue;" +
+            "fill-color: blue;" +
             "fill-mode: dyn-plain; " +
             "}" +
             "edge {" +
             "arrow-shape: arrow;" +
             "size: 2; " +
-            "text-size: 10;	" +
+            "text-size: 11;	" +
             "}";
 }
