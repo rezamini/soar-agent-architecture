@@ -286,6 +286,13 @@ public class NodeGraph {
 
         while (k.hasNext()) {
             Node next = k.next();
+
+            //dont change the color of the last nodes (value nodes)
+            if(next.hasAttribute("isLastNode")) continue;
+
+            //remove any previous set color otherwise the ui.class will not work
+            next.removeAttribute("ui.color");
+            
             next.setAttribute("ui.class", "marked");
             sleep();
         }

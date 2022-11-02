@@ -266,7 +266,11 @@ public class NodeGraphUI extends JPanel {
             }
 
             nodeGraph.setGraphNodeAndEdgeNames();
-            // explore(graph.getNode("landmarks"));
+
+            // if(nodeGraph.graph.getNode("landmarks") != null){
+            //     nodeGraph.explore(nodeGraph.graph.getNode("landmarks"));
+            // }
+            
         }
     }
 
