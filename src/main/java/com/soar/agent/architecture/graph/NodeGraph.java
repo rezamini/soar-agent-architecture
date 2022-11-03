@@ -9,12 +9,10 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.swing.SwingGraphRenderer;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.View;
 import org.jsoar.kernel.memory.Wme;
-import org.jsoar.runtime.ThreadedAgent;
 
 import com.google.common.collect.Iterators;
 import java.io.IOException;
@@ -22,55 +20,25 @@ import java.awt.Color;
 
 public class NodeGraph {
     public Graph graph;
-    private SpriteManager spriteManager;
     public SwingViewer viewer;
     public View view;
 
     public NodeGraph() throws IOException {
-        // System.setProperty("org.graphstream.ui", "swing");
-
         this.graph = new MultiGraph("Memory Graph");
-        this.spriteManager = new SpriteManager(graph);
         startGraph();
-
-        // Sprite s = spriteManager.addSprite("test");
-        // s.attachToEdge(edgeId);
-        // s.setPosition(0.5);
-        // s.detach();
     }
 
     public void startGraph() {
-        graph.setAttribute("ui.title", "Soar Working Memory Visualisation");
         graph.setAttribute("ui.stylesheet", styleSheet);
         graph.setStrict(false);
         graph.setAutoCreate(true);
         graph.setAttribute("ui.quality");
         graph.setAttribute("ui.antialias");
-        // Viewer viewer = graph.display();
+        
         viewer = new SwingViewer(graph, SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
 
         view = viewer.addDefaultView(false, new SwingGraphRenderer());
-
-        // ViewPanel viewPanel = (ViewPanel) view;
-
-        // viewPanel.addMouseWheelListener(new MouseWheelListener() {
-        // @Override
-        // public void mouseWheelMoved(MouseWheelEvent mwe) {
-        // zoomGraphMouseWheelMoved(mwe, viewPanel);
-        // }
-
-        // });
-
-        // View view = viewer.getDefaultView();
-        // view.getCamera().setViewPercent(0.5);
-        // ViewPanel viewPanel = (ViewPanel) viewer.getDefaultView();
-        // viewPanel.getCamera().setViewPercent(0.5);
-        // viewPanel.resizeFrame(1000, 800);
-
-        // add((DefaultView) viewer.addDefaultView(false, new SwingGraphRenderer()),
-        // BorderLayout.CENTER);
-
     }
 
     /**
@@ -207,9 +175,6 @@ public class NodeGraph {
 
     // method overloading: this method add a childs with a predetermined color
     private void addChildNodes(Node mainNode, Wme parentWme, List<Wme> childs, Color color) {
-        // Node parentNode = graph.addNode(parent.getIdentifier().toString() +
-        // parent.getAttribute().toString());
-        // parentNode.setAttribute("nodeValue", parent.getValue().toString());
 
         // check if parent node is last node
         if (childs.size() == 0) {
