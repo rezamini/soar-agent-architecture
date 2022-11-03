@@ -27,6 +27,8 @@ import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.events.SoarEvent;
 import org.jsoar.util.events.SoarEventListener;
 
+import com.soar.agent.architecture.enums.GraphEnum;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -85,7 +87,7 @@ public class NodeGraphUI extends JPanel {
                 mainFrame.setContentPane(nodeGraphInstance);
                 mainFrame.setSize(1100, 900);
                 mainFrame.setVisible(true);
-                mainFrame.setTitle("Soar Working Memory Dynamic Graph (Knowledge Graph) ");
+                mainFrame.setTitle(GraphEnum.FRAME_TITLE.getName());
                 mainFrame.setLocationRelativeTo(null);
 
                 // call(the nodegrapg is final variable now which is initialised in the
@@ -103,13 +105,13 @@ public class NodeGraphUI extends JPanel {
     private void initGraphMenu() {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu menu = new JMenu("Menu");
+        JMenu menu = new JMenu(GraphEnum.MAIN_MENUE_TITLE.getName());
 
         menu.setOpaque(true);
         menu.setFont(new Font(menu.getFont().getName(), menu.getFont().getStyle(), 15));
         menu.setFont(menu.getFont().deriveFont(menu.getFont().getStyle() | Font.BOLD));
 
-        JCheckBoxMenuItem nodeEnableCheckBox = new JCheckBoxMenuItem("Enable Nodes Menu");
+        JCheckBoxMenuItem nodeEnableCheckBox = new JCheckBoxMenuItem(GraphEnum.SUB_MENUE_ENABLE_NODE_MENU.getName());
 
         // Set keystroke for this checbox. this shows the label on the meue item as well
         // as enabling the keyboard action. The action can be trigger at anytime within
@@ -132,7 +134,7 @@ public class NodeGraphUI extends JPanel {
         menu.add(nodeEnableCheckBox);
         menu.addSeparator();
 
-        JCheckBoxMenuItem enableZoomCheckBox = new JCheckBoxMenuItem("Enable Zoom Control");
+        JCheckBoxMenuItem enableZoomCheckBox = new JCheckBoxMenuItem(GraphEnum.SUB_MENUE_ENABLE_ZOOM_CONTROL.getName());
         // Set keystroke for this checbox. this shows the label on the meue item as well
         // as enabling the keyboard action. The action can be trigger at anytime within
         // the window
@@ -157,7 +159,7 @@ public class NodeGraphUI extends JPanel {
     }
 
     private void initGraphToolbar() {
-        nodesToolbar = new JToolBar("Draggable Toolbar");
+        nodesToolbar = new JToolBar(GraphEnum.TOOLBAR_TITLE.getName());
 
         // page_axis is to-to-bottom layouw and will place the elemnts to the left as
         // well
@@ -173,7 +175,7 @@ public class NodeGraphUI extends JPanel {
         add(nodesToolbar, BorderLayout.WEST);
 
         // set a title for the toolbar nodes
-        JLabel toolbarTitle = new JLabel("Working Memory Nodes: ");
+        JLabel toolbarTitle = new JLabel(GraphEnum.NODE_MENU_MAIN_TITLE.getName());
         toolbarTitle.setFont(new Font(toolbarTitle.getFont().getName(), toolbarTitle.getFont().getStyle(), 16));
         // make the title bold
         toolbarTitle.setFont(toolbarTitle.getFont().deriveFont(toolbarTitle.getFont().getStyle() | Font.BOLD));
@@ -278,8 +280,8 @@ public class NodeGraphUI extends JPanel {
 
         for (Wme currentNode : inputList) {
 
-            String nodeName = "^" + currentNode.getAttribute().toString();
-            String mainParentNodeI2 = "^" + currentNode.getIdentifier().toString();
+            String nodeName = GraphEnum.MEMORY_CARET.getName() + currentNode.getAttribute().toString();
+            String mainParentNodeI2 = GraphEnum.MEMORY_CARET.getName() + currentNode.getIdentifier().toString();
 
             if (!checboxMap.containsKey(mainParentNodeI2)) {
                 addNewCheckbox(mainParentNodeI2, currentNode, true);
