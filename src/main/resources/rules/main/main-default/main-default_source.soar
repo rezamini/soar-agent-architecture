@@ -1,3 +1,10 @@
+# learn --on
+# pushd default-chunking
+# source simple.soar
+# source selection.soar
+# popd
+
+
 pushd all
 source all_source.soar
 popd
