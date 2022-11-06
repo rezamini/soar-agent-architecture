@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import com.soar.agent.architecture.events.MoveResponder;
-import com.soar.agent.architecture.graph.NodeGraph;
 import com.soar.agent.architecture.graph.NodeGraphUI;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
@@ -55,7 +54,6 @@ public class AppMain {
 
     public void startAgent() {
         for (RobotAgent agent : agents.values()) {
-            agent.updateRobotMemory();
             agent.addListener(moveResponder);
             agent.start();
         }
@@ -70,7 +68,6 @@ public class AppMain {
 
     public void stepAgent() {
         for (RobotAgent agent : agents.values()) {
-            agent.updateRobotMemory();
             agent.addListener(moveResponder);
             agent.step();
         }

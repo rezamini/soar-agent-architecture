@@ -5,7 +5,6 @@ import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
-import com.soar.agent.architecture.world.PanelUI;
 
 public class MoveResponder implements MoveListenerEvent{
     
