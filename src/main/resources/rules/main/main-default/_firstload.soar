@@ -1,0 +1,6 @@
+#
+# enabling/disabling rules such as Reinforce learning will be here 
+#
+
+rl --set learning on
+indifferent-selection –-epsilon-greedy

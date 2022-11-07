@@ -4,6 +4,7 @@
 # source selection.soar
 # popd
 
+source _firstload.soar
 
 pushd all
 source all_source.soar
