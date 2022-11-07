@@ -1,9 +1,3 @@
-# learn --on
-# pushd default-chunking
-# source simple.soar
-# source selection.soar
-# popd
-
 source _firstload.soar
 
 pushd all
