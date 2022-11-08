@@ -94,6 +94,7 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
             
             // source = new File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
             source = new File(getClass().getResource("/rules/main/main-default.soar").toURI());
             
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
