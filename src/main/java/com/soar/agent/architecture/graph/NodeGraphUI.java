@@ -21,7 +21,7 @@ import javax.swing.SwingUtilities;
 
 import org.graphstream.ui.swing_viewer.DefaultView;
 import org.jsoar.debugger.util.SwingTools;
-import org.jsoar.kernel.events.InputEvent;
+import org.jsoar.kernel.events.AfterDecisionCycleEvent;
 import org.jsoar.kernel.memory.Wme;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.events.SoarEvent;
@@ -40,7 +40,7 @@ public class NodeGraphUI extends JPanel {
     private static NodeGraphUI nodeGraphInstance;
     private final JFrame mainFrame;
     private ThreadedAgent agent;
-    private final NodeGraph nodeGraph;
+    private NodeGraph nodeGraph;
     private JToolBar nodesToolbar;
     private JPanel zoomControlPanel;
     private Map<String, JCheckBox> checboxMap = new HashMap<String, JCheckBox>();
@@ -62,6 +62,11 @@ public class NodeGraphUI extends JPanel {
             nodeGraphInstance = new NodeGraphUI(agent);
 
         } else {
+            nodeGraphInstance.agent = agent;
+            System.out.println(agent.getInputOutput().getInputLink());
+            nodeGraphInstance.nodeGraph = new NodeGraph();
+            nodeGraphInstance.initialise();
+            
             nodeGraphInstance.mainFrame.setVisible(true);
         }
 
@@ -69,6 +74,10 @@ public class NodeGraphUI extends JPanel {
     }
 
     private void initialise() {
+        removeAll();
+        revalidate();
+        repaint();
+
         initMemoryInputListener();
         initGraphUI();
         initGraphMenu();
@@ -224,10 +233,11 @@ public class NodeGraphUI extends JPanel {
     }
 
     private void initMemoryInputListener() {
-        agent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
+        agent.getEvents().addListener(AfterDecisionCycleEvent.class, new SoarEventListener() {
 
             @Override
             public void onEvent(SoarEvent event) {
+                System.out.println("XXXXXX 1");
                 // add wmes to a seperate list.
                 // cant assign to a iterator and reuse; apparently the size will be 0 after a
                 // loop
@@ -259,7 +269,7 @@ public class NodeGraphUI extends JPanel {
 
                 // add the rest of the nodes, the checked nodes
                 if (current.getChildren() != null) {
-
+                    
                     List<Wme> wmeChildrenList = new ArrayList<Wme>();
                     current.getChildren().forEachRemaining(wmeChildrenList::add);
 

@@ -76,9 +76,9 @@ public class AppMain {
     }
 
     public void reInitializeAgent() throws IOException {
-        for (RobotAgent agent : agents.values()) {
-            // panelUI = null;
-            panelUI.initUI();
+        panelUI.initUI();
+
+        for (RobotAgent agent : agents.values()) {    
             agent.reInitialize();
         }
     }
