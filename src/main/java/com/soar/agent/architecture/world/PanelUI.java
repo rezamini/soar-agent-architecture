@@ -2,6 +2,7 @@ package com.soar.agent.architecture.world;
 
 import java.io.IOException;
 import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -23,6 +24,7 @@ import com.soar.agent.architecture.loader.MapLoader.Result;
 
 public class PanelUI extends JPanel {
 
+    final private JFrame mainFrame;
     private static WorldPanel worldPanel;
     private static World world;
     private AppMain appMain = new AppMain();
@@ -32,19 +34,24 @@ public class PanelUI extends JPanel {
         worldPanel = new WorldPanel();
         loadMap(new MapLoader().load(getClass().getResource("/map/map.txt")));
         setSimulationToolbar(worldPanel);
+        mainFrame = new JFrame();
+
     }
 
-    public static void initUI() {
+    public void reloadMap() throws IOException {
+        loadMap(new MapLoader().load(getClass().getResource("/map/map.txt")));
+    }
+
+    public void initUI() {
         SwingTools.initializeLookAndFeel();
         SwingUtilities.invokeLater(() -> {
-            JFrame f = new JFrame();
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             try {
                 PanelUI content = new PanelUI();
-                f.setContentPane(content);
-                f.setSize(800, 800);
-                f.setVisible(true);
+                mainFrame.setContentPane(content);
+                mainFrame.setSize(800, 800);
+                mainFrame.setVisible(true);
                 PanelUI.worldPanel.fit();
 
             } catch (IOException e) {
@@ -160,6 +167,19 @@ public class PanelUI extends JPanel {
         });
         graphButton.setToolTipText("Open Memory Visualisation");
         bar.add(graphButton);
+
+        //Re-Initialize
+        bar.add(new AbstractAction("Re-Initialize") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    appMain.reInitializeAgent();
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        });
 
         // bar.add(new AbstractAction("Graph") {
         //     @Override

@@ -260,6 +260,11 @@ public class RobotAgent {
         threadedAgent.stop();
     }
 
+    public void reInitialize() {
+        threadedAgent.initialize();
+        events.fireEvent(memoryResponder);
+    }    
+
     public void openDebugger() {
         try {
             threadedAgent.openDebugger();

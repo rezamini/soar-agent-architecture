@@ -19,13 +19,14 @@ public class AppMain {
 
     private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
     private MoveResponder moveResponder = new MoveResponder();
-    // private static PanelUI panelUI;
+    private static PanelUI panelUI;
     
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // try {
             // panelUI = new PanelUI(new AppMain());
-            PanelUI.initUI();
+            panelUI = new PanelUI();
+            panelUI.initUI();
         // } catch (Exception e) {
         //     e.printStackTrace();
         // }
@@ -72,6 +73,14 @@ public class AppMain {
             agent.step();
         }
         PanelUI.getWorldPanel().repaint();
+    }
+
+    public void reInitializeAgent() throws IOException {
+        for (RobotAgent agent : agents.values()) {
+            // panelUI = null;
+            panelUI.initUI();
+            agent.reInitialize();
+        }
     }
 
     public void openDebugger() {
