@@ -2,6 +2,7 @@ package com.soar.agent.architecture.robot;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -11,8 +12,10 @@ import com.soar.agent.architecture.events.MoveListenerEvent;
 import com.soar.agent.architecture.events.AreaResponder;
 import com.soar.agent.architecture.events.MemoryResponder;
 
+import org.jsoar.kernel.DebuggerProvider;
 import org.jsoar.kernel.RunType;
 import org.jsoar.kernel.SoarException;
+import org.jsoar.kernel.DebuggerProvider.CloseAction;
 import org.jsoar.kernel.events.AfterDecisionCycleEvent;
 import org.jsoar.kernel.io.CycleCountInput;
 import org.jsoar.kernel.io.beans.SoarBeanExceptionHandler;
@@ -262,11 +265,17 @@ public class RobotAgent {
 
     public void reInitialize() {
         threadedAgent.initialize();
+
+        // threadedAgent.getDebuggerProvider().CLOSE_ACTION.closeDebugger(threadedAgent.getAgent());
         events.fireEvent(memoryResponder);
     }    
 
     public void openDebugger() {
         try {
+            Map<String, Object> debuggerProps = threadedAgent.getDebuggerProvider().getProperties();
+            debuggerProps.put(DebuggerProvider.CLOSE_ACTION, CloseAction.DETACH);
+            threadedAgent.getDebuggerProvider().setProperties(debuggerProps);
+            
             threadedAgent.openDebugger();
         } catch (SoarException e) {
             e.printStackTrace();
