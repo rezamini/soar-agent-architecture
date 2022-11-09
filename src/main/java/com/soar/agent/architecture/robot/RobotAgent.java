@@ -12,11 +12,14 @@ import com.soar.agent.architecture.events.MoveListenerEvent;
 import com.soar.agent.architecture.events.AreaResponder;
 import com.soar.agent.architecture.events.MemoryResponder;
 
+import org.jsoar.debugger.JSoarDebugger;
+import org.jsoar.debugger.SwingCompletionHandler;
 import org.jsoar.kernel.DebuggerProvider;
 import org.jsoar.kernel.RunType;
 import org.jsoar.kernel.SoarException;
 import org.jsoar.kernel.DebuggerProvider.CloseAction;
 import org.jsoar.kernel.events.AfterDecisionCycleEvent;
+import org.jsoar.kernel.events.AfterInitSoarEvent;
 import org.jsoar.kernel.io.CycleCountInput;
 import org.jsoar.kernel.io.beans.SoarBeanExceptionHandler;
 import org.jsoar.kernel.io.beans.SoarBeanOutputContext;
@@ -28,6 +31,7 @@ import org.jsoar.kernel.io.quick.DefaultQMemory;
 import org.jsoar.kernel.io.quick.QMemory;
 import org.jsoar.kernel.io.quick.SoarQMemoryAdapter;
 import org.jsoar.kernel.symbols.Identifier;
+import org.jsoar.runtime.CompletionHandler;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.commands.SoarCommands;
 import org.jsoar.util.events.SoarEvent;
@@ -65,7 +69,7 @@ public class RobotAgent {
             initMoveCommandListenerObject(); // initialize the output command listener for later use
             initCommandListener("move");
             initAfterDecisionListener();
-
+            initAfterInitListener();
 
             areaResponder = new AreaResponder(robot, this);
             memoryResponder = new MemoryResponder(robot, this);
@@ -95,11 +99,13 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-2.3.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
-            
-            // source = new File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
+
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
             source = new File(getClass().getResource("/rules/main/main-default.soar").toURI());
-            
+
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/advanced-move.soar").toURI());
@@ -122,7 +128,7 @@ public class RobotAgent {
         });
 
         events.addListener(AreaResponder.class, event -> {
-            if(move != null && move.getDirection() != null && !move.getDirection().equals("")){
+            if (move != null && move.getDirection() != null && !move.getDirection().equals("")) {
                 areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
                 areaResponder.setLocaleInfo(qMemory, move.getDirection(), CellTypeEnum.NORMAL.getName());
             }
@@ -158,7 +164,6 @@ public class RobotAgent {
                     // every move. much more realistic ui
                     synchronized (threadedAgent.getAgent()) {
                         threadedAgent.getAgent().wait(100);
-                        
 
                         bean.setAttribute(context.getCommand().getAttribute());
                         bean.setTimeTag(context.getCommand().getTimetag());
@@ -175,9 +180,10 @@ public class RobotAgent {
 
                             events.fireEvent(areaResponder);
 
-                            //Old way of calling area responder
+                            // Old way of calling area responder
                             // areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
-                            // areaResponder.setLocaleInfo(qMemory, bean.getDirection(), CellTypeEnum.NORMAL.getName());
+                            // areaResponder.setLocaleInfo(qMemory, bean.getDirection(),
+                            // CellTypeEnum.NORMAL.getName());
                             // areaResponder.updateOppositeCell(qMemory, bean.getDirection());
                             // updateRobotMemory();
                         }
@@ -211,6 +217,16 @@ public class RobotAgent {
         outputManager.registerHandler(commandNameToListen, handler);
     }
 
+    private void initAfterInitListener() {
+        threadedAgent.getEvents().addListener(AfterInitSoarEvent.class, new SoarEventListener() {
+
+            @Override
+            public void onEvent(SoarEvent event) {
+                events.fireEvent(memoryResponder);
+            }
+        });
+    }
+
     // a general method for all type of input events listners.
     private void initAfterDecisionListener() {
         threadedAgent.getEvents().addListener(AfterDecisionCycleEvent.class, new SoarEventListener() {
@@ -218,8 +234,8 @@ public class RobotAgent {
             @Override
             public void onEvent(SoarEvent event) {
                 // update the robot memory for every input event
-                //updateRobotMemory(); // original call
-                 //memoryResponder.updateRobotMemory();
+                // updateRobotMemory(); // original call
+                // memoryResponder.updateRobotMemory();
                 events.fireEvent(memoryResponder);
 
                 // List<Wme> actualList = new ArrayList<Wme>();
@@ -227,7 +243,8 @@ public class RobotAgent {
 
                 // System.out.println(actualList);
 
-                // for (Iterator<Wme> iter = threadedAgent.getInputOutput().getInputLink().getWmes(); iter.hasNext();) {
+                // for (Iterator<Wme> iter =
+                // threadedAgent.getInputOutput().getInputLink().getWmes(); iter.hasNext();) {
                 // }
             }
         });
@@ -263,20 +280,21 @@ public class RobotAgent {
         threadedAgent.stop();
     }
 
-    public void reInitialize() {
+    public synchronized void reInitialize() {
+        // threadedAgent.getInterpreter().eval("init-soar");
         threadedAgent.initialize();
-
-        // threadedAgent.getDebuggerProvider().CLOSE_ACTION.closeDebugger(threadedAgent.getAgent());
-        events.fireEvent(memoryResponder);
-    }    
+        
+        // close debugger if any instance is open
+        closeDebugger();
+    }
 
     public void openDebugger() {
         try {
             Map<String, Object> debuggerProps = threadedAgent.getDebuggerProvider().getProperties();
             debuggerProps.put(DebuggerProvider.CLOSE_ACTION, CloseAction.DETACH);
             threadedAgent.getDebuggerProvider().setProperties(debuggerProps);
-            
-            threadedAgent.openDebugger();
+
+            threadedAgent.getAgent().openDebugger();
         } catch (SoarException e) {
             e.printStackTrace();
         }
@@ -284,7 +302,13 @@ public class RobotAgent {
 
     public void closeDebugger() {
         try {
-            threadedAgent.closeDebugger();
+            // if there is a instace = there is property then close it otherwise it throws
+            // nullpointer exception
+            if (threadedAgent.getDebuggerProvider().getProperties().size() > 0) {
+                threadedAgent.closeDebugger();
+
+            }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (SoarException e) {
