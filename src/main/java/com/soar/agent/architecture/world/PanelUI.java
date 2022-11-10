@@ -4,8 +4,6 @@ import java.io.IOException;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
@@ -13,7 +11,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.*;
@@ -167,6 +164,10 @@ public class PanelUI extends JPanel {
         });
         graphButton.setToolTipText("Open Memory Visualisation");
         bar.add(graphButton);
+
+
+        //push the rest of the icons/button to the end of the toolbar; right of toolbar
+        bar.add(Box.createGlue());
 
         //Re-Initialize
         bar.add(new AbstractAction("Re-Initialize") {
