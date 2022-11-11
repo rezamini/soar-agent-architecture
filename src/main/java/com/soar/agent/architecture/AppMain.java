@@ -20,6 +20,7 @@ public class AppMain {
     private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
     private MoveResponder moveResponder = new MoveResponder();
     private static PanelUI panelUI;
+    private NodeGraphUI graph;
     
 
     public static void main(String[] args) throws IOException {
@@ -79,8 +80,13 @@ public class AppMain {
         panelUI.initUI();
 
         for (RobotAgent agent : agents.values()) {    
-            agent.reInitialize();
+            synchronized(agent){
+                agent.reInitialize();
+            }
+            
         }
+        
+        closeGraph();
     }
 
     public void openDebugger() {
@@ -108,7 +114,14 @@ public class AppMain {
             RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
 
             //only get one instance from nodeGraphui. Singleton pattern using getInstance method.
-            NodeGraphUI graph = NodeGraphUI.getInstance(agent.getThreadedAgent());
+            graph = NodeGraphUI.getInstance(agent.getThreadedAgent());
         }
     }
+
+    public void closeGraph() throws IOException{
+        if (graph != null ) {
+            graph.setFrameVisibility(false);
+        }
+    }
+    
 }

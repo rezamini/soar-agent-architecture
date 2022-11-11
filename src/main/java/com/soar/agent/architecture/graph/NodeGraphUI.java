@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import org.graphstream.ui.swing_viewer.DefaultView;
 import org.jsoar.debugger.util.SwingTools;
 import org.jsoar.kernel.events.AfterDecisionCycleEvent;
+import org.jsoar.kernel.events.AfterInitSoarEvent;
 import org.jsoar.kernel.memory.Wme;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.events.SoarEvent;
@@ -63,7 +64,6 @@ public class NodeGraphUI extends JPanel {
 
         } else {
             nodeGraphInstance.agent = agent;
-            System.out.println(agent.getInputOutput().getInputLink());
             nodeGraphInstance.nodeGraph = new NodeGraph();
             nodeGraphInstance.initialise();
             
@@ -237,7 +237,6 @@ public class NodeGraphUI extends JPanel {
 
             @Override
             public void onEvent(SoarEvent event) {
-                System.out.println("XXXXXX 1");
                 // add wmes to a seperate list.
                 // cant assign to a iterator and reuse; apparently the size will be 0 after a
                 // loop
@@ -344,5 +343,9 @@ public class NodeGraphUI extends JPanel {
         // refresh the toolbar
         nodesToolbar.repaint();
         nodesToolbar.revalidate();
+    }
+
+    public void setFrameVisibility(boolean showFrame) {
+        nodeGraphInstance.mainFrame.setVisible(showFrame);
     }
 }
