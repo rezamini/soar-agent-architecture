@@ -165,28 +165,26 @@ public class PanelUI extends JPanel {
         graphButton.setToolTipText("Open Memory Visualisation");
         bar.add(graphButton);
 
-
-        //push the rest of the icons/button to the end of the toolbar; right of toolbar
+        // push the rest of the icons/button to the end of the toolbar; right of toolbar
         bar.add(Box.createGlue());
 
-        //Re-Initialize
-        bar.add(new AbstractAction("Re-Initialize") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    appMain.reInitializeAgent();
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
+        // Re-Initialize / Reset
+        JToggleButton resetButton = createButton("reset", "reset-clicked", false);
+        resetButton.addActionListener((event) -> {
+            try {
+                appMain.reInitializeAgent();
+            } catch (Exception e) {
+                // TODO: handle exception
             }
         });
+        graphButton.setToolTipText("Re-Initialize Map & Agent State");
+        bar.add(resetButton);
 
         // bar.add(new AbstractAction("Graph") {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         appMain.startGraph();
-        //     }
+        // @Override
+        // public void actionPerformed(ActionEvent e) {
+        // appMain.startGraph();
+        // }
         // });
 
         // bar.add(new AbstractAction("Stop") {
