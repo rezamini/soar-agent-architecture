@@ -42,7 +42,7 @@ public class NodeGraphUI extends JPanel {
     private final JFrame mainFrame;
     private ThreadedAgent agent;
     private NodeGraph nodeGraph;
-    private JToolBar nodesToolbar;
+    private final JToolBar nodesToolbar;
     private JPanel zoomControlPanel;
     private Map<String, JCheckBox> checboxMap = new HashMap<String, JCheckBox>();
     private List<Wme> inputList = new ArrayList<Wme>();
@@ -54,6 +54,7 @@ public class NodeGraphUI extends JPanel {
 
         mainFrame = new JFrame();
         nodeGraph = new NodeGraph();
+        nodesToolbar = new JToolBar(GraphEnum.TOOLBAR_TITLE.getName());
 
         initialise();
     }
@@ -66,7 +67,7 @@ public class NodeGraphUI extends JPanel {
             nodeGraphInstance.agent = agent;
             nodeGraphInstance.nodeGraph = new NodeGraph();
             nodeGraphInstance.initialise();
-            
+
             nodeGraphInstance.mainFrame.setVisible(true);
         }
 
@@ -168,8 +169,6 @@ public class NodeGraphUI extends JPanel {
     }
 
     private void initGraphToolbar() {
-        nodesToolbar = new JToolBar(GraphEnum.TOOLBAR_TITLE.getName());
-
         // page_axis is to-to-bottom layouw and will place the elemnts to the left as
         // well
         nodesToolbar.setLayout(new BoxLayout(nodesToolbar, BoxLayout.Y_AXIS));
@@ -183,12 +182,16 @@ public class NodeGraphUI extends JPanel {
 
         add(nodesToolbar, BorderLayout.WEST);
 
-        // set a title for the toolbar nodes
-        JLabel toolbarTitle = new JLabel(GraphEnum.NODE_MENU_MAIN_TITLE.getName());
-        toolbarTitle.setFont(new Font(toolbarTitle.getFont().getName(), toolbarTitle.getFont().getStyle(), 16));
-        // make the title bold
-        toolbarTitle.setFont(toolbarTitle.getFont().deriveFont(toolbarTitle.getFont().getStyle() | Font.BOLD));
-        nodesToolbar.add(toolbarTitle);
+        if (nodesToolbar.getComponentCount() == 0) {
+            // set a title for the toolbar nodes
+            JLabel toolbarTitle = new JLabel(GraphEnum.NODE_MENU_MAIN_TITLE.getName());
+            toolbarTitle.setFont(new Font(toolbarTitle.getFont().getName(), toolbarTitle.getFont().getStyle(), 16));
+            // make the title bold
+            toolbarTitle.setFont(toolbarTitle.getFont().deriveFont(toolbarTitle.getFont().getStyle() | Font.BOLD));
+
+            nodesToolbar.add(toolbarTitle);
+        }
+
         nodesToolbar.addSeparator();
 
     }
@@ -268,7 +271,7 @@ public class NodeGraphUI extends JPanel {
 
                 // add the rest of the nodes, the checked nodes
                 if (current.getChildren() != null) {
-                    
+
                     List<Wme> wmeChildrenList = new ArrayList<Wme>();
                     current.getChildren().forEachRemaining(wmeChildrenList::add);
 
@@ -279,9 +282,9 @@ public class NodeGraphUI extends JPanel {
             nodeGraph.setGraphNodeAndEdgeNames();
 
             // if(nodeGraph.graph.getNode("landmarks") != null){
-            //     nodeGraph.explore(nodeGraph.graph.getNode("landmarks"));
+            // nodeGraph.explore(nodeGraph.graph.getNode("landmarks"));
             // }
-            
+
         }
     }
 
