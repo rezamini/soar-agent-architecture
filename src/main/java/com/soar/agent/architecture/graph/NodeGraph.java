@@ -15,6 +15,8 @@ import org.graphstream.ui.view.View;
 import org.jsoar.kernel.memory.Wme;
 
 import com.google.common.collect.Iterators;
+import com.soar.agent.architecture.enums.GraphEnum;
+
 import java.io.IOException;
 import java.awt.Color;
 
@@ -88,7 +90,7 @@ public class NodeGraph {
         graph.edges().forEach(edge -> {
 
             if (edge.hasAttribute("edgeValue")) {
-                edge.setAttribute("ui.label", "^" + edge.getAttribute("edgeValue"));
+                edge.setAttribute("ui.label", GraphEnum.MEMORY_CARET.getName() + edge.getAttribute("edgeValue"));
             }
         });
     }
