@@ -21,15 +21,14 @@ public class AppMain {
     private MoveResponder moveResponder = new MoveResponder();
     private static PanelUI panelUI;
     private NodeGraphUI graph;
-    
 
     public static void main(String[] args) throws IOException {
         // try {
-            // panelUI = new PanelUI(new AppMain());
-            panelUI = new PanelUI();
-            panelUI.initUI();
+        // panelUI = new PanelUI(new AppMain());
+        panelUI = new PanelUI();
+        panelUI.initUI();
         // } catch (Exception e) {
-        //     e.printStackTrace();
+        // e.printStackTrace();
         // }
     }
 
@@ -79,14 +78,18 @@ public class AppMain {
     public void reInitializeAgent() throws IOException {
         panelUI.initUI();
 
-        for (RobotAgent agent : agents.values()) {    
-            synchronized(agent){
+        for (RobotAgent agent : agents.values()) {
+            synchronized (agent) {
                 agent.reInitialize();
             }
-            
+
         }
-        
+
+        // close graph if any instance is open
         closeGraph();
+
+        // close debugger if any instance is open
+        closeDebugger();
     }
 
     public void openDebugger() {
@@ -109,19 +112,20 @@ public class AppMain {
         PanelUI.getWorldPanel().repaint();
     }
 
-    public void startGraph() throws IOException{
+    public void startGraph() throws IOException {
         if (agents != null && agents.size() > 0) {
             RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
 
-            //only get one instance from nodeGraphui. Singleton pattern using getInstance method.
+            // only get one instance from nodeGraphui. Singleton pattern using getInstance
+            // method.
             graph = NodeGraphUI.getInstance(agent.getThreadedAgent());
         }
     }
 
-    public void closeGraph() throws IOException{
-        if (graph != null ) {
+    public void closeGraph() throws IOException {
+        if (graph != null) {
             graph.setFrameVisibility(false);
         }
     }
-    
+
 }

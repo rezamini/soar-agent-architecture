@@ -283,9 +283,6 @@ public class RobotAgent {
     public synchronized void reInitialize() {
         // threadedAgent.getInterpreter().eval("init-soar");
         threadedAgent.initialize();
-        
-        // close debugger if any instance is open
-        closeDebugger();
     }
 
     public void openDebugger() {
