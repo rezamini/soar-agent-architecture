@@ -7,19 +7,12 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.soar.agent.architecture.beans.Move;
-import com.soar.agent.architecture.enums.CellTypeEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
-import com.soar.agent.architecture.events.AreaResponder;
-import com.soar.agent.architecture.events.MemoryResponder;
-
-import org.jsoar.debugger.JSoarDebugger;
-import org.jsoar.debugger.SwingCompletionHandler;
+import com.soar.agent.architecture.events.UtilityResponder;
 import org.jsoar.kernel.DebuggerProvider;
 import org.jsoar.kernel.RunType;
 import org.jsoar.kernel.SoarException;
 import org.jsoar.kernel.DebuggerProvider.CloseAction;
-import org.jsoar.kernel.events.AfterDecisionCycleEvent;
-import org.jsoar.kernel.events.AfterInitSoarEvent;
 import org.jsoar.kernel.io.CycleCountInput;
 import org.jsoar.kernel.io.beans.SoarBeanExceptionHandler;
 import org.jsoar.kernel.io.beans.SoarBeanOutputContext;
@@ -31,11 +24,8 @@ import org.jsoar.kernel.io.quick.DefaultQMemory;
 import org.jsoar.kernel.io.quick.QMemory;
 import org.jsoar.kernel.io.quick.SoarQMemoryAdapter;
 import org.jsoar.kernel.symbols.Identifier;
-import org.jsoar.runtime.CompletionHandler;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.commands.SoarCommands;
-import org.jsoar.util.events.SoarEvent;
-import org.jsoar.util.events.SoarEventListener;
 import org.jsoar.util.events.SoarEventManager;
 
 public class RobotAgent {
@@ -44,9 +34,9 @@ public class RobotAgent {
     private final QMemory qMemory = DefaultQMemory.create();
     private File source = null;
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
-    private AreaResponder areaResponder;
-    private MemoryResponder memoryResponder;
+    private UtilityResponder utilityResponder;
     public final SoarEventManager events = new SoarEventManager();
+
     private Move move;
 
     public RobotAgent() {
@@ -68,13 +58,10 @@ public class RobotAgent {
 
             initMoveCommandListenerObject(); // initialize the output command listener for later use
             initCommandListener("move");
-            initAfterDecisionListener();
-            initAfterInitListener();
 
-            areaResponder = new AreaResponder(robot, this);
-            memoryResponder = new MemoryResponder(robot, this);
-
-            addEventListeners();
+            // areaResponder = new AreaResponder(robot, this);
+            utilityResponder = new UtilityResponder(this, robot, events);
+            utilityResponder.addAllListeners();
 
             threadedAgent.initialize(); // Do an init-soar
             // source = new
@@ -123,16 +110,14 @@ public class RobotAgent {
     }
 
     private void addEventListeners() {
-        events.addListener(MemoryResponder.class, event -> {
-            memoryResponder.updateRobotMemory();
-        });
 
-        events.addListener(AreaResponder.class, event -> {
-            if (move != null && move.getDirection() != null && !move.getDirection().equals("")) {
-                areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
-                areaResponder.setLocaleInfo(qMemory, move.getDirection(), CellTypeEnum.NORMAL.getName());
-            }
-        });
+
+        // events.addListener(AreaResponder.class, event -> {
+        //     if (move != null && move.getDirection() != null && !move.getDirection().equals("")) {
+        //         areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
+        //         areaResponder.setLocaleInfo(qMemory, move.getDirection(), CellTypeEnum.NORMAL.getName());
+        //     }
+        // });
     }
 
     public void initMoveCommandListenerObject() {
@@ -178,8 +163,6 @@ public class RobotAgent {
                         for (MoveListenerEvent listener : moveListeners) {
                             listener.moveCompleted(bean, robot, RobotAgent.this);
 
-                            events.fireEvent(areaResponder);
-
                             // Old way of calling area responder
                             // areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
                             // areaResponder.setLocaleInfo(qMemory, bean.getDirection(),
@@ -217,39 +200,6 @@ public class RobotAgent {
         outputManager.registerHandler(commandNameToListen, handler);
     }
 
-    private void initAfterInitListener() {
-        threadedAgent.getEvents().addListener(AfterInitSoarEvent.class, new SoarEventListener() {
-
-            @Override
-            public void onEvent(SoarEvent event) {
-                events.fireEvent(memoryResponder);
-            }
-        });
-    }
-
-    // a general method for all type of input events listners.
-    private void initAfterDecisionListener() {
-        threadedAgent.getEvents().addListener(AfterDecisionCycleEvent.class, new SoarEventListener() {
-
-            @Override
-            public void onEvent(SoarEvent event) {
-                // update the robot memory for every input event
-                // updateRobotMemory(); // original call
-                // memoryResponder.updateRobotMemory();
-                events.fireEvent(memoryResponder);
-
-                // List<Wme> actualList = new ArrayList<Wme>();
-                // threadedAgent.getInputOutput().getInputLink().getWmes().forEachRemaining(actualList::add);
-
-                // System.out.println(actualList);
-
-                // for (Iterator<Wme> iter =
-                // threadedAgent.getInputOutput().getInputLink().getWmes(); iter.hasNext();) {
-                // }
-            }
-        });
-    }
-
     private void removeMemoryPath(String path) {
         synchronized (qMemory) {
             qMemory.remove(path);
@@ -262,6 +212,14 @@ public class RobotAgent {
 
     public ThreadedAgent getThreadedAgent() {
         return threadedAgent;
+    }
+
+    public Move getMove() {
+        return move;
+    }
+
+    public SoarEventManager getEvents() {
+        return events;
     }
 
     public QMemory getQMemory() {

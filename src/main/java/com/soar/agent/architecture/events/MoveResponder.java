@@ -20,6 +20,8 @@ public class MoveResponder implements MoveListenerEvent{
     
             //better to get ui repaint from a method than the ui class directly. to keep them seperate at initial level for changes.
             AppMain.PerformUIRePaint();
+
+            robotAgent.getEvents().fireEvent(new AreaResponder(robot, robotAgent));
             
         }else{
             System.out.println("The move command direction is not found !");
