@@ -60,7 +60,7 @@ public class RobotAgent {
             initCommandListener("move");
 
             // areaResponder = new AreaResponder(robot, this);
-            utilityResponder = new UtilityResponder(this, robot, events);
+            utilityResponder = new UtilityResponder(this, robot);
             utilityResponder.addAllListeners();
 
             threadedAgent.initialize(); // Do an init-soar
