@@ -91,7 +91,10 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
-            source = new File(getClass().getResource("/rules/main/main-default.soar").toURI());
+            source = new
+            File(getClass().getResource("/rules/move-to-landmark-3.0-epmem.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/main/main-default.soar").toURI());
 
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new
@@ -111,12 +114,13 @@ public class RobotAgent {
 
     private void addEventListeners() {
 
-
         // events.addListener(AreaResponder.class, event -> {
-        //     if (move != null && move.getDirection() != null && !move.getDirection().equals("")) {
-        //         areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
-        //         areaResponder.setLocaleInfo(qMemory, move.getDirection(), CellTypeEnum.NORMAL.getName());
-        //     }
+        // if (move != null && move.getDirection() != null &&
+        // !move.getDirection().equals("")) {
+        // areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
+        // areaResponder.setLocaleInfo(qMemory, move.getDirection(),
+        // CellTypeEnum.NORMAL.getName());
+        // }
         // });
     }
 
