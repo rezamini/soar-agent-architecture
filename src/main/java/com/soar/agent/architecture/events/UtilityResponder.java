@@ -2,6 +2,7 @@ package com.soar.agent.architecture.events;
 
 import org.jsoar.kernel.events.AfterDecisionCycleEvent;
 import org.jsoar.kernel.events.AfterInitSoarEvent;
+import org.jsoar.kernel.events.InputEvent;
 import org.jsoar.util.events.SoarEvent;
 import org.jsoar.util.events.SoarEventListener;
 
@@ -22,8 +23,8 @@ public class UtilityResponder extends UtilityListener {
 
     @Override
     public void addAllListeners() {
-        initAfterInitListener();
-        initAfterDecisionListener();
+        startAfterInitSoarEventListener();
+        startAfterDecisionCycleEventListener();
 
         robotAgent.getEvents().addListener(MemoryResponder.class, event -> {
             memoryResponder.updateRobotMemory();
@@ -38,7 +39,7 @@ public class UtilityResponder extends UtilityListener {
     }
 
     @Override
-    public void initAfterDecisionListener() {
+    public void startAfterDecisionCycleEventListener() {
         robotAgent.getThreadedAgent().getEvents().addListener(AfterDecisionCycleEvent.class, new SoarEventListener() {
             @Override
             public void onEvent(SoarEvent event) {
@@ -48,7 +49,7 @@ public class UtilityResponder extends UtilityListener {
     }
 
     @Override
-    public void initAfterInitListener() {
+    public void startAfterInitSoarEventListener() {
         robotAgent.getThreadedAgent().getEvents().addListener(AfterInitSoarEvent.class, new SoarEventListener() {
 
             @Override
@@ -56,6 +57,27 @@ public class UtilityResponder extends UtilityListener {
                 robotAgent.getEvents().fireEvent(memoryResponder);
             }
         });
+    }
+
+    @Override
+    public void startInputEventListener() {
+        robotAgent.getThreadedAgent().getEvents().addListener(InputEvent.class, new SoarEventListener() {
+
+            @Override
+            public void onEvent(SoarEvent event) {
+                // InputEvent ie = (InputEvent) event;
+            }
+        });
+    }
+
+    @Override
+    public void startOutputEventListener(){
+        
+    }
+
+    @Override
+    public void startWorkingMemoryChangedEventListener(){
+        
     }
 
 }

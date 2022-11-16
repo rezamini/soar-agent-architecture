@@ -15,6 +15,20 @@ public abstract class UtilityListener implements SoarEvent {
 
     }
     public abstract void addAllListeners();
-    public abstract void initAfterDecisionListener();
-    public abstract void initAfterInitListener();
+
+    //AfterInitSoarEvent.class
+    public abstract void startAfterInitSoarEventListener();
+
+    //AfterDecisionCycleEvent.class
+    public abstract void startAfterDecisionCycleEventListener();
+
+    //InputEvent.class
+    public abstract void startInputEventListener();
+
+    //OutputEvent.class
+    public abstract void startOutputEventListener();
+
+    //WorkingMemoryChangedEvent.class
+    public abstract void startWorkingMemoryChangedEventListener();
+    
 }
