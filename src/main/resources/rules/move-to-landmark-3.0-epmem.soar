@@ -3,17 +3,19 @@
 ## Agent might still have some strange movements but it reached its landmark much accurately.
 
 #epmem --set graph-match-ordering mcv
-#epmem --set lazy-commit off
-#epmem --set optimization safety
-# epmem --set inclusions self
+# epmem --set lazy-commit off
+# epmem --set optimization safety
+
+#Note: this command provide the full epmem setting of the agent in the debugger
+#epmem --force
 
 epmem --set trigger dc
 epmem --set learning on
 watch --epmem
 
 #set epmem db settings
-# epmem --set database memory
-epmem --set path epmem-db.sqlite
+# epmem --set database file
+epmem --set path src/main/resources/databases/epmem/epmem-db.sqlite
 epmem --set append-database on
 epmem --init
 
