@@ -2,6 +2,19 @@
 # This helps with landmarks that are close to the obstacles (since this assumes basic directions only), it worked with current testing.
 ## Agent might still have some strange movements but it reached its landmark much accurately.
 
+#epmem --set database file
+#epmem --set path /Users/justinnhli/Desktop/hamilton.sqlite
+#epmem --set graph-match-ordering mcv
+#epmem --set lazy-commit off
+#epmem --set optimization safety
+
+epmem --set trigger dc
+epmem --set learning on
+watch --epmem
+# epmem --set exclusions directions
+# epmem --set exclusions preferable-directions
+# epmem --set inclusions self
+
 sp {initialize*state*directions
    (state <ss> ^type state)
    -->
