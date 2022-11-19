@@ -287,4 +287,23 @@ sp {epmem*query*result
 }
 
 
+# sp {epmem*query*result*retrieved
+#    (state <s> 
+#             ^epmem <epmem>)
+#    (<epmem>  ^result.retrieved <retrieved> )
+#    (<retrieved> ^landmarks <lands>)
+# -->
+#    (write (crlf) |======= EPMEM : retrieved ======== : | <lands> )
+#    (<s> ^operator <o> + >)
+#    (<o> ^name success)
+# }
+
+# sp {apply*success
+#    (state <s> ^operator <o>)
+#    (<o> ^name success)
+# -->
+#    (write |Success!!!!!| (crlf))
+# }
+
+
 
