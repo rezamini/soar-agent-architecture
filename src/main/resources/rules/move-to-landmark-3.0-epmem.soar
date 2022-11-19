@@ -287,16 +287,53 @@ sp {epmem*query*result
 }
 
 
-# sp {epmem*query*result*retrieved
-#    (state <s> 
-#             ^epmem <epmem>)
-#    (<epmem>  ^result.retrieved <retrieved> )
-#    (<retrieved> ^landmarks <lands>)
+sp {epmem*query*result*retrieved
+   (state <s> ^operator <o1> + 
+              ^operator <o2> +
+            ^epmem <epmem>)
+   (<epmem>  ^result.retrieved <retrieved> )
+   (<retrieved> ^landmarks.<landmarks1> <lands>)
+   (<lands> ^status active )
+
+   (<retrieved> ^landmarks.<landmarks2> <lands2>)
+   (<lands2> ^status active )
+   
+   (<o1> ^name move-to-landmark
+            # ^lnd.distance <distance1> 
+            ^lnd.name <name1>)
+   (<lands> ^name <name1>
+            ^distance <epmem-distance1>)
+
+    (<o2> ^name move-to-landmark
+            # ^lnd.distance <distance2> 
+            ^lnd.name <name2> )
+   (<lands2> ^name <name2>
+            ^distance <epmem-distance2> > <epmem-distance1>)
+-->
+   (write (crlf) |======= EPMEM : retrieved ======== : | <lands> )
+   (<s> ^operator <o1> > <o2>)}
+   # (<s> ^operator <o> + >)
+   # (<o> ^name epmem-shortest-landmark
+   #    #   ^lnd <lnd>
+   #    #   ^distance-agent <distance-agent>
+   #      ^direction-command test )
+   #    #   ^cell-type <cell-type> )
+
+# sp {select*move-to-landmark*pick-epmem-operator
+#     (state <s> ^operator <o1> + 
+#                 ^operator <o2> +
+#                 ^preferable-directions <pd>
+#                 ^last-direction <l-dir> )
+#     (<pd> ^value <l-dir>
+#         ^prefer <p-dir> )
+#     (<o1> ^name move-random
+#             ^direction-command <p-dir> )
+#     (<o2> ^name move-to-landmark
+#             ^cell-type << block >>  )
+    
 # -->
-#    (write (crlf) |======= EPMEM : retrieved ======== : | <lands> )
-#    (<s> ^operator <o> + >)
-#    (<o> ^name success)
-# }
+# (<s> ^operator <o1> > )}
+
 
 # sp {apply*success
 #    (state <s> ^operator <o>)
