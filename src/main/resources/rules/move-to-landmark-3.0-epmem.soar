@@ -20,18 +20,18 @@ epmem --set optimization safety
 epmem --init
 
 #exclude pre-set constant variables
-# epmem --set exclusions directions
-# epmem --set exclusions preferable-directions
-# epmem --set exclusions opposite
-# epmem --set exclusions prefer
-# epmem --set exclusions value
+epmem --set exclusions directions
+epmem --set exclusions preferable-directions
+epmem --set exclusions opposite
+epmem --set exclusions prefer
+epmem --set exclusions value
 
-epmem --set inclusions landmarks
+# epmem --set inclusions landmarks
 
-#exclude input data such as landmarks so we rely on the epmem on this info
+#exclude input data such as cycle-count
 # epmem --set exclusions landmarks
 # epmem --set exclusions landmarks
-# epmem --set exclusions cycle-count
+epmem --set exclusions cycle-count
 
 sp {initialize*state*directions
    (state <ss> ^type state)
@@ -217,49 +217,74 @@ sp {select*move-forward*prefer-forward-than-others
 -->
 (<s> ^operator <o1> > <o2>)}
 
+
+
+# # create a new state when all landmarks reached within the short memory
+# sp {state*check*landmarks-recorded
+#       (state <s> ^superstate nil)
+# -->
+#    (write (crlf) |======= Creating a landmarks-recorded on state with 'No' value ========|)
+#    (<s> ^landmarks-recorded no )
+# }
+
+# update landmarks-recorded status when all landmarks reached.
+# sp {state*update*landmarks-recorded
+#       (state <s> -^landmarks-recorded
+#                  ^io.input-link.landmarks.status <status>
+#                   { <status> inactive } )
+# -->
+#    (write (crlf) |======= Updating a landmarks-recorded on state with 'Yes' value ========|)
+#    (<s> ^landmarks-recorded yes )}
+
 # 
 # Empep rules
 #
 #
-# sp {epmem*propose*cbr
+
+
+sp {epmem*query
+   (state <s> ^io.input-link.self.pose <e>
+              ^io.input-link.landmarks <lnd>
+            #   ^operator <o>
+              ^epmem.command <cmd>)
+   (<e> ^x <x> ^y <y>)
+   (<lnd> ^status { <status> <> inactive })
+   # (<lnd> ^direction-command <direction-command> )
+   # (<o> ^name move-to-landmark
+   #       ^direction-command <direction-command>
+   #       ^lnd <lnd> )
+-->
+   (write (crlf) |======= EPMEM : query landmarks started ========|)
+   (<cmd> ^query <q> - )
+   (<cmd> ^query <q2>)
+   (<q2> ^x <x>
+        ^y <y>
+        ^landmarks <lands> )
+   (<lands> ^status <status> )
+}
+
+
+
+
+
+# sp {epmem*query
 #    (state <s> ^io.input-link.self.pose <e>
 #               ^epmem.command <cmd>)
 #    (<e> ^x <x> ^y <y>)
 # -->
-#    (write (crlf) |======= EPMEM : setting state name & query ========|)
-#    # (<s> ^name epmem-query)
+#    (write (crlf) |======= EPMEM : query landmarks started ========|)
 
-#    (<cmd> ^query <n1>)
-#    (<n1> ^status inactive
-#         ^direction-command here)
+#    (<cmd> ^query <q>)
+#    (<q> ^landmarks <lands>)
+#    (<lands> ^status inactive)
 # }
 
+sp {epmem*query*result
+   (state <s> ^epmem <epmem>)
+   (<epmem>  ^result. { << success failure >> <q-result> } )
+-->
+   (write (crlf) |======= EPMEM : query result ======== : | <q-result> )
+}
 
-# sp {epmem*apply*cbr-query
-#    (state <s> ^name epmem
-#               ^epmem.command <cmd>)
-# -->
-#    (write (crlf) |======= EPMEM : query ========|)
-#    (<cmd> ^query <n1>)
-#    (<n1> ^feature value
-#         ^id <n2>)
-#    (<n2> ^sub-feature value2
-#          ^sub-id <n3>)
-# }
 
-#
-#END: Select Rules
-#
-#
-
-# 
-#Monitor info
-#
-#
-# sp {monitor*move-to-landmark 
-#    (state <s> ^operator <o>) 
-#    (<o> ^name move-to-landmark ^distance-agent <distance-agent> ^lnd.name <name> ^direction-command <direction-command>) 
-# --> 
-#    (write | direction-command is : | <direction-command>)
-   # (write | - Direction-command variable is : | <name>)}
 
