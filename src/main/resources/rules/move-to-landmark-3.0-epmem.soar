@@ -163,7 +163,8 @@ sp {apply*move*remove*last-direction
 #
 
 sp {select*move-to-landmark*pick-landmark-with-shortest-distance
-    (state <s> ^operator <o1> + 
+    (state <s> -^epmem.result.success <epmem-result>
+                ^operator <o1> + 
                 ^operator <o2> + )
     (<o1> ^name move-to-landmark
             ^lnd.distance <distance1> )
