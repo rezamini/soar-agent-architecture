@@ -1,6 +1,15 @@
 # Enable smem
 smem --set learning on
 
+# Smem db settings
+# smem --set driver org.sqlite.JDBC //can be ommited. throws error once enabled
+# smem --set protocol jdbc:sqlite //can be ommited. throws error once enabled
+smem --set path src/main/resources/databases/smem/smem-db.sqlite
+smem --set append-database on
+smem --set lazy-commit off
+smem --set optimization safety
+smem --init
+
 # add some preload knowledge/objects. it is useful for content of large knowledge bases.
 smem --add {
    (<dirs> ^directions <n> <ne> <nw> <e> <s> <sw> <se> <w>)  
