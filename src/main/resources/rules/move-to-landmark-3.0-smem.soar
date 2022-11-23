@@ -11,28 +11,40 @@ smem --set optimization safety
 smem --init
 
 # add some preload knowledge/objects. it is useful for content of large knowledge bases.
-smem --add {
-   (<dirs> ^directions <n> <ne> <nw> <e> <s> <sw> <se> <w>)  
-   (<n> ^value north ^opposite south)
-   (<ne> ^value northeast ^opposite southwest)
-   (<nw> ^value northwest ^opposite southeast)
-   (<e> ^value east  ^opposite west)
-   (<s> ^value south ^opposite north)
-   (<sw> ^value southwest ^opposite northeast)
-   (<se> ^value southeast ^opposite northwest)
-   (<w> ^value west  ^opposite east)
-}
+# smem --add {
+#    (<dirs> ^directions <n> <ne> <nw> <e> <s> <sw> <se> <w>)  
+#    (<n> ^value north ^opposite south)
+#    (<ne> ^value northeast ^opposite southwest)
+#    (<nw> ^value northwest ^opposite southeast)
+#    (<e> ^value east  ^opposite west)
+#    (<s> ^value south ^opposite north)
+#    (<sw> ^value southwest ^opposite northeast)
+#    (<se> ^value southeast ^opposite northwest)
+#    (<w> ^value west  ^opposite east)
+# }
 
 
 # sp {propose*store
 #   (state <s> ^superstate nil 
 #             #  ^smem <smem>
-#              ^smem.command <sc>)
+#             #  ^smem.command <sc>
+#              )
 # #   (<smem> -^result.success )
 # --> 
-#   (<sc> ^store <p>)
-#   (<p> ^name Steve
-#        ^email |jobs@apple.com|)
+#    (write (crlf) |======= beginning ========|)
+#    (cmd smem --add 
+#    |
+#    (<dirs> ^directions <n> <ne> <nw> <e> <s> <sw> <se> <w>)  
+#    (<n> ^value north ^opposite south)
+#    (<ne> ^value northeast ^opposite southwest)
+#    (<nw> ^value northwest ^opposite southeast)
+#    (<e> ^value east  ^opposite west)
+#    (<s> ^value south ^opposite north)
+#    (<sw> ^value southwest ^opposite northeast)
+#    (<se> ^value southeast ^opposite northwest)
+#    (<w> ^value west  ^opposite east)
+#    | 
+#    )
 # }
 
 sp {initialize*state*directions
