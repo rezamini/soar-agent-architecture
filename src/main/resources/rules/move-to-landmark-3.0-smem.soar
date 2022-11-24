@@ -47,6 +47,37 @@ smem --init
 #    )
 # }
 
+# sp {propose*store*preferable-directions
+#   (state <s> ^superstate nil 
+#             #  ^smem <smem>
+#             #  ^smem.command <sc>
+#              )
+# #   (<smem> -^result.success )
+# --> 
+#    (write (crlf) |======= beginning ========|)
+#    (cmd smem --add 
+#    |
+#    (<pref-dirs> ^preferable-directions <ne> <nw> <sw> <se> ) 
+   
+#    (<ne> ^value northeast ^prefer northeast) 
+#    (<ne> ^value northeast ^prefer east)
+#    (<ne> ^value northeast ^prefer north)
+   
+#    (<nw> ^value northwest ^prefer northwest)
+#    (<nw> ^value northwest ^prefer west)
+#    (<nw> ^value northwest ^prefer north)
+
+#    (<sw> ^value southwest ^prefer southwest)
+#    (<sw> ^value southwest ^prefer south)
+#    (<sw> ^value southwest ^prefer west)
+
+#    (<se> ^value southeast ^prefer southeast)
+#    (<se> ^value southeast ^prefer south)
+#    (<se> ^value southeast ^prefer east)
+#    | 
+#    )
+# }
+
 sp {initialize*state*directions
    (state <ss> ^type state)
    -->
@@ -261,3 +292,90 @@ sp {select*move-forward*prefer-forward-than-others
             ^direction-command <direction> )
 -->
 (<s> ^operator <o1> > <o2>)}
+
+
+
+#For testing and refering purpose
+
+# sp {propose*store*preferable-directions
+#   (state <s> ^superstate nil 
+#             #  ^smem <smem>
+#             #  ^smem.command <sc>
+#              )
+# #   (<smem> -^result.success )
+# --> 
+#    (write (crlf) |======= beginning ========|)
+#    (cmd smem --add 
+#    |
+#      (<person> ^person <p> ) 
+#      (<p> ^name Steve
+#        ^name Bill
+#        ^email bbbb)
+   
+#    | 
+#    )
+# }
+
+# sp {smem*query
+#    (state <s> ^superstate nil
+#               ^smem.command <sc> )
+#    # (<sc> -^query <q> )
+# --> 
+# (write (crlf) |======= beginning ========|)
+#  (<sc> ^query.person <p>)
+# #  (<p> ^email bbbb)
+#  (<s> ^testname Bill)
+# }
+
+# sp {success
+#   (state <s> ^smem.result.retrieved <t>
+#              ^testname <test-name>)
+# #   (<t> ^name |Bill| )
+# #          ^email bbbb)
+# -->
+# (write (crlf) |======= succeeded ========| <t>)
+# (<s> ^querydone true)
+# }
+
+
+# sp {smem*query
+#    (state <s> ^superstate nil
+#               ^smem.command <sc> )
+#    # (<sc> -^query <q> )
+# --> 
+# (write (crlf) |======= beginning ========|)
+#  (<sc> ^query <cue>)
+#  (<cue> ^prefer |northeast| )
+# #  (<cue> ^prefer <pref-dir> )
+# #  (<cue> ^preferable-directions <pref-dirs> )
+# }
+
+# sp {success
+#   (state <s> ^smem.result.retrieved <lti>)
+#   (<lti> ^preferable-directions <prefs> )
+# #   (<prefs> ^<any1> <any2>)
+# -->
+# (write (crlf) |======= succeeded ========| <prefs>)
+# }
+
+
+# sp {smem*add
+#    (state <s> ^superstate nil
+#               ^preferable-directions <prefs>
+#               ^smem.command <sc> )
+#    # (<sc> -^query <q> )
+# --> 
+# (write (crlf) |======= adding new ========|)
+#  (<sc> ^store <prefs>)
+#  (<prefs> ^stored true)
+# }
+
+# sp {smem*add*done
+#    (state <s> ^preferable-directions <prefs>
+#                ^smem.command <sc>)
+#    (<prefs> ^stored true)
+# -->
+#    # (<s> ^random-objects <ro> -)
+#    (write (crlf) |======= removing new ========|)
+#    (<sc> ^store <store> -)
+# }
