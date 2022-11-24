@@ -24,7 +24,7 @@ smem --init
 # }
 
 
-# sp {propose*store
+# sp {propose*store*directions
 #   (state <s> ^superstate nil 
 #             #  ^smem <smem>
 #             #  ^smem.command <sc>
@@ -135,7 +135,7 @@ sp {apply*move
    (<o> ^name { <name> << move-to-landmark move-random >> }
         ^direction-command <dir>)
 -->
-   (write | applied operator is : | <name>)
+   # (write | applied operator is : | <name>)
    (<ol> ^move.direction <dir>)} 
 
 
@@ -165,6 +165,17 @@ sp {apply*move*remove*last-direction
 #    (<s> ^prior-direction <direction> )
    (<s> ^last-direction <direction> -)}  
 
+
+sp {smem*query
+   (state <s> ^last-direction <l-dir>
+              ^smem.command <sc> )
+   # (<sc> -^query <q> )
+--> 
+# (write (crlf) |======= SMEM query for last direction ========| <l-dir>)
+ (<sc> ^query <cue>)
+ (<cue> ^value <l-dir> )
+ (<cue> ^prefer <anyvalue> )
+}
 
 #
 #END: Apply Rules
@@ -204,9 +215,10 @@ sp {select*move-to-landmark*pick-original-landmark-direction
 (<s> ^operator <o1> > )}
 
 
-sp {select*move-to-landmark*pick-prefer-directions-over-others-if-landmark-block
+sp {select*move-to-landmark*no-smem*pick-prefer-directions-over-others-if-landmark-block
     (state <s> ^operator <o1> + 
                 ^operator <o2> +
+                -^smem.result.success <smem-result>
                 ^preferable-directions <pd>
                 ^last-direction <l-dir> )
     (<pd> ^value <l-dir>
@@ -217,6 +229,25 @@ sp {select*move-to-landmark*pick-prefer-directions-over-others-if-landmark-block
             ^cell-type << block >>  )
     
 -->
+(write (crlf) |======= operator selected based on short term memory data ========|)
+(<s> ^operator <o1> > )}
+
+sp {select*move-to-landmark*smem*pick-prefer-directions-over-others-if-landmark-block
+    (state <s> ^operator <o1> + 
+                ^operator <o2> +
+                ^last-direction <l-dir> 
+                ^smem.result.success <smem-result>
+                ^smem.result.retrieved <smem-retrieved>)
+
+   (<smem-retrieved> ^value <l-dir>
+        ^prefer <p-dir>  )
+    (<o1> ^name move-random
+            ^direction-command <p-dir> )
+    (<o2> ^name move-to-landmark
+            ^cell-type << block >>  )
+    
+-->
+(write (crlf) |======= operator selected based on Semantic Memory(SMEM) data ========| <smem-retrieved> )
 (<s> ^operator <o1> > )}
 
 
