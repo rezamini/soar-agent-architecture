@@ -1,9 +1,3 @@
-# Main different with version 2.3 is that it does not remove move-random operator and also reject backward is commented out.
-# This helps with landmarks that are close to the obstacles (since this assumes basic directions only), it worked with current testing.
-## Agent might still have some strange movements but it reached its landmark much accurately.
-
-#epmem --set graph-match-ordering mcv
-
 #Note: this command provide the full epmem setting of the agent in the debugger
 #epmem --force
 
@@ -16,7 +10,7 @@ watch --epmem
 epmem --set path src/main/resources/databases/epmem/epmem-db.sqlite
 epmem --set append-database on
 epmem --set lazy-commit off
-epmem --set optimization safety
+epmem --set optimization performance
 epmem --init
 
 #exclude pre-set constant variables
@@ -121,7 +115,7 @@ sp {apply*move
    (<o> ^name { <name> << move-to-landmark move-random >> }
         ^direction-command <dir>)
 -->
-   (write | applied operator is : | <name>)
+   # (write | applied operator is : | <name>)
    (<ol> ^move.direction <dir>)} 
 
 
@@ -255,7 +249,7 @@ sp {epmem*query
    #       ^direction-command <direction-command>
    #       ^lnd <lnd> )
 -->
-   (write (crlf) |======= EPMEM : query landmarks started ========|)
+   # (write (crlf) |======= EPMEM : query landmarks started ========|)
    (<cmd> ^query <q> - )
    (<cmd> ^query <q2>)
    (<q2> ^x <x>
@@ -264,39 +258,23 @@ sp {epmem*query
    (<lands> ^status <status> )
 }
 
-
-
-
-
-# sp {epmem*query
-#    (state <s> ^io.input-link.self.pose <e>
-#               ^epmem.command <cmd>)
-#    (<e> ^x <x> ^y <y>)
-# -->
-#    (write (crlf) |======= EPMEM : query landmarks started ========|)
-
-#    (<cmd> ^query <q>)
-#    (<q> ^landmarks <lands>)
-#    (<lands> ^status inactive)
-# }
-
 sp {epmem*query*result
    (state <s> ^epmem <epmem>)
    (<epmem>  ^result. { << success failure >> <q-result> } )
 -->
-   (write (crlf) |======= EPMEM : query result ======== : | <q-result> )
+   (write (crlf) |======= Episodic Memory (EPMEM): query result is : | <q-result> )
 }
-
 
 sp {epmem*query*result*retrieved
    (state <s> ^operator <o1> + 
               ^operator <o2> +
-            ^epmem <epmem>)
-   (<epmem>  ^result.retrieved <retrieved> )
-   (<retrieved> ^landmarks.<landmarks1> <lands>)
+              ^epmem.result.success <epmem-result>
+              ^epmem.result.retrieved <epmem-retrieved>)
+   
+   (<epmem-retrieved> ^landmarks.<landmarks1> <lands> )
    (<lands> ^status active )
 
-   (<retrieved> ^landmarks.<landmarks2> <lands2>)
+   (<epmem-retrieved> ^landmarks.<landmarks2> <lands2>)
    (<lands2> ^status active )
    
    (<o1> ^name move-to-landmark
@@ -311,7 +289,6 @@ sp {epmem*query*result*retrieved
    (<lands2> ^name <name2>
             ^distance <epmem-distance2> > <epmem-distance1>)
 -->
-   (write (crlf) |======= EPMEM : retrieved ======== : | <lands> )
    (<s> ^operator <o1> > <o2>)}
    # (<s> ^operator <o> + >)
    # (<o> ^name epmem-shortest-landmark
