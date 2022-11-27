@@ -98,7 +98,7 @@ sp {propose*move-to-landmark
         ^cell-type <cell-type>)}
 
 
-sp {propose*move-random
+sp {propose*move-inertia
    (state <s> ^io.input-link.self.pose <e>
               ^io.input-link.area.<view> <v-directions> 
               ^io.input-link.landmarks.status 
@@ -109,7 +109,7 @@ sp {propose*move-random
     
 -->
    (<s> ^operator <o> + =)
-   (<o> ^name move-random
+   (<o> ^name move-inertia
         ^direction-command <n-dir> )}
 
 #
@@ -125,7 +125,7 @@ sp {propose*move-random
 sp {apply*move
    (state <s> ^io.output-link <ol>
               ^operator <o>)
-   (<o> ^name { <name> << move-to-landmark move-random >> }
+   (<o> ^name { <name> << move-to-landmark move-inertia >> }
         ^direction-command <dir>)
 -->
    # (write | applied operator is : | <name>)
@@ -143,7 +143,7 @@ sp {apply*move*remove-move
 
 sp {apply*move*create*last-direction
    (state <s> ^operator <o>)
-   (<o> ^name { <name> << move-to-landmark move-random >> }
+   (<o> ^name { <name> << move-to-landmark move-inertia >> }
         ^direction-command <direction>)
 -->
    (<s> ^last-direction <direction>)}
@@ -152,7 +152,7 @@ sp {apply*move*create*last-direction
 sp {apply*move*remove*last-direction
    (state <s> ^operator <o>
               ^last-direction <direction>)
-   (<o> ^name { <name> << move-to-landmark move-random >> }
+   (<o> ^name { <name> << move-to-landmark move-inertia >> }
         ^direction-command <> <direction>)
 -->
 #    (<s> ^prior-direction <direction> )
@@ -194,7 +194,7 @@ sp {select*move-to-landmark*pick-landmark-with-shortest-distance
 sp {select*move-to-landmark*pick-other-direction-if-block
     (state <s> ^operator <o1> +
                 ^operator <o2> + )
-    (<o1> ^name move-random )
+    (<o1> ^name move-inertia )
     (<o2> ^name move-to-landmark
             ^cell-type << block >> )
     
@@ -217,7 +217,7 @@ sp {select*move-to-landmark*no-smem*pick-prefer-directions-over-others-if-landma
                 ^last-direction <l-dir> )
     (<pd> ^value <l-dir>
         ^prefer <p-dir> )
-    (<o1> ^name move-random
+    (<o1> ^name move-inertia
             ^direction-command <p-dir> )
     (<o2> ^name move-to-landmark
             ^cell-type << block >>  )
@@ -235,7 +235,7 @@ sp {select*move-to-landmark*smem*pick-prefer-directions-over-others-if-landmark-
 
    (<smem-retrieved> ^value <l-dir>
         ^prefer <p-dir>  )
-    (<o1> ^name move-random
+    (<o1> ^name move-inertia
             ^direction-command <p-dir> )
     (<o2> ^name move-to-landmark
             ^cell-type << block >>  )
@@ -249,9 +249,9 @@ sp {select*move-forward*prefer-forward-than-others
     (state <s> ^operator <o1> +
                 ^operator <o2> +
                 ^last-direction <lastdirection> )
-    (<o1> ^name << move-random >>
+    (<o1> ^name << move-inertia >>
             ^direction-command <lastdirection> )
-    (<o2> ^name << move-random >>
+    (<o2> ^name << move-inertia >>
             ^direction-command <direction> )
 -->
 (<s> ^operator <o1> > <o2>)}
