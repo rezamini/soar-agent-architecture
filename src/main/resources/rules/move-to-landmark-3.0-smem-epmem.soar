@@ -7,76 +7,38 @@ smem --set learning on
 smem --set path src/main/resources/databases/smem/smem-db.sqlite
 smem --set append-database on
 smem --set lazy-commit off
-smem --set optimization safety
+smem --set optimization performance
 smem --init
 
-# add some preload knowledge/objects. it is useful for content of large knowledge bases.
-# smem --add {
-#    (<dirs> ^directions <n> <ne> <nw> <e> <s> <sw> <se> <w>)  
-#    (<n> ^value north ^opposite south)
-#    (<ne> ^value northeast ^opposite southwest)
-#    (<nw> ^value northwest ^opposite southeast)
-#    (<e> ^value east  ^opposite west)
-#    (<s> ^value south ^opposite north)
-#    (<sw> ^value southwest ^opposite northeast)
-#    (<se> ^value southeast ^opposite northwest)
-#    (<w> ^value west  ^opposite east)
-# }
+#Enable Epmem
+#Note: this command provide the full epmem setting of the agent in the debugger
+#epmem --force
 
+epmem --set trigger dc
+epmem --set learning on
+watch --epmem
 
-# sp {propose*store*directions
-#   (state <s> ^superstate nil 
-#             #  ^smem <smem>
-#             #  ^smem.command <sc>
-#              )
-# #   (<smem> -^result.success )
-# --> 
-#    (write (crlf) |======= beginning ========|)
-#    (cmd smem --add 
-#    |
-#    (<dirs> ^directions <n> <ne> <nw> <e> <s> <sw> <se> <w>)  
-#    (<n> ^value north ^opposite south)
-#    (<ne> ^value northeast ^opposite southwest)
-#    (<nw> ^value northwest ^opposite southeast)
-#    (<e> ^value east  ^opposite west)
-#    (<s> ^value south ^opposite north)
-#    (<sw> ^value southwest ^opposite northeast)
-#    (<se> ^value southeast ^opposite northwest)
-#    (<w> ^value west  ^opposite east)
-#    | 
-#    )
-# }
+#set epmem db settings
+# epmem --set database file
+epmem --set path src/main/resources/databases/epmem/epmem-db.sqlite
+epmem --set append-database on
+epmem --set lazy-commit off
+epmem --set optimization performance
+epmem --init
 
-# sp {propose*store*preferable-directions
-#   (state <s> ^superstate nil 
-#             #  ^smem <smem>
-#             #  ^smem.command <sc>
-#              )
-# #   (<smem> -^result.success )
-# --> 
-#    (write (crlf) |======= beginning ========|)
-#    (cmd smem --add 
-#    |
-#    (<pref-dirs> ^preferable-directions <ne> <nw> <sw> <se> ) 
-   
-#    (<ne> ^value northeast ^prefer northeast) 
-#    (<ne> ^value northeast ^prefer east)
-#    (<ne> ^value northeast ^prefer north)
-   
-#    (<nw> ^value northwest ^prefer northwest)
-#    (<nw> ^value northwest ^prefer west)
-#    (<nw> ^value northwest ^prefer north)
+#exclude pre-set constant variables
+epmem --set exclusions directions
+epmem --set exclusions preferable-directions
+epmem --set exclusions opposite
+epmem --set exclusions prefer
+epmem --set exclusions value
 
-#    (<sw> ^value southwest ^prefer southwest)
-#    (<sw> ^value southwest ^prefer south)
-#    (<sw> ^value southwest ^prefer west)
+# epmem --set inclusions landmarks
 
-#    (<se> ^value southeast ^prefer southeast)
-#    (<se> ^value southeast ^prefer south)
-#    (<se> ^value southeast ^prefer east)
-#    | 
-#    )
-# }
+#exclude input data such as cycle-count
+# epmem --set exclusions landmarks
+# epmem --set exclusions landmarks
+epmem --set exclusions cycle-count
 
 sp {initialize*state*directions
    (state <ss> ^type state)
@@ -219,7 +181,8 @@ sp {smem*query
 #
 
 sp {select*move-to-landmark*pick-landmark-with-shortest-distance
-    (state <s> ^operator <o1> + 
+    (state <s> -^epmem.result.success <epmem-result>
+                ^operator <o1> + 
                 ^operator <o2> + )
     (<o1> ^name move-to-landmark
             ^lnd.distance <distance1> )
@@ -293,89 +256,49 @@ sp {select*move-forward*prefer-forward-than-others
 -->
 (<s> ^operator <o1> > <o2>)}
 
+#epmem query & result rules
+sp {epmem*query
+   (state <s> ^io.input-link.self.pose <e>
+              ^io.input-link.landmarks <lnd>
+              ^epmem.command <cmd>)
+   (<e> ^x <x> ^y <y>)
+   (<lnd> ^status { <status> <> inactive })
+-->
+   (<cmd> ^query <q> - )
+   (<cmd> ^query <q2>)
+   (<q2> ^x <x>
+        ^y <y>
+        ^landmarks <lands> )
+   (<lands> ^status <status> )
+}
 
+sp {epmem*query*result
+   (state <s> ^epmem <epmem>)
+   (<epmem>  ^result. { << success failure >> <q-result> } )
+-->
+   (write (crlf) |======= Episodic Memory (EPMEM): query result is : | <q-result> )
+}
 
-#For testing and refering purpose
-
-# sp {propose*store*preferable-directions
-#   (state <s> ^superstate nil 
-#             #  ^smem <smem>
-#             #  ^smem.command <sc>
-#              )
-# #   (<smem> -^result.success )
-# --> 
-#    (write (crlf) |======= beginning ========|)
-#    (cmd smem --add 
-#    |
-#      (<person> ^person <p> ) 
-#      (<p> ^name Steve
-#        ^name Bill
-#        ^email bbbb)
+sp {epmem*query*result*retrieved
+   (state <s> ^operator <o1> + 
+              ^operator <o2> +
+              ^epmem.result.success <epmem-result>
+              ^epmem.result.retrieved <epmem-retrieved>)
    
-#    | 
-#    )
-# }
+   (<epmem-retrieved> ^landmarks.<landmarks1> <lands> )
+   (<lands> ^status active )
 
-# sp {smem*query
-#    (state <s> ^superstate nil
-#               ^smem.command <sc> )
-#    # (<sc> -^query <q> )
-# --> 
-# (write (crlf) |======= beginning ========|)
-#  (<sc> ^query.person <p>)
-# #  (<p> ^email bbbb)
-#  (<s> ^testname Bill)
-# }
+   (<epmem-retrieved> ^landmarks.<landmarks2> <lands2>)
+   (<lands2> ^status active )
+   
+   (<o1> ^name move-to-landmark
+            ^lnd.name <name1>)
+   (<lands> ^name <name1>
+            ^distance <epmem-distance1>)
 
-# sp {success
-#   (state <s> ^smem.result.retrieved <t>
-#              ^testname <test-name>)
-# #   (<t> ^name |Bill| )
-# #          ^email bbbb)
-# -->
-# (write (crlf) |======= succeeded ========| <t>)
-# (<s> ^querydone true)
-# }
-
-
-# sp {smem*query
-#    (state <s> ^superstate nil
-#               ^smem.command <sc> )
-#    # (<sc> -^query <q> )
-# --> 
-# (write (crlf) |======= beginning ========|)
-#  (<sc> ^query <cue>)
-#  (<cue> ^prefer |northeast| )
-# #  (<cue> ^prefer <pref-dir> )
-# #  (<cue> ^preferable-directions <pref-dirs> )
-# }
-
-# sp {success
-#   (state <s> ^smem.result.retrieved <lti>)
-#   (<lti> ^preferable-directions <prefs> )
-# #   (<prefs> ^<any1> <any2>)
-# -->
-# (write (crlf) |======= succeeded ========| <prefs>)
-# }
-
-
-# sp {smem*add
-#    (state <s> ^superstate nil
-#               ^preferable-directions <prefs>
-#               ^smem.command <sc> )
-#    # (<sc> -^query <q> )
-# --> 
-# (write (crlf) |======= adding new ========|)
-#  (<sc> ^store <prefs>)
-#  (<prefs> ^stored true)
-# }
-
-# sp {smem*add*done
-#    (state <s> ^preferable-directions <prefs>
-#                ^smem.command <sc>)
-#    (<prefs> ^stored true)
-# -->
-#    # (<s> ^random-objects <ro> -)
-#    (write (crlf) |======= removing new ========|)
-#    (<sc> ^store <store> -)
-# }
+    (<o2> ^name move-to-landmark
+            ^lnd.name <name2> )
+   (<lands2> ^name <name2>
+            ^distance <epmem-distance2> > <epmem-distance1>)
+-->
+   (<s> ^operator <o1> > <o2>)}
