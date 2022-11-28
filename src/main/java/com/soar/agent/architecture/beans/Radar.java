@@ -5,6 +5,13 @@ public class Radar {
     public double radarAngle;
     public double radarRange;
 
+    public Radar () {
+    }
+
+    public Radar(double radarAngle){
+        this.radarAngle = radarAngle;
+    }
+
     public Radar(double radarAngle, double radarRange){
         this.radarAngle = radarAngle;
         this.radarRange = radarRange;
