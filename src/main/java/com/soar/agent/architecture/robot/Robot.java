@@ -1,5 +1,6 @@
 package com.soar.agent.architecture.robot;
 
+import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.world.World;
 import java.awt.geom.*;
@@ -20,10 +21,23 @@ public class Robot {
     private double speed;
     private double turnRate;
     public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
+    public final Radar[] ranges = new Radar[4];
 
     public Robot(World game, String name) {
         this.world = game;
         this.name = name;
+
+        initRobotRadar();
+    }
+
+    private void initRobotRadar() {
+        int slot = -(ranges.length / 2);
+        for (int i = 0; i < ranges.length; ++i) {
+            ranges[i] = new Radar(slot * (Math.PI / ranges.length));
+            ranges[i].setRadarRange(i);
+            slot++;
+        }
+        
     }
 
     public void move(double newX, double newY) {

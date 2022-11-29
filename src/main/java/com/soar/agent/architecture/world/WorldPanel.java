@@ -3,6 +3,7 @@ package com.soar.agent.architecture.world;
 import javax.swing.JPanel;
 
 import com.soar.agent.architecture.beans.Landmark;
+import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.robot.Robot;
 
 import java.awt.BasicStroke;
@@ -141,7 +142,7 @@ public class WorldPanel extends JPanel {
         transform.rotate(robot.getYaw());
         g2d.transform(transform);
 
-        // drawRanges(g2d, robot);
+        drawRanges(g2d, robot);
 
         if (robot == selection) {
             final double selR = robot.getRadius() * 1.4;
@@ -198,16 +199,14 @@ public class WorldPanel extends JPanel {
         g2d.dispose();
     }
 
-    // private void drawRanges(Graphics2D g2dIn, Robot robot)
-    // {
-    // for(RadarRange range : robot.ranges)
-    // {
-    // final Arc2D arc = new Arc2D.Double(-range.range, -range.range, 2 *
-    // range.range, 2 * range.range,
-    // Math.toDegrees(-range.angle) - 1.0, 2.0, Arc2D.PIE);
-    // drawShape(g2dIn, arc, Color.GREEN, Color.GREEN);
-    // }
-    // }
+    private void drawRanges(Graphics2D g2dIn, Robot robot) {
+        for (Radar range : robot.ranges) {
+            final Arc2D arc = new Arc2D.Double(-range.getRadarRange(), -range.getRadarRange(), 2 *
+                    range.getRadarRange(), 2 * range.getRadarRange(),
+                    Math.toDegrees(-range.getRadarAngle()) - 1.0, 2.0, Arc2D.PIE);
+            drawShape(g2dIn, arc, Color.GREEN, Color.GREEN);
+        }
+    }
 
     private void drawLandmark(Graphics2D g2dIn, Landmark landmark) {
         final Graphics2D g2d = (Graphics2D) g2dIn.create();
