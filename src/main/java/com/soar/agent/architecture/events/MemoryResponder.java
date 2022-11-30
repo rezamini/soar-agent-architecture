@@ -13,158 +13,176 @@ import com.soar.agent.architecture.robot.RobotAgent;
 
 public class MemoryResponder extends MemoryListener {
 
-    QMemory qMemory = robotAgent.getQMemory();
-    private AreaResponder areaResponder;
+        QMemory qMemory = robotAgent.getQMemory();
+        private AreaResponder areaResponder;
 
-    public MemoryResponder(Robot robot, RobotAgent robotAgent) {
-        super(robot, robotAgent);
-        areaResponder = new AreaResponder(robot, robotAgent);
-    }
-
-    @Override
-    public void updateRobotMemory() {
-
-        synchronized (qMemory) {
-            //agent name
-            qMemory.setString(buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.BASIC_NAME.getName(), null),
-                    robot.getName());
-            //mbb
-            qMemory.setDouble(
-                    buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.MINIMUM_BOUNDING_BOX.getName(), null),
-                    robot.getRadius());
-
-            final double x = robot.getShape().getCenterX();
-            final double y = robot.getShape().getCenterY();
-
-            // X position
-            qMemory.setDouble(
-                    buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.POSITION.getName(),
-                            MemoryEnum.POSITION_X.getName()),
-                    x);
-
-            // Y position
-            qMemory.setDouble(
-                    buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.POSITION.getName(),
-                            MemoryEnum.POSITION_Y.getName()),
-                    y);
-
-            // Yaw degree
-            qMemory.setDouble(
-                    buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.POSITION.getName(),
-                            MemoryEnum.YAW.getName()),
-                    Math.toDegrees(robot.getYaw()));
-
-            areaResponder.updateAreaMemory();
-            // events.fireEvent(areaResponder);
-            updateMemoryLandmarks();
+        public MemoryResponder(Robot robot, RobotAgent robotAgent) {
+                super(robot, robotAgent);
+                areaResponder = new AreaResponder(robot, robotAgent);
         }
 
-    }
+        @Override
+        public void updateRobotMemory() {
 
-    @Override
-    public void updateMemoryLandmarks() {
-        synchronized (qMemory) {
-            //Main Landmarks Hierarchy
-            QMemory landmarks = qMemory.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
+                synchronized (qMemory) {
+                        // agent name
+                        qMemory.setString(
+                                        buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.BASIC_NAME.getName(),
+                                                        null),
+                                        robot.getName());
+                        // mbb
+                        qMemory.setDouble(
+                                        buildMemoryPath(MemoryEnum.IDENTITY.getName(),
+                                                        MemoryEnum.MINIMUM_BOUNDING_BOX.getName(), null),
+                                        robot.getRadius());
 
-            for (Iterator<Landmark> iter = robot.getWorld().getLandmarks().iterator(); iter.hasNext();) {
-                Landmark landmark = iter.next();
-                boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
+                        final double x = robot.getShape().getCenterX();
+                        final double y = robot.getShape().getCenterY();
 
-                // create a sub landmark with the landmark name - [name of landmark]
-                String subName = MemoryEnum.LANDMARK_SUB.getName() + UtilitiesEnum.DASHSEPERATOR.getName()
-                        + landmark.name;
-                QMemory subLandmark = landmarks.subMemory(subName);
+                        // X position
+                        qMemory.setDouble(
+                                        buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.POSITION.getName(),
+                                                        MemoryEnum.POSITION_X.getName()),
+                                        x);
 
-                // get current agent and landmark positions
-                // Agent X position
-                double agentXPose = qMemory
-                        .getDouble(buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.POSITION.getName(),
-                                MemoryEnum.POSITION_X.getName()));
+                        // Y position
+                        qMemory.setDouble(
+                                        buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.POSITION.getName(),
+                                                        MemoryEnum.POSITION_Y.getName()),
+                                        y);
 
-                // Agent Y position
-                double agentYPose = qMemory
-                        .getDouble(buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.POSITION.getName(),
-                                MemoryEnum.POSITION_Y.getName()));
+                        // Yaw degree
+                        qMemory.setDouble(
+                                        buildMemoryPath(MemoryEnum.IDENTITY.getName(), MemoryEnum.POSITION.getName(),
+                                                        MemoryEnum.YAW.getName()),
+                                        Math.toDegrees(robot.getYaw()));
 
-                double landmarkX = landmark.getLocation().getX();
-                double landmarkY = landmark.getLocation().getY();
-
-                // Calculate where and which direction the landmark is located from the agent
-                // current position. Dynamic values & movements
-                String landmarkDirection = calcLandmarkDirection(agentXPose, agentYPose, landmarkX, landmarkY);
-
-                // set basic landmark information
-                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
-                subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
-                subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
-                subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
-                        landmark.getLocation().distance(agentXPose, agentYPose));
-                subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), landmarkDirection);
-                subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(), UtilitiesEnum.ACTIVESTATUS.getName());
-                
-                // if its true it means the agent reached at this specific landmark, so remove
-                // the landmark and update the direction command to Here regardless
-                if (isAgentReached) {
-                    subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
-                    subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
-                            UtilitiesEnum.REACHEDSTATUS.getName());
-
-                    // add a inactive status; this could be helpful in future usuage within .soar files    
-                    subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(), UtilitiesEnum.INACTIVESTATUS.getName());
-                    iter.remove();
+                        areaResponder.updateAreaMemory();
+                        // events.fireEvent(areaResponder);
+                        updateMemoryLandmarks();
+                        updateMemoryRadar();
                 }
 
-                /* Note: Might need to use below code in the future */
-                // double bearing = Math.toDegrees(Math.atan2(agentYPose - landmarkY, agentXPose
-                // - landmarkX) - robot.getYaw());
-                // while(bearing <= -180.0) bearing += 180.0;
-                // while(bearing >= 180.0) bearing -= 180.0;
-                // subLandmark.setDouble("relative-bearing", bearing);
-            }
-
-            // set the status of the overal landmarks
-            landmarks.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
-                    robot.getWorld().getLandmarks().size() == 0 ? UtilitiesEnum.INACTIVESTATUS.getName()
-                            : UtilitiesEnum.ACTIVESTATUS.getName());
         }
 
-    }
+        @Override
+        public void updateMemoryLandmarks() {
+                synchronized (qMemory) {
+                        // Main Landmarks Hierarchy
+                        QMemory landmarks = qMemory.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
 
-    private String calcLandmarkDirectionSimple(double agentX, double agentY, double landmarkX, double landmarkY) {
-        String direction = "";
-        direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
-                : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
+                        for (Iterator<Landmark> iter = robot.getWorld().getLandmarks().iterator(); iter.hasNext();) {
+                                Landmark landmark = iter.next();
+                                boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
 
-        if (direction.equals("")) {
-            direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
-                    : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
+                                // create a sub landmark with the landmark name - [name of landmark]
+                                String subName = MemoryEnum.LANDMARK_SUB.getName()
+                                                + UtilitiesEnum.DASHSEPERATOR.getName()
+                                                + landmark.name;
+                                QMemory subLandmark = landmarks.subMemory(subName);
+
+                                // get current agent and landmark positions
+                                // Agent X position
+                                double agentXPose = qMemory
+                                                .getDouble(buildMemoryPath(MemoryEnum.IDENTITY.getName(),
+                                                                MemoryEnum.POSITION.getName(),
+                                                                MemoryEnum.POSITION_X.getName()));
+
+                                // Agent Y position
+                                double agentYPose = qMemory
+                                                .getDouble(buildMemoryPath(MemoryEnum.IDENTITY.getName(),
+                                                                MemoryEnum.POSITION.getName(),
+                                                                MemoryEnum.POSITION_Y.getName()));
+
+                                double landmarkX = landmark.getLocation().getX();
+                                double landmarkY = landmark.getLocation().getY();
+
+                                // Calculate where and which direction the landmark is located from the agent
+                                // current position. Dynamic values & movements
+                                String landmarkDirection = calcLandmarkDirection(agentXPose, agentYPose, landmarkX,
+                                                landmarkY);
+
+                                // set basic landmark information
+                                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
+                                subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
+                                subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
+                                subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
+                                                landmark.getLocation().distance(agentXPose, agentYPose));
+                                subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), landmarkDirection);
+                                subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                                UtilitiesEnum.ACTIVESTATUS.getName());
+
+                                // if its true it means the agent reached at this specific landmark, so remove
+                                // the landmark and update the direction command to Here regardless
+                                if (isAgentReached) {
+                                        subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
+                                        subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                                                        UtilitiesEnum.REACHEDSTATUS.getName());
+
+                                        // add a inactive status; this could be helpful in future usuage within .soar
+                                        // files
+                                        subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                                        UtilitiesEnum.INACTIVESTATUS.getName());
+                                        iter.remove();
+                                }
+
+                                /* Note: Might need to use below code in the future */
+                                // double bearing = Math.toDegrees(Math.atan2(agentYPose - landmarkY, agentXPose
+                                // - landmarkX) - robot.getYaw());
+                                // while(bearing <= -180.0) bearing += 180.0;
+                                // while(bearing >= 180.0) bearing -= 180.0;
+                                // subLandmark.setDouble("relative-bearing", bearing);
+                        }
+
+                        // set the status of the overal landmarks
+                        landmarks.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                        robot.getWorld().getLandmarks().size() == 0
+                                                        ? UtilitiesEnum.INACTIVESTATUS.getName()
+                                                        : UtilitiesEnum.ACTIVESTATUS.getName());
+                }
+
         }
 
-        return direction.equals("") ? UtilitiesEnum.REACHEDSTATUS.getName() : direction;
-    }
+        @Override
+        public void updateMemoryRadar() {
+                // TODO Auto-generated method stub
 
-    private String calcLandmarkDirection(double agentX, double agentY, double landmarkX, double landmarkY) {
-        String direction = "";
-        direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
-                : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
+        }
 
-        direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
-                : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
+        private String calcLandmarkDirectionSimple(double agentX, double agentY, double landmarkX, double landmarkY) {
+                String direction = "";
+                direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
+                                : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
 
-        return direction.equals("") ? UtilitiesEnum.REACHEDSTATUS.getName() : direction;
-    }
+                if (direction.equals("")) {
+                        direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
+                                        : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
+                }
 
-    private String buildMemoryPath(String arg1, String arg2, String arg3) {
-        StringBuilder sb = new StringBuilder();
+                return direction.equals("") ? UtilitiesEnum.REACHEDSTATUS.getName() : direction;
+        }
 
-        sb.append(arg1 != null ? arg1 : "")
-                .append(arg2 != null ? UtilitiesEnum.DOTSEPERATOR.getName() : "")
-                .append(arg2 != null ? arg2 : "")
-                .append(arg3 != null ? UtilitiesEnum.DOTSEPERATOR.getName() : "")
-                .append(arg3 != null ? arg3 : "");
+        private String calcLandmarkDirection(double agentX, double agentY, double landmarkX, double landmarkY) {
+                String direction = "";
+                direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
+                                : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
 
-        return sb.toString();
-    }
+                direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
+                                : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
+
+                return direction.equals("") ? UtilitiesEnum.REACHEDSTATUS.getName() : direction;
+        }
+
+        private String buildMemoryPath(String arg1, String arg2, String arg3) {
+                StringBuilder sb = new StringBuilder();
+
+                sb.append(arg1 != null ? arg1 : "")
+                                .append(arg2 != null ? UtilitiesEnum.DOTSEPERATOR.getName() : "")
+                                .append(arg2 != null ? arg2 : "")
+                                .append(arg3 != null ? UtilitiesEnum.DOTSEPERATOR.getName() : "")
+                                .append(arg3 != null ? arg3 : "");
+
+                return sb.toString();
+        }
 
 }

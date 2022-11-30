@@ -16,4 +16,5 @@ public abstract class MemoryListener implements SoarEvent{
 
     public abstract void updateRobotMemory();
     public abstract void updateMemoryLandmarks();
+    public abstract void updateMemoryRadar();
 }
