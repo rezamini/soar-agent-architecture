@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.jsoar.kernel.io.quick.QMemory;
 
 import com.soar.agent.architecture.beans.Landmark;
+import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.enums.MemoryEnum;
 import com.soar.agent.architecture.enums.UtilitiesEnum;
@@ -145,7 +146,15 @@ public class MemoryResponder extends MemoryListener {
 
         @Override
         public void updateMemoryRadar() {
-                // TODO Auto-generated method stub
+                synchronized (qMemory) {
+                        for (int i = 0; i < robot.ranges.length; ++i) {
+                                Radar r = robot.ranges[i];
+                                QMemory sub = qMemory.subMemory("ranges.range[" + i + "]");
+                                sub.setInteger("id", i - robot.ranges.length / 2);
+                                sub.setDouble("distance", r.getRadarRange());
+                                sub.setDouble("angle", Math.toDegrees(r.getRadarAngle()));
+                        }
+                }
 
         }
 
