@@ -61,6 +61,10 @@ public class Robot {
         if (!world.willCollide(this, newX, newY)) {
             move(newX, newY);
         }
+
+        for (Radar range : ranges) {
+            range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
+        }
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
