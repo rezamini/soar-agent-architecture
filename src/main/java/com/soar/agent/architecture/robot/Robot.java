@@ -21,23 +21,30 @@ public class Robot {
     private double speed;
     private double turnRate;
     public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
-    public final Radar[] ranges = new Radar[4];
+    public Radar[] ranges;
 
     public Robot(World game, String name) {
         this.world = game;
         this.name = name;
 
-        initRobotRadar();
+        // initMultipleRobotRadar();
+        initSingleRobotRadar();
     }
 
-    private void initRobotRadar() {
+    private void initMultipleRobotRadar() {
+        ranges = new Radar[4];
         int slot = -(ranges.length / 2);
         for (int i = 0; i < ranges.length; ++i) {
             ranges[i] = new Radar(slot * (Math.PI / ranges.length));
             ranges[i].setRadarRange(i);
             slot++;
         }
-        
+    }
+
+    private void initSingleRobotRadar() {
+        ranges = new Radar[1];
+        ranges[0] = new Radar(0);
+        ranges[0].setRadarRange(0);
     }
 
     public void move(double newX, double newY) {
