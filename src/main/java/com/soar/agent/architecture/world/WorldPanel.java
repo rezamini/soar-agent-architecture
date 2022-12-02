@@ -203,7 +203,7 @@ public class WorldPanel extends JPanel {
         for (Radar range : robot.ranges) {
             final Arc2D arc = new Arc2D.Double(-range.getRadarRange(), -range.getRadarRange(), 2 *
                     range.getRadarRange(), 2 * range.getRadarRange(),
-                    Math.toDegrees(-range.getRadarAngle()) - 1.0, 2.0, Arc2D.PIE);
+                    Math.toDegrees(-range.getRadarAngle()) - 10.0, 25.0, Arc2D.PIE);
             drawShape(g2dIn, arc, Color.GREEN, Color.GREEN);
         }
     }
