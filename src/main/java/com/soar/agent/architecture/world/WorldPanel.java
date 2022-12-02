@@ -204,6 +204,10 @@ public class WorldPanel extends JPanel {
             final Arc2D arc = new Arc2D.Double(-range.getRadarRange(), -range.getRadarRange(), 2 *
                     range.getRadarRange(), 2 * range.getRadarRange(),
                     Math.toDegrees(-range.getRadarAngle()) - 10.0, 25.0, Arc2D.PIE);
+
+            //add the newly drawn arc to the robot class to make use of its data if needed
+            robot.setRadarArc(arc);
+            
             drawShape(g2dIn, arc, Color.GREEN, Color.GREEN);
         }
     }

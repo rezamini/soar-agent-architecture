@@ -5,9 +5,6 @@ import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.world.World;
 import java.awt.geom.*;
 
-/**
- * @author ray
- */
 public class Robot {
     public final double widthMultiplier = 4.0;
     public final double heightMultiplier = 1.5;
@@ -22,6 +19,8 @@ public class Robot {
     private double turnRate;
     public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
     public Radar[] ranges;
+
+    public Arc2D radarArc = new Arc2D.Double();
 
     public Robot(World game, String name) {
         this.world = game;
@@ -146,6 +145,14 @@ public class Robot {
 
     public double getShapeStartingPoint() {
         return shapeStartingPoint;
+    }
+
+    public Arc2D getRadarArc() {
+        return radarArc;
+    }
+
+    public void setRadarArc(Arc2D radarArc) {
+        this.radarArc = radarArc;
     }
 
 }
