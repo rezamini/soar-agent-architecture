@@ -167,4 +167,13 @@ public class World {
         return false;
     }
 
+    public void radarDetectLandmark(Robot robot){
+        for(Landmark landmark: landmarks){
+            double landmarkX = landmark.getLocation().getX();
+            double landmarkXY = landmark.getLocation().getY();
+
+        }
+
+    }
+
 }

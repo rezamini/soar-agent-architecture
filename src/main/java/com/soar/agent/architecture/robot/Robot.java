@@ -70,6 +70,7 @@ public class Robot {
 
         for (Radar range : ranges) {
             range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
+            world.radarDetectLandmark(this);
         }
     }
 
