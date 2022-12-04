@@ -9,6 +9,7 @@ import java.util.List;
 import org.jsoar.util.events.SoarEventManager;
 
 import com.soar.agent.architecture.beans.Landmark;
+import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.robot.Robot;
 
 public class World {
@@ -167,7 +168,17 @@ public class World {
         return false;
     }
 
-    public void radarDetectLandmark(Robot robot){
+    public void radarDetectLandmark(Robot robot, Radar radar){
+        //robot position
+        double robotCurrentX = robot.getShape().getCenterX();
+        double robotCurrentY = robot.getShape().getCenterY();
+
+        //end position of the range from the robot
+        double dx = Math.cos(robot.getYaw() + radar.getRadarAngle()) * radar.getRadarRange();
+        double dy = Math.sin(robot.getYaw() + radar.getRadarAngle()) * radar.getRadarRange();
+        double newX = robotCurrentX + dx;
+        double newY = robotCurrentY + dy;
+
         for(Landmark landmark: landmarks){
             double landmarkX = landmark.getLocation().getX();
             double landmarkXY = landmark.getLocation().getY();
