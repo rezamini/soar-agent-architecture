@@ -179,6 +179,10 @@ public class World {
         double newX = robotCurrentX + dx;
         double newY = robotCurrentY + dy;
 
+        //otherside of the arc
+        double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
+        double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
+
         for(Landmark landmark: landmarks){
             double landmarkX = landmark.getLocation().getX();
             double landmarkXY = landmark.getLocation().getY();
