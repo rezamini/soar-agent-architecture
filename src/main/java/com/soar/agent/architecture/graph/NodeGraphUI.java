@@ -22,7 +22,6 @@ import javax.swing.SwingUtilities;
 import org.graphstream.ui.swing_viewer.DefaultView;
 import org.jsoar.debugger.util.SwingTools;
 import org.jsoar.kernel.events.AfterDecisionCycleEvent;
-import org.jsoar.kernel.events.AfterInitSoarEvent;
 import org.jsoar.kernel.memory.Wme;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.events.SoarEvent;

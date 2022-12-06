@@ -118,18 +118,6 @@ public class RobotAgent {
         }
     }
 
-    private void addEventListeners() {
-
-        // events.addListener(AreaResponder.class, event -> {
-        // if (move != null && move.getDirection() != null &&
-        // !move.getDirection().equals("")) {
-        // areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
-        // areaResponder.setLocaleInfo(qMemory, move.getDirection(),
-        // CellTypeEnum.NORMAL.getName());
-        // }
-        // });
-    }
-
     public void initMoveCommandListenerObject() {
         final SoarBeanOutputManager manager = new SoarBeanOutputManager(threadedAgent.getEvents());
         final SoarBeanOutputHandler<Move> handler = new SoarBeanOutputHandler<Move>() {
