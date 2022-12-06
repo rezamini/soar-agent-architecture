@@ -69,10 +69,10 @@ public class World {
         }
     }
 
-    public boolean isLandmarkReached(Landmark landmark, Robot robot ) {
+    public boolean isLandmarkReached(Landmark landmark, Robot robot) {
         boolean result = false;
-        
-        if(robot.getShape().contains(landmark.getLocation())){
+
+        if (robot.getShape().contains(landmark.getLocation())) {
             result = true;
         }
 
@@ -99,10 +99,9 @@ public class World {
             }
         }
 
-        
         // for (Landmark landmark : landmarks) {
-        //     System.out.println(landmark.getLocation().distance(newX+radius,
-        //     newY+radius));
+        // System.out.println(landmark.getLocation().distance(newX+radius,
+        // newY+radius));
         // // pose is x=5, y=11 for the north obstacle
 
         // if (landmark.getLocation().distance(newX + radius, newY + radius) <
@@ -165,25 +164,36 @@ public class World {
                 return true;
             }
         }
+
+        for (Landmark l : landmarks) {
+            double landmarkX = l.getLocation().getX();
+            double landmarkXY = l.getLocation().getY();
+
+            double distance = l.getLocation().distance(x, y);
+
+            if(distance < 1){
+                System.out.println(l.getName());
+            }
+        }
         return false;
     }
 
-    public void radarDetectLandmark(Robot robot, Radar radar){
-        //robot position
+    public void radarDetectLandmark(Robot robot, Radar radar) {
+        // robot position
         double robotCurrentX = robot.getShape().getCenterX();
         double robotCurrentY = robot.getShape().getCenterY();
 
-        //end position of the range from the robot
+        // end position of the range from the robot
         double dx = Math.cos(robot.getYaw() + radar.getRadarAngle()) * radar.getRadarRange();
         double dy = Math.sin(robot.getYaw() + radar.getRadarAngle()) * radar.getRadarRange();
         double newX = robotCurrentX + dx;
         double newY = robotCurrentY + dy;
 
-        //otherside of the arc
+        // otherside of the arc
         double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
         double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
 
-        for(Landmark landmark: landmarks){
+        for (Landmark landmark : landmarks) {
             double landmarkX = landmark.getLocation().getX();
             double landmarkXY = landmark.getLocation().getY();
 
