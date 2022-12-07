@@ -20,7 +20,7 @@ public class Robot {
     public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
     public Radar[] ranges;
 
-    public Arc2D radarArc = new Arc2D.Double();
+    public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, - 10.0, 25.0, Arc2D.PIE);
 
     public Robot(World game, String name) {
         this.world = game;

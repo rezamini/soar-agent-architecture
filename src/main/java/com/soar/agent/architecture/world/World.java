@@ -1,6 +1,7 @@
 package com.soar.agent.architecture.world;
 
 import java.awt.Shape;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -179,6 +180,8 @@ public class World {
     }
 
     public void radarDetectLandmark(Robot robot, Radar radar) {
+        Arc2D arc = robot.getRadarArc();
+        
         // robot position
         double robotCurrentX = robot.getShape().getCenterX();
         double robotCurrentY = robot.getShape().getCenterY();
@@ -193,11 +196,15 @@ public class World {
         double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
         double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
 
-        for (Landmark landmark : landmarks) {
-            double landmarkX = landmark.getLocation().getX();
-            double landmarkXY = landmark.getLocation().getY();
+        Rectangle2D newRec = new Rectangle2D.Double(newX, newY, 2 * radar.getRadarRange(), 2 * radar.getRadarRange());
+        arc.setFrame(newRec);
+        robot.setRadarArc(arc);
 
-        }
+        // for (Landmark landmark : landmarks) {
+        //     double landmarkX = landmark.getLocation().getX();
+        //     double landmarkXY = landmark.getLocation().getY();
+
+        // }
 
     }
 
