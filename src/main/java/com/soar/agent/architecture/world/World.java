@@ -172,9 +172,9 @@ public class World {
 
             double distance = l.getLocation().distance(x, y);
 
-            if(distance < 1){
-                System.out.println(l.getName());
-            }
+            // if(distance < 1){
+
+            // }
         }
         return false;
     }
@@ -199,12 +199,6 @@ public class World {
         Rectangle2D newRec = new Rectangle2D.Double(newX, newY, 2 * radar.getRadarRange(), 2 * radar.getRadarRange());
         arc.setFrame(newRec);
         robot.setRadarArc(arc);
-
-        // for (Landmark landmark : landmarks) {
-        //     double landmarkX = landmark.getLocation().getX();
-        //     double landmarkXY = landmark.getLocation().getY();
-
-        // }
 
     }
 
