@@ -146,6 +146,8 @@ public class World {
             x += dx;
             y += dy;
             range += delta;
+
+            radarDetectLandmark(source, x, y, range);
         }
         return range - delta;
     }
@@ -172,11 +174,26 @@ public class World {
 
             double distance = l.getLocation().distance(x, y);
 
-            // if(distance < 1){
-
-            // }
         }
         return false;
+    }
+
+    public void radarDetectLandmark(Robot robot, double radarX, double radarY, double radarRange) {
+        //get a instance of the agent shape
+        Rectangle2D agentShape = (Rectangle2D) robot.getShape().clone();
+        
+        //simulate a move with the radar positions
+        agentShape.setFrameFromCenter(radarX, radarY, radarX + robot.getRadius(), radarY + robot.getRadius());
+
+        //check if the agent will reach/hit any landmark with the current landmark positions (aka if radar can see and agent can hit the landmark)
+        for (Landmark landmark : landmarks) {
+            double landmarkX = landmark.getLocation().getX();
+            double landmarkY = landmark.getLocation().getY();
+
+            if(agentShape.contains(landmark.getLocation())){
+                System.out.println(landmark.getName());
+            }
+        }
     }
 
     public void radarDetectLandmark(Robot robot, Radar radar) {
