@@ -19,7 +19,6 @@ public class World {
     private final List<Robot> robots = new ArrayList<Robot>();
     private final List<Shape> obstacles = new ArrayList<Shape>();
     private final List<Landmark> landmarks = new ArrayList<Landmark>();
-
     private List<Landmark> detectedRadarLandmarks = new ArrayList<Landmark>();
 
     public World() {
@@ -64,6 +63,10 @@ public class World {
 
     public List<Landmark> getLandmarks() {
         return landmarks;
+    }
+
+    public List<Landmark> getDetectedRadarLandmarks() {
+        return detectedRadarLandmarks;
     }
 
     public void updateAndMoveAgents(double dt) {
@@ -220,5 +223,6 @@ public class World {
         robot.setRadarArc(arc);
 
     }
+
 
 }

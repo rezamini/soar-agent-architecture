@@ -1,6 +1,7 @@
 package com.soar.agent.architecture.events;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.jsoar.kernel.io.quick.QMemory;
 
@@ -144,6 +145,60 @@ public class MemoryResponder extends MemoryListener {
 
         }
 
+
+        /* Overloaded method to update memory landmarks, specifically for the detected radar landmarks
+         * it accepts list of landmarks, in this case the detectedLandmark by the radar
+         */
+        public void updateMemoryLandmarks(List<Landmark> detectedLandmark) {
+                synchronized (qMemory) {
+                        // Main Landmarks Hierarchy
+                        QMemory radar = qMemory.subMemory("ranges.range");
+                        QMemory landmarks = radar.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
+
+                        for(int j=0; j < robot.getWorld().getDetectedRadarLandmarks().size(); j++){
+                                Landmark landmark = robot.getWorld().getDetectedRadarLandmarks().get(j);
+
+                                // create a sub landmark with the landmark name - [name of landmark]
+                                String subName = MemoryEnum.LANDMARK_SUB.getName()
+                                                + UtilitiesEnum.DASHSEPERATOR.getName()
+                                                + landmark.name;
+                                QMemory subLandmark = landmarks.subMemory(subName);
+
+                                // get current agent and landmark positions
+                                // Agent X position
+                                double agentXPose = qMemory
+                                                .getDouble(buildMemoryPath(MemoryEnum.IDENTITY.getName(),
+                                                                MemoryEnum.POSITION.getName(),
+                                                                MemoryEnum.POSITION_X.getName()));
+
+                                // Agent Y position
+                                double agentYPose = qMemory
+                                                .getDouble(buildMemoryPath(MemoryEnum.IDENTITY.getName(),
+                                                                MemoryEnum.POSITION.getName(),
+                                                                MemoryEnum.POSITION_Y.getName()));
+
+                                double landmarkX = landmark.getLocation().getX();
+                                double landmarkY = landmark.getLocation().getY();
+
+                                // Calculate where and which direction the landmark is located from the agent
+                                // current position. Dynamic values & movements
+                                String landmarkDirection = calcLandmarkDirection(agentXPose, agentYPose, landmarkX,
+                                                landmarkY);
+
+                                // set basic landmark information
+                                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
+                                subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
+                                subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
+                                subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
+                                                landmark.getLocation().distance(agentXPose, agentYPose));
+                                subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), landmarkDirection);
+                                subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                                UtilitiesEnum.ACTIVESTATUS.getName());
+                        }
+                }
+
+        }
+
         @Override
         public void updateMemoryRadar() {
                 synchronized (qMemory) {
@@ -153,6 +208,9 @@ public class MemoryResponder extends MemoryListener {
                                 sub.setInteger("id", i - robot.ranges.length / 2);
                                 sub.setDouble("distance", r.getRadarRange());
                                 sub.setDouble("angle", Math.toDegrees(r.getRadarAngle()));
+
+                                //update detected landmarks
+                                updateMemoryLandmarks(robot.getWorld().getDetectedRadarLandmarks());
                         }
                 }
 
