@@ -152,7 +152,9 @@ public class MemoryResponder extends MemoryListener {
         public void updateMemoryLandmarks(List<Landmark> detectedLandmark) {
                 synchronized (qMemory) {
                         // Main Landmarks Hierarchy
-                        QMemory radar = qMemory.subMemory("ranges.range");
+                        // QMemory radar = qMemory.subMemory("ranges.range");
+                        QMemory radar = qMemory.subMemory("radar");
+
                         QMemory landmarks = radar.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
 
                         for(int j=0; j < robot.getWorld().getDetectedRadarLandmarks().size(); j++){
@@ -204,7 +206,9 @@ public class MemoryResponder extends MemoryListener {
                 synchronized (qMemory) {
                         for (int i = 0; i < robot.ranges.length; ++i) {
                                 Radar r = robot.ranges[i];
-                                QMemory sub = qMemory.subMemory("ranges.range[" + i + "]");
+                                // QMemory sub = qMemory.subMemory("ranges.range[" + i + "]");
+                                QMemory sub = qMemory.subMemory("radar");
+
                                 sub.setInteger("id", i - robot.ranges.length / 2);
                                 sub.setDouble("distance", r.getRadarRange());
                                 sub.setDouble("angle", Math.toDegrees(r.getRadarAngle()));
