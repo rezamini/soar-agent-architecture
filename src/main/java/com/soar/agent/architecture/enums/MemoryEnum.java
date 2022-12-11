@@ -11,9 +11,18 @@ public enum MemoryEnum {
   YAW("yaw"),
   DISTANCE("distance"),
   DIRECTION_COMMAND("direction-command"),
+  
   //Landmark Memory Enums  
   LANDMARK_MAIN("landmarks"),
-  LANDMARK_SUB("landmark");
+  LANDMARK_SUB("landmark"),
+
+  //Radar Memory Enums
+  RADAR_BASE("radar"),
+  RADAR_ID("id"),
+  RADAR_DISTANCE("distance"),
+  RADAR_ANGLE("angle"),
+
+  ;
 
   private String name;
 
