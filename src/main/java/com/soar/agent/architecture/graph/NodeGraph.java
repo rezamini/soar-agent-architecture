@@ -36,7 +36,7 @@ public class NodeGraph {
         graph.setAutoCreate(true);
         graph.setAttribute("ui.quality");
         graph.setAttribute("ui.antialias");
-        
+
         viewer = new SwingViewer(graph, SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
 
@@ -67,7 +67,7 @@ public class NodeGraph {
         edge.setAttribute("edgeValue", parentWme.getAttribute().toString());
     }
 
-    //remove the main parent ID which is usually I2 from the graph.
+    // remove the main parent ID which is usually I2 from the graph.
     void removeInputParentNode(Wme parentWme) {
         if (graph.getNode(parentWme.getIdentifier().toString()) != null) {
             graph.removeNode(parentWme.getIdentifier().toString());
@@ -156,7 +156,10 @@ public class NodeGraph {
             // Wme current = iter.next();
 
             // example: landmark-aname, landmarka-distance, viewnorth
-            String edgeId = parentWme.getAttribute().toString() + current.getAttribute().toString();
+            // the random at is added to make sure the uniqueness of the edge.
+            // "& Integer.MAX_VALUE" is to make sure the returned random integer is positive
+            String edgeId = (new Random().nextInt() & Integer.MAX_VALUE) + "/" + parentWme.getAttribute().toString()
+                    + current.getAttribute().toString();
 
             // example: L2direction-command, L2distance, S10name, V1northeast
             Node childNode = graph.addNode(current.getIdentifier().toString() + current.getAttribute().toString());
@@ -195,7 +198,9 @@ public class NodeGraph {
             // Wme current = iter.next();
 
             // example: landmark-aname, landmarka-distance, viewnorth
-            String edgeId = parentWme.getAttribute().toString() + current.getAttribute().toString();
+            // "& Integer.MAX_VALUE" is to make sure the returned random integer is positive
+            String edgeId = (new Random().nextInt() & Integer.MAX_VALUE) + "/" + parentWme.getAttribute().toString()
+                    + current.getAttribute().toString();
 
             // example: L2direction-command, L2distance, S10name, V1northeast
             Node childNode = graph.addNode(current.getIdentifier().toString() + current.getAttribute().toString());
@@ -254,12 +259,13 @@ public class NodeGraph {
         while (k.hasNext()) {
             Node next = k.next();
 
-            //dont change the color of the last nodes (value nodes)
-            if(next.hasAttribute("isLastNode")) continue;
+            // dont change the color of the last nodes (value nodes)
+            if (next.hasAttribute("isLastNode"))
+                continue;
 
-            //remove any previous set color otherwise the ui.class will not work
+            // remove any previous set color otherwise the ui.class will not work
             next.removeAttribute("ui.color");
-            
+
             next.setAttribute("ui.class", "marked");
             sleep();
         }
