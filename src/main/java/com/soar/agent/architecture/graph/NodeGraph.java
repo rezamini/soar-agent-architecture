@@ -158,7 +158,8 @@ public class NodeGraph {
             // example: landmark-aname, landmarka-distance, viewnorth
             // the random at is added to make sure the uniqueness of the edge.
             // "& Integer.MAX_VALUE" is to make sure the returned random integer is positive
-            String edgeId = (new Random().nextInt() & Integer.MAX_VALUE) + "/" + parentWme.getAttribute().toString()
+            String edgeId = (new Random().nextInt() & Integer.MAX_VALUE) + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
+                    + parentWme.getAttribute().toString()
                     + current.getAttribute().toString();
 
             // example: L2direction-command, L2distance, S10name, V1northeast
@@ -199,7 +200,8 @@ public class NodeGraph {
 
             // example: landmark-aname, landmarka-distance, viewnorth
             // "& Integer.MAX_VALUE" is to make sure the returned random integer is positive
-            String edgeId = (new Random().nextInt() & Integer.MAX_VALUE) + "/" + parentWme.getAttribute().toString()
+            String edgeId = (new Random().nextInt() & Integer.MAX_VALUE) + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
+                    + parentWme.getAttribute().toString()
                     + current.getAttribute().toString();
 
             // example: L2direction-command, L2distance, S10name, V1northeast

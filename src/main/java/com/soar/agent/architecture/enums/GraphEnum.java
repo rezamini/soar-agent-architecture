@@ -8,6 +8,7 @@ public enum GraphEnum {
     SUB_MENUE_ENABLE_ZOOM_CONTROL("Enable Zoom Control"),
     TOOLBAR_TITLE("Draggable Toolbar"),
     NODE_MENU_MAIN_TITLE("Working Memory Nodes: "),
+    VERTICAL_BAR_SEPERATOR("|"),
     ;
 
     private String name;
