@@ -199,8 +199,21 @@ public class WorldPanel extends JPanel {
             final Arc2D arc = new Arc2D.Double(-range.getRadarRange(), -range.getRadarRange(), 2 *
                     range.getRadarRange(), 2 * range.getRadarRange(),
                     Math.toDegrees(-range.getRadarAngle()) - 10.0, 25.0, Arc2D.PIE);
-            
+
             drawShape(g2dIn, arc, Color.GREEN, Color.GREEN);
+
+            // draw radar battery level
+            if (arc.getWidth() > 4) {
+                double fontHeight = 0.2 * 1.5;
+                prepareFont(g2dIn, fontHeight);
+                final Rectangle2D bounds = g2dIn.getFont().getStringBounds("90 %",
+                        g2dIn.getFontRenderContext());
+
+                System.out.println(bounds);
+                g2dIn.setColor(Color.GRAY);
+                g2dIn.drawString("90 %", (float) ((range.getRadarRange() / 2) - (-bounds.getWidth() / 2.0)),
+                        (float) (-(fontHeight / 1.5)));
+            }
         }
     }
 
