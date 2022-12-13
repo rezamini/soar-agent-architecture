@@ -213,6 +213,7 @@ public class MemoryResponder extends MemoryListener {
                                 sub.setInteger(MemoryEnum.RADAR_ID.getName(), i - robot.ranges.length / 2);
                                 sub.setDouble(MemoryEnum.RADAR_DISTANCE.getName(), r.getRadarRange());
                                 sub.setDouble(MemoryEnum.RADAR_ANGLE.getName(), Math.toDegrees(r.getRadarAngle()));
+                                sub.setDouble(MemoryEnum.RADAR_BATTERY.getName(), robot.getRadarBattery());
 
                                 //update detected landmarks
                                 updateMemoryLandmarks(robot.getWorld().getDetectedRadarLandmarks());
