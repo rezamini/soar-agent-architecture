@@ -206,12 +206,12 @@ public class WorldPanel extends JPanel {
             if (arc.getWidth() > 4) {
                 double fontHeight = 0.2 * 1.5;
                 prepareFont(g2dIn, fontHeight);
-                final Rectangle2D bounds = g2dIn.getFont().getStringBounds("90 %",
+                Rectangle2D bounds = g2dIn.getFont().getStringBounds(robot.getRadarBattery() + " %",
                         g2dIn.getFontRenderContext());
 
-                System.out.println(bounds);
                 g2dIn.setColor(Color.GRAY);
-                g2dIn.drawString("90 %", (float) ((range.getRadarRange() / 2) - (-bounds.getWidth() / 2.0)),
+                g2dIn.drawString(robot.getRadarBattery() + " %",
+                        (float) ((range.getRadarRange() / 2) - (-bounds.getWidth() / 2.0)),
                         (float) (-(fontHeight / 1.5)));
             }
         }

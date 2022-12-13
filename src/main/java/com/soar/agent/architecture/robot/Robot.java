@@ -20,11 +20,14 @@ public class Robot {
     public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
     public Radar[] ranges;
 
-    public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, - 10.0, 25.0, Arc2D.PIE);
+    public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, -10.0, 25.0, Arc2D.PIE);
+
+    private double radarBattery;
 
     public Robot(World game, String name) {
         this.world = game;
         this.name = name;
+        radarBattery = 100;
 
         // initMultipleRobotRadar();
         initSingleRobotRadar();
@@ -72,6 +75,9 @@ public class Robot {
             range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
             world.radarDetectLandmark(this, range);
         }
+
+        updateRadarBattery();
+
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
@@ -94,6 +100,13 @@ public class Robot {
         boolean isObstacle = world.willCollide(this, newX, newY);
 
         return isObstacle;
+    }
+
+    public void updateRadarBattery() {
+        // simply update and decrease radar battery on every move by 0.5
+        if (radarBattery > 0) {
+            radarBattery = radarBattery - 0.5;
+        }
     }
 
     public World getWorld() {
@@ -154,6 +167,14 @@ public class Robot {
 
     public void setRadarArc(Arc2D radarArc) {
         this.radarArc = radarArc;
+    }
+
+    public double getRadarBattery() {
+        return radarBattery;
+    }
+
+    public void setRadarBattery(double radarBattery) {
+        this.radarBattery = radarBattery;
     }
 
 }
