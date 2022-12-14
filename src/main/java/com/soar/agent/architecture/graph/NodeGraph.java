@@ -156,10 +156,14 @@ public class NodeGraph {
             // Wme current = iter.next();
 
             // example: landmark-aname, landmarka-distance, viewnorth
-            // the random at is added to make sure the uniqueness of the edge.
             // "& Integer.MAX_VALUE" is to make sure the returned random integer is positive
-            String edgeId = (new Random().nextInt() & Integer.MAX_VALUE) + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
-                    + parentWme.getAttribute().toString()
+            // (new Random().nextInt() & Integer.MAX_VALUE)
+            // example: L7|L8|landmark-a|direction-command - L1|L5|landmark-a|x
+            // S3|P1|pose|yaw -
+            // I2|A1|area|view - A1|V1|view|northwest - V1|N3|northwest|type
+            String edgeId = parentWme.getIdentifier() + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
+                    + current.getIdentifier() + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
+                    + parentWme.getAttribute().toString() + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
                     + current.getAttribute().toString();
 
             // example: L2direction-command, L2distance, S10name, V1northeast
@@ -200,8 +204,13 @@ public class NodeGraph {
 
             // example: landmark-aname, landmarka-distance, viewnorth
             // "& Integer.MAX_VALUE" is to make sure the returned random integer is positive
-            String edgeId = (new Random().nextInt() & Integer.MAX_VALUE) + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
-                    + parentWme.getAttribute().toString()
+            // (new Random().nextInt() & Integer.MAX_VALUE)
+            // example: L7|L8|landmark-a|direction-command - L1|L5|landmark-a|x
+            // S3|P1|pose|yaw - 
+            // I2|A1|area|view - A1|V1|view|northwest - V1|N3|northwest|type
+            String edgeId = parentWme.getIdentifier() + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
+                    + current.getIdentifier() + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
+                    + parentWme.getAttribute().toString() + GraphEnum.VERTICAL_BAR_SEPERATOR.getName()
                     + current.getAttribute().toString();
 
             // example: L2direction-command, L2distance, S10name, V1northeast

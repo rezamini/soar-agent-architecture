@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import org.graphstream.ui.swing_viewer.DefaultView;
 import org.jsoar.debugger.util.SwingTools;
 import org.jsoar.kernel.events.AfterDecisionCycleEvent;
+import org.jsoar.kernel.events.InputEvent;
 import org.jsoar.kernel.memory.Wme;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.events.SoarEvent;
@@ -235,7 +236,7 @@ public class NodeGraphUI extends JPanel {
     }
 
     private void initMemoryInputListener() {
-        agent.getEvents().addListener(AfterDecisionCycleEvent.class, new SoarEventListener() {
+        agent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
 
             @Override
             public void onEvent(SoarEvent event) {
