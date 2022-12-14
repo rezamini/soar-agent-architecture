@@ -23,11 +23,13 @@ public class Robot {
     public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, -10.0, 25.0, Arc2D.PIE);
 
     private double radarBattery;
+    private boolean toggleRadar;
 
     public Robot(World game, String name) {
         this.world = game;
         this.name = name;
         radarBattery = 100;
+        toggleRadar = true;
 
         // initMultipleRobotRadar();
         initSingleRobotRadar();
@@ -106,6 +108,12 @@ public class Robot {
         // simply update and decrease radar battery on every move by 0.5
         if (radarBattery > 0) {
             radarBattery = radarBattery - 0.5;
+
+            //incase after the calculation the battery is at 0 or lower then switch off the radar
+            if(radarBattery <= 0 ) toggleRadar = false;
+        }else{
+            //off the radar if battery is not above 0
+            toggleRadar = false;
         }
     }
 
@@ -176,5 +184,14 @@ public class Robot {
     public void setRadarBattery(double radarBattery) {
         this.radarBattery = radarBattery;
     }
+
+    public boolean isToggleRadar() {
+        return toggleRadar;
+    }
+
+    public void setToggleRadar(boolean toggleRadar) {
+        this.toggleRadar = toggleRadar;
+    }
+
 
 }

@@ -137,8 +137,11 @@ public class WorldPanel extends JPanel {
         transform.rotate(robot.getYaw());
         g2d.transform(transform);
 
-        drawRanges(g2d, robot);
-
+        //draw ranges/radar if the radar need to be on
+        if(robot.isToggleRadar()){
+            drawRanges(g2d, robot);
+        }
+        
         if (robot == selection) {
             final double selR = robot.getRadius() * 1.4;
             final Ellipse2D sel = new Ellipse2D.Double(-selR, -selR, selR * 2.0, selR * 2.0);
