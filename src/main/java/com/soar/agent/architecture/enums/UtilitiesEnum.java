@@ -8,7 +8,9 @@ public enum UtilitiesEnum {
     REACHEDSTATUS("here"),
     DOTSEPERATOR("."),
     DASHSEPERATOR("-"),
-    MEMORYSTATUS("status");
+    MEMORYSTATUS("status"),
+    ON_STATUS("on"),
+    OFF_STATUS("off");
 
 
     private UtilitiesEnum(String name){

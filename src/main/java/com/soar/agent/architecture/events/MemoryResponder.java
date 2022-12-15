@@ -145,8 +145,9 @@ public class MemoryResponder extends MemoryListener {
 
         }
 
-
-        /* Overloaded method to update memory landmarks, specifically for the detected radar landmarks
+        /*
+         * Overloaded method to update memory landmarks, specifically for the detected
+         * radar landmarks
          * it accepts list of landmarks, in this case the detectedLandmark by the radar
          */
         @Override
@@ -158,8 +159,9 @@ public class MemoryResponder extends MemoryListener {
 
                         QMemory landmarks = radar.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
 
-                        for(int j=0; j < robot.getWorld().getDetectedRadarLandmarks().size(); j++){
+                        for (int j = 0; j < robot.getWorld().getDetectedRadarLandmarks().size(); j++) {
                                 Landmark landmark = robot.getWorld().getDetectedRadarLandmarks().get(j);
+                                boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
 
                                 // create a sub landmark with the landmark name - [name of landmark]
                                 String subName = MemoryEnum.LANDMARK_SUB.getName()
@@ -197,6 +199,15 @@ public class MemoryResponder extends MemoryListener {
                                 subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), landmarkDirection);
                                 subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
                                                 UtilitiesEnum.ACTIVESTATUS.getName());
+
+                                if (isAgentReached) {
+                                        subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
+                                        subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                                                        UtilitiesEnum.REACHEDSTATUS.getName());
+
+                                        subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                                        UtilitiesEnum.INACTIVESTATUS.getName());
+                                }
                         }
                 }
 
@@ -214,8 +225,11 @@ public class MemoryResponder extends MemoryListener {
                                 sub.setDouble(MemoryEnum.RADAR_DISTANCE.getName(), r.getRadarRange());
                                 sub.setDouble(MemoryEnum.RADAR_ANGLE.getName(), Math.toDegrees(r.getRadarAngle()));
                                 sub.setDouble(MemoryEnum.RADAR_BATTERY.getName(), robot.getRadarBattery());
+                                sub.setString(MemoryEnum.RADAR_STATUS.getName(),
+                                                robot.isToggleRadar() ? UtilitiesEnum.ON_STATUS.getName()
+                                                                : UtilitiesEnum.OFF_STATUS.getName());
 
-                                //update detected landmarks
+                                // update detected landmarks
                                 updateMemoryLandmarks(robot.getWorld().getDetectedRadarLandmarks());
                         }
                 }
