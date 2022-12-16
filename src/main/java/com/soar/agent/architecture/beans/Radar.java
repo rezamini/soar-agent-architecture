@@ -5,6 +5,8 @@ public class Radar {
     public double radarAngle;
     public double radarRange;
 
+    private boolean toggleRadar;
+
     public Radar () {
     }
 
@@ -28,5 +30,13 @@ public class Radar {
     }
     public void setRadarRange(double radarRange) {
         this.radarRange = radarRange;
+    }
+
+    public boolean isToggleRadar() {
+        return toggleRadar;
+    }
+
+    public void setToggleRadar(boolean toggleRadar) {
+        this.toggleRadar = toggleRadar;
     }
 }

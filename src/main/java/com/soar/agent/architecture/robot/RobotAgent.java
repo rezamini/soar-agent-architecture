@@ -61,6 +61,7 @@ public class RobotAgent {
             threadedAgent.setName(robot.getName());
 
             // initialize the output command listener for later use
+            initRadarCommandListenerObject();
             initMoveCommandListenerObject();
             
             initCommandListener("move");
@@ -183,6 +184,33 @@ public class RobotAgent {
             }
         };
         manager.registerHandler("move", handler, Move.class);
+    }
+
+    public void initRadarCommandListenerObject() {
+        final SoarBeanOutputManager manager = new SoarBeanOutputManager(threadedAgent.getEvents());
+        final SoarBeanOutputHandler<Radar> handler = new SoarBeanOutputHandler<Radar>() {
+
+            @Override
+            public void setExceptionHandler(SoarBeanExceptionHandler handler) {
+                super.setExceptionHandler(handler);
+            }
+
+            @Override
+            public void handleOutputCommand(SoarBeanOutputContext context, Radar bean) {
+
+                try {
+                    synchronized (threadedAgent.getAgent()) {
+                        robot.setToggleRadar(bean.isToggleRadar());
+                        context.setStatus("complete");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        manager.registerHandler("radar", handler, Radar.class);
     }
 
     // it will listen to specific commands upon remove/add. for example move command
