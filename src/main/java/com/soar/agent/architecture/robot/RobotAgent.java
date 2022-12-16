@@ -2,11 +2,14 @@ package com.soar.agent.architecture.robot;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.soar.agent.architecture.beans.Move;
+import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.events.MoveListenerEvent;
 import com.soar.agent.architecture.events.UtilityResponder;
 import org.jsoar.kernel.DebuggerProvider;
@@ -23,6 +26,7 @@ import org.jsoar.kernel.io.commands.OutputCommandManager;
 import org.jsoar.kernel.io.quick.DefaultQMemory;
 import org.jsoar.kernel.io.quick.QMemory;
 import org.jsoar.kernel.io.quick.SoarQMemoryAdapter;
+import org.jsoar.kernel.memory.Wme;
 import org.jsoar.kernel.symbols.Identifier;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.commands.SoarCommands;
@@ -56,7 +60,9 @@ public class RobotAgent {
 
             threadedAgent.setName(robot.getName());
 
-            initMoveCommandListenerObject(); // initialize the output command listener for later use
+            // initialize the output command listener for later use
+            initMoveCommandListenerObject();
+            
             initCommandListener("move");
 
             // areaResponder = new AreaResponder(robot, this);
@@ -93,8 +99,7 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-epmem.soar").toURI());
-            source = new
-            File(getClass().getResource("/rules/move-to-landmark-3.0-epmem-radar.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-to-landmark-3.0-epmem-radar.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-smem.soar").toURI());
 

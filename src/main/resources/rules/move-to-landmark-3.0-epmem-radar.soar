@@ -1,0 +1,421 @@
+#Note: this command provide the full epmem setting of the agent in the debugger
+#epmem --force
+
+# epmem --set trigger dc
+epmem --set trigger dc
+# epmem --set phase selection
+epmem --set learning on
+# epmem --set balance 0
+watch --epmem
+
+#set epmem db settings
+# epmem --set database file
+epmem --set path src/main/resources/databases/epmem/epmem-db_radar2.sqlite
+epmem --set append-database on
+epmem --set lazy-commit off
+epmem --set optimization performance
+epmem --init
+
+#exclude pre-set constant variables
+epmem --set exclusions directions
+epmem --set exclusions preferable-directions
+epmem --set exclusions opposite
+epmem --set exclusions prefer
+epmem --set exclusions value
+
+# wm activation --set activation on
+
+
+# epmem --set inclusions landmarks
+
+# epmem --set inclusions self
+# epmem --set inclusions radar
+
+#exclude input data such as cycle-count
+# epmem --set exclusions landmarks
+# epmem --set exclusions landmarks
+epmem --set exclusions cycle-count
+
+# sp {initialize*state*set-radar-on
+#    (state <ss> ^type state)
+#    -->
+#    (<ss> ^last-toggle-radar on)}
+
+sp {initialize*state*directions
+   (state <ss> ^type state)
+   -->
+   (<ss> ^directions <n> <ne> <nw> <e> <s> <sw> <se> <w>)  
+   (<n> ^value north ^opposite south)
+   (<ne> ^value northeast ^opposite southwest)
+   (<nw> ^value northwest ^opposite southeast)
+   (<e> ^value east  ^opposite west)
+   (<s> ^value south ^opposite north)
+   (<sw> ^value southwest ^opposite northeast)
+   (<se> ^value southeast ^opposite northwest)
+   (<w> ^value west  ^opposite east)}
+
+
+sp {initialize*state*preferable*directions
+   (state <ss> ^type state)
+   -->
+   (<ss> ^preferable-directions <ne> <nw> <sw> <se> ) 
+   
+   (<ne> ^value northeast ^prefer northeast) 
+   (<ne> ^value northeast ^prefer east)
+   (<ne> ^value northeast ^prefer north)
+   
+   (<nw> ^value northwest ^prefer northwest)
+   (<nw> ^value northwest ^prefer west)
+   (<nw> ^value northwest ^prefer north)
+
+   (<sw> ^value southwest ^prefer southwest)
+   (<sw> ^value southwest ^prefer south)
+   (<sw> ^value southwest ^prefer west)
+
+   (<se> ^value southeast ^prefer southeast)
+   (<se> ^value southeast ^prefer south)
+   (<se> ^value southeast ^prefer east)
+}
+
+#
+#START: Proposal Rules
+#
+#
+
+sp {propose*move-to-landmark
+   (state <s> ^io.input-link.landmarks.<landmarks> <lnd>     
+              ^io.input-link.self.pose <e>
+              ^io.input-link.area.<view> <area-view> )
+   (<e> ^x <x> ^y <y>)
+   (<lnd> ^direction-command <direction-command> )
+   (<lnd> ^distance <distance-agent> )
+   (<area-view> ^<direction-command>.type <cell-type>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name move-to-landmark
+        ^lnd <lnd>
+        ^distance-agent <distance-agent>
+        ^direction-command <direction-command>
+        ^cell-type <cell-type> )}
+
+
+sp {propose*move-random
+   (state <s> ^io.input-link.self.pose <e>
+              ^io.input-link.area.<view> <v-directions> 
+              ^io.input-link.landmarks.status 
+               { <landmarks-status> <> inactive } )
+    (<e> ^x <x> ^y <y>)
+    (<v-directions> ^ { << north northeast northwest east west south southeast southwest >> <n-dir> } )
+    (<v-directions> ^<n-dir>.type <> block )
+    
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name move-random
+        ^direction-command <n-dir> )}
+
+#
+#END: Proposal Rules
+#
+#
+
+#
+#START: Apply Rules
+#
+#
+
+sp {apply*move
+   (state <s> ^io.output-link <ol>
+              ^operator <o>)
+   (<o> ^name { <name> << move-to-landmark move-random >> }
+        ^direction-command <dir>
+        ^toggle-radar <toggle-radar>)
+-->
+   # (write | applied operator is : | <name>)
+   (<ol> ^move.direction <dir>
+         ^radar.toggleRadar <toggle-radar>)} 
+
+sp {apply*move2
+   (state <s> ^io.output-link <ol>
+              ^operator <o> )
+   (<o> ^name { <name> << move-to-landmark move-random >> }
+        ^direction-command <dir> 
+        -^toggle-radar <toggle-radar>)
+-->
+   # (write | applied operator is : | <name>)
+   (<ol> ^move.direction <dir>
+         ^toggle-radar on )} 
+
+
+sp {apply*move*remove-move
+   (state <s> ^io.output-link <ol>
+              ^operator.name <name>)
+   (<ol> ^<action-to-remove> <value> )
+   (<value> ^status complete)
+-->
+   (<ol> ^<action-to-remove> <value> - )}
+
+# sp {apply*move*remove-move
+#    (state <s> ^io.output-link <ol>
+#               ^operator.name <name>)
+#    (<ol> ^move <direction>
+#          ^radar <radar>)
+#    (<direction> ^status complete)
+#    (<radar> ^status complete)
+# -->
+#    (<ol> ^move <direction> -
+#          ^radar <radar> - )}
+
+
+sp {apply*move*create*last-direction
+   (state <s> ^operator <o>)
+   (<o> ^name { <name> << move-to-landmark move-random >> }
+        ^direction-command <direction>)
+-->
+   (<s> ^last-direction <direction>)}
+
+
+sp {apply*move*remove*last-direction
+   (state <s> ^operator <o>
+              ^last-direction <direction>)
+   (<o> ^name { <name> << move-to-landmark move-random >> }
+        ^direction-command <> <direction>)
+-->
+#    (<s> ^prior-direction <direction> )
+   (<s> ^last-direction <direction> -)}  
+
+
+#
+#END: Apply Rules
+#
+#
+
+#
+#START: Select Rules
+#
+#
+
+# sp {select*move-to-landmark*pick-radar-off
+#     (state <s>  ^operator <o1> + 
+#                 ^operator <o2> + )
+#     (<o1> ^name radar-off
+#             ^toggle-radar off )
+#     (<o2> ^name  << move-to-landmark move-random >>
+#             ^toggle-radar on )
+# -->
+# (<s> ^operator <o1> > <o2>)}
+
+sp {select*move-to-landmark*pick-landmark-with-shortest-distance
+    (state <s>  ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-to-landmark
+            ^lnd.distance <distance1> )
+    (<o2> ^name move-to-landmark
+            ^lnd.distance <distance2> > <distance1> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+sp {select*move-to-landmark*pick-other-direction-if-block
+    (state <s> ^operator <o1> +
+                ^operator <o2> + )
+    (<o1> ^name move-random )
+    (<o2> ^name move-to-landmark
+            ^cell-type << block >> )
+    
+-->
+(<s> ^operator <o1> > <o2> )}
+
+sp {select*move-to-landmark*pick-original-landmark-direction
+    (state <s> ^operator <o1> + )
+    (<o1> ^name move-to-landmark 
+        ^cell-type << normal >> )
+-->
+(<s> ^operator <o1> > )}
+
+
+sp {select*move-to-landmark*pick-prefer-directions-over-others-if-landmark-block
+    (state <s> ^operator <o1> + 
+                ^operator <o2> +
+                ^preferable-directions <pd>
+                ^last-direction <l-dir> )  
+    (<pd> ^value <l-dir>
+        ^prefer <p-dir> )
+    (<o1> ^name move-random
+            ^direction-command <p-dir> )
+    (<o2> ^name move-to-landmark
+            ^cell-type << block >>  )
+    
+-->
+(<s> ^operator <o1> > )}
+
+
+sp {select*move-forward*prefer-forward-than-others
+    (state <s> ^operator <o1> +
+                ^operator <o2> +
+                ^last-direction <lastdirection> )
+    (<o1> ^name << move-random >>
+            ^direction-command <lastdirection> )
+    (<o2> ^name << move-random >>
+            ^direction-command <direction> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+
+
+# # create a new state when all landmarks reached within the short memory
+# sp {state*check*landmarks-recorded
+#       (state <s> ^superstate nil)
+# -->
+#    (write (crlf) |======= Creating a landmarks-recorded on state with 'No' value ========|)
+#    (<s> ^landmarks-recorded no )
+# }
+
+# update landmarks-recorded status when all landmarks reached.
+# sp {state*update*landmarks-recorded
+#       (state <s> -^landmarks-recorded
+#                  ^io.input-link.landmarks.status <status>
+#                   { <status> inactive } )
+# -->
+#    (write (crlf) |======= Updating a landmarks-recorded on state with 'Yes' value ========|)
+#    (<s> ^landmarks-recorded yes )}
+
+# 
+# Empep rules
+#
+#
+
+
+# sp {epmem*query
+#    (state <s> ^io.input-link.self.pose <e>
+#               ^io.input-link.landmarks <lnd>
+#             #   ^operator <o>
+#               ^epmem.command <cmd>)
+#    (<e> ^x <x> ^y <y>)
+#    (<lnd> ^status { <status> <> inactive })
+#    # (<lnd> ^direction-command <direction-command> )
+#    # (<o> ^name move-to-landmark
+#    #       ^direction-command <direction-command>
+#    #       ^lnd <lnd> )
+# -->
+#    # (write (crlf) |======= EPMEM : query landmarks started ========|)
+#    (<cmd> ^query <q> - )
+#    (<cmd> ^query <q2>)
+#    (<q2> ^x <x>
+#         ^y <y>
+#         ^landmarks <lands> )
+#    (<lands> ^status <status> )
+# }
+
+sp {epmem*query
+   (state <s> 
+               # ^io.input-link.landmarks <lnd>
+              ^io.input-link.self.pose <e>
+              ^io.input-link.radar.landmarks <current-radar-landmarks>
+              ^io.input-link.landmarks <lnd>
+              ^epmem.command <cmd>)
+   (<e> ^x <x> ^y <y>)
+   # (<lnd> ^status { <status> <> inactive })
+-->
+   (<cmd> ^query <q> - )
+   (<cmd> ^query <q2>)
+   (<q2> ^self.pose <e>
+         ^radar.landmarks <current-radar-landmarks> )
+   # (write (crlf) |======= QUERY : | <current-radar-landmarks> )
+   #   ( <q2> ^radar.landmarks <lnd> )
+#    (<radar> ^landmarks <landmarks> )
+}
+
+sp {epmem*query*result
+   (state <s> ^epmem <epmem>)
+   (<epmem>  ^result. { << success failure >> <q-result> } )
+-->
+   (write (crlf) |======= Episodic Memory (EPMEM): query result is : | <q-result> )
+}
+
+sp {epmem*query*result*retrieved
+   (state <s> ^operator <o1> + 
+              ^epmem.result.success <epmem-result>
+              ^epmem.result.retrieved <epmem-retrieved> )
+   
+   (<epmem-retrieved> ^radar.landmarks.<landmarks1> <lands> )
+    (<o1> ^name << move-to-landmark >>  )
+
+-->
+   (<o1> ^toggle-radar off )}
+
+
+# sp {epmem*query*result*retrieved
+#    (state <s> ^epmem.result.success <epmem-result>
+#               ^epmem.result.retrieved <epmem-retrieved> )
+   
+#    (<epmem-retrieved> ^radar.landmarks.<landmarks1> <lands> )
+
+# -->
+#    (<s> ^last-toggle-radar off )}
+
+
+# sp {apply*move*remove*last-toggle-radar
+#    (state <s> ^operator <o>
+#               ^last-toggle-radar <last-toggle-radar>)
+#    (<o> ^name { <name> << move-to-landmark move-random >> }
+#         ^toggle-radar <> <last-toggle-radar>)
+# -->
+# #    (<s> ^prior-direction <direction> )
+#    (<s> ^last-toggle-radar <last-toggle-radar> -)}  
+
+   
+# sp {epmem*query*result*retrieved
+#    (state <s> ^operator <o1> + 
+#               ^operator <o2> +
+#               ^epmem.result.success <epmem-result>
+#               ^epmem.result.retrieved <epmem-retrieved> )
+   
+#    (<epmem-retrieved> ^radar.landmarks.<landmarks1> <lands> )
+#     (<o1> ^name << move-radar-off >> 
+#           ^toggle-radar off )
+#    (<o2> ^name << move-to-landmark move-random >> 
+#           ^toggle-radar on )
+
+# -->
+#    (<s> ^operator <o1> > )}
+   # (<s> ^operator <o> + >)
+   # (<o> ^name radar-off
+   #    #   ^direction-command <n-dir>
+   #      ^toggle-radar off )}
+
+# # 
+# sp {apply*move*remove*toggle-radar-state
+#    (state <s> ^operator <o>
+#               ^toggle-radar-state <direction>)
+#    (<o> ^name { <name> << move-to-landmark move-random >> }
+#         ^toggle-radar <> <direction>)
+# -->
+# #    (<s> ^prior-direction <direction> )
+#    (<s> ^toggle-radar-state <direction> -)}  
+   
+
+
+# sp {select*move-to-landmark*pick-epmem-operator
+#     (state <s> ^operator <o1> + 
+#                 ^operator <o2> +
+#                 ^preferable-directions <pd>
+#                 ^last-direction <l-dir> )
+#     (<pd> ^value <l-dir>
+#         ^prefer <p-dir> )
+#     (<o1> ^name move-random
+#             ^direction-command <p-dir> )
+#     (<o2> ^name move-to-landmark
+#             ^cell-type << block >>  )
+    
+# -->
+# (<s> ^operator <o1> > )}
+
+
+# sp {apply*success
+#    (state <s> ^operator <o>)
+#    (<o> ^name success)
+# -->
+#    (write |Success!!!!!| (crlf))
+# }
+
+
+
