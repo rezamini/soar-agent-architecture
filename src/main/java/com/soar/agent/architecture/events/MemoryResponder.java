@@ -2,6 +2,7 @@ package com.soar.agent.architecture.events;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.jsoar.kernel.io.quick.QMemory;
 
@@ -69,6 +70,83 @@ public class MemoryResponder extends MemoryListener {
 
         @Override
         public void updateMemoryLandmarks() {
+                synchronized (qMemory) {
+                        // Main Landmarks Hierarchy
+                        QMemory landmarks = qMemory.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
+
+                        for (Entry<Landmark, Boolean> entry : robot.getWorld().getLandmarkMap().entrySet()) {
+                                //if landmark is already reached then continue
+                                if(entry.getValue() == true) continue;
+
+                                Landmark landmark = entry.getKey();
+                                boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
+
+                                // create a sub landmark with the landmark name - [name of landmark]
+                                String subName = MemoryEnum.LANDMARK_SUB.getName()
+                                                + UtilitiesEnum.DASHSEPERATOR.getName()
+                                                + landmark.name;
+                                QMemory subLandmark = landmarks.subMemory(subName);
+
+                                // get current agent and landmark positions
+                                // Agent X position
+                                double agentXPose = qMemory
+                                                .getDouble(buildMemoryPath(MemoryEnum.IDENTITY.getName(),
+                                                                MemoryEnum.POSITION.getName(),
+                                                                MemoryEnum.POSITION_X.getName()));
+
+                                // Agent Y position
+                                double agentYPose = qMemory
+                                                .getDouble(buildMemoryPath(MemoryEnum.IDENTITY.getName(),
+                                                                MemoryEnum.POSITION.getName(),
+                                                                MemoryEnum.POSITION_Y.getName()));
+
+                                double landmarkX = landmark.getLocation().getX();
+                                double landmarkY = landmark.getLocation().getY();
+
+                                // Calculate where and which direction the landmark is located from the agent
+                                // current position. Dynamic values & movements
+                                String landmarkDirection = calcLandmarkDirection(agentXPose, agentYPose, landmarkX,
+                                                landmarkY);
+
+                                // set basic landmark information
+                                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
+                                subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
+                                subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
+                                subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
+                                                landmark.getLocation().distance(agentXPose, agentYPose));
+                                subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), landmarkDirection);
+                                subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                                UtilitiesEnum.ACTIVESTATUS.getName());
+
+                                // if its true it means the agent reached at this specific landmark, so remove
+                                // the landmark and update the direction command to Here regardless
+                                if (isAgentReached) {
+                                        subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
+                                        subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                                                        UtilitiesEnum.REACHEDSTATUS.getName());
+
+                                        // add a inactive status; this could be helpful in future usuage within .soar
+                                        // files
+                                        subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                                        UtilitiesEnum.INACTIVESTATUS.getName());
+                                        
+                                        //update landmark map to indicate this landmark is reached; 
+                                        entry.setValue(true);
+                                }
+
+                        }
+
+                        // set the status of the overal landmarks
+                        landmarks.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                        robot.getWorld().getLandmarks().size() == 0
+                                                        ? UtilitiesEnum.INACTIVESTATUS.getName()
+                                                        : UtilitiesEnum.ACTIVESTATUS.getName());
+                }
+
+        }
+
+        @Override
+        public void updateAndRemoveMemoryLandmarks() {
                 synchronized (qMemory) {
                         // Main Landmarks Hierarchy
                         QMemory landmarks = qMemory.subMemory(MemoryEnum.LANDMARK_MAIN.getName());

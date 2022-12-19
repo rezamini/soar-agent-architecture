@@ -5,12 +5,13 @@
 epmem --set trigger dc
 # epmem --set phase selection
 epmem --set learning on
-# epmem --set balance 0
+epmem --set balance 0
 watch --epmem
-
+# wm activation --set activation on
+epmem --set graph-match-ordering mcv
 #set epmem db settings
 # epmem --set database file
-epmem --set path src/main/resources/databases/epmem/epmem-db_radar2.sqlite
+epmem --set path src/main/resources/databases/epmem/epmem-db_radar.sqlite
 epmem --set append-database on
 epmem --set lazy-commit off
 epmem --set optimization performance
@@ -22,8 +23,6 @@ epmem --set exclusions preferable-directions
 epmem --set exclusions opposite
 epmem --set exclusions prefer
 epmem --set exclusions value
-
-# wm activation --set activation on
 
 
 # epmem --set inclusions landmarks
@@ -317,12 +316,32 @@ sp {epmem*query
 -->
    (<cmd> ^query <q> - )
    (<cmd> ^query <q2>)
-   (<q2> ^self.pose <e>
-         ^radar.landmarks <current-radar-landmarks> )
+   (<q2> ^self <self> )
+   (<self> ^pose <e>)
+         # ^radar.landmarks <current-radar-landmarks> )
    # (write (crlf) |======= QUERY : | <current-radar-landmarks> )
    #   ( <q2> ^radar.landmarks <lnd> )
 #    (<radar> ^landmarks <landmarks> )
 }
+
+# sp {epmem*query*change*next
+#    (state <s> ^epmem.command <cmd>)
+#    (<cmd> ^query <q>)
+# -->
+#    # (<cmd> ^query <q> -
+#    #        ^next <next>)
+#    (write (crlf) |======= Episodic Memory (EPMEM): epmem*query*change*next | )
+# }
+
+# sp {epmem*query*result
+#    (state <s> ^epmem <epmem> )
+#    (<epmem> ^command.query <q>
+#             ^result.success <q>
+#             ^result.retrieved <result>)
+# -->
+
+#    (write (crlf) |======= Episodic Memory (EPMEM): query result is : | <q> )
+# }
 
 sp {epmem*query*result
    (state <s> ^epmem <epmem>)

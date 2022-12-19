@@ -100,12 +100,12 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-epmem.soar").toURI());
-            source = new File(getClass().getResource("/rules/move-to-landmark-3.0-epmem-radar.soar").toURI());
+            // source = new File(getClass().getResource("/rules/move-to-landmark-3.0-epmem-radar.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-smem.soar").toURI());
 
-            // source = new
-            // File(getClass().getResource("/rules/move-to-landmark-3.0-smem-epmem.soar").toURI());
+            source = new
+            File(getClass().getResource("/rules/move-to-landmark-3.0-smem-epmem.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/main/main-default.soar").toURI());
 

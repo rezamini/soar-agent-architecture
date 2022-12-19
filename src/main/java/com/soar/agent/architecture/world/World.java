@@ -5,7 +5,9 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jsoar.util.events.SoarEventManager;
 
@@ -19,6 +21,8 @@ public class World {
     private final List<Robot> robots = new ArrayList<Robot>();
     private final List<Shape> obstacles = new ArrayList<Shape>();
     private final List<Landmark> landmarks = new ArrayList<Landmark>();
+    private final Map<Landmark, Boolean> landmarkMap = new HashMap<Landmark, Boolean>();
+
     private List<Landmark> detectedRadarLandmarks = new ArrayList<Landmark>();
 
     public World() {
@@ -63,6 +67,14 @@ public class World {
 
     public List<Landmark> getLandmarks() {
         return landmarks;
+    }
+
+    public void addLandmarkMap(Landmark landmark, boolean isReached) {
+        landmarkMap.put(landmark, isReached);
+    }
+
+    public Map<Landmark, Boolean> getLandmarkMap() {
+        return landmarkMap;
     }
 
     public List<Landmark> getDetectedRadarLandmarks() {

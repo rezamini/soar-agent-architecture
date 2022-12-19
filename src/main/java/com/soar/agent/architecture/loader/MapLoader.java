@@ -83,6 +83,7 @@ public class MapLoader {
                 }else if(Character.isLetter(c) && Character.isLowerCase(c)){
                     Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy));
                     world.addLandmark(landmark);
+                    world.addLandmarkMap(landmark, false);
                 }
             }
         }
