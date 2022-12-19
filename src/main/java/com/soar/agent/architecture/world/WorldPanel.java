@@ -19,6 +19,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Map.Entry;
 
 import org.jsoar.debugger.util.SwingTools;
 
@@ -87,8 +88,12 @@ public class WorldPanel extends JPanel {
             drawRobot(g2d, robot);
         }
 
-        for (Landmark w : world.getLandmarks()) {
-            drawLandmark(g2d, w);
+        // for (Landmark w : world.getLandmarks()) {
+        //     drawLandmark(g2d, w);
+        // }
+
+        for (Entry<Landmark, Boolean> entry : world.getLandmarkMap().entrySet()) {
+            drawLandmark(g2d, entry.getKey(), entry.getValue());
         }
 
         for (Shape s : world.getObstacles()) {
@@ -228,6 +233,38 @@ public class WorldPanel extends JPanel {
                 * r, 2 * r);
 
         drawShape(g2d, circle1, Color.ORANGE, Color.BLACK);
+
+        final double r2 = r * 1.4;
+        final Ellipse2D circle2 = new Ellipse2D.Double(p.getX() - r2, p.getY() - r2,
+                2 * r2, 2 * r2);
+        g2d.draw(circle2);
+
+        final double fontHeight = r * 1.5;
+        prepareFont(g2d, fontHeight);
+        final Rectangle2D bounds = g2d.getFont().getStringBounds(landmark.name,
+                g2d.getFontRenderContext());
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(landmark.name, (float) (p.getX() - bounds.getWidth() / 2.0),
+                (float) (p.getY() - fontHeight / 3.0));
+
+        g2d.dispose();
+
+        /* This is to add + line on the landmark */
+        // g2d.draw(new Line2D.Double(p.getX(), p.getY() - 1.5 * r, p.getX(), p.getY()+
+        // 1.5 * r));
+        // g2d.draw(new Line2D.Double(p.getX() - 1.5 * r, p.getY(), p.getX() + 1.5 *r,
+        // p.getY()));
+    }
+
+    //* Method overloading for drawing landmark */
+    private void drawLandmark(Graphics2D g2dIn, Landmark landmark, Boolean isReached) {
+        final Graphics2D g2d = (Graphics2D) g2dIn.create();
+        final Point2D p = landmark.getLocation();
+        final double r = 0.2;
+        final Ellipse2D circle1 = new Ellipse2D.Double(p.getX() - r, p.getY() - r, 2
+                * r, 2 * r);
+
+        drawShape(g2d, circle1, isReached ? Color.RED : Color.ORANGE, Color.BLACK);
 
         final double r2 = r * 1.4;
         final Ellipse2D circle2 = new Ellipse2D.Double(p.getX() - r2, p.getY() - r2,
