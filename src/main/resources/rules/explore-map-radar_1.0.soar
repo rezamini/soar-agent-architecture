@@ -1,0 +1,93 @@
+sp {propose*move
+   (state <s> ^io.input-link.area.view <area-view>
+              ^io.input-link.self.pose <e>)
+            #   -^current-direction <current-direction>)
+   (<area-view> ^<direction-command>.type <> block )
+   (<e> ^x <x> ^y <y>)
+-->
+# (write | proposing move : | <direction-command> )
+   (<s> ^operator <o> + =)
+   (<o> ^name move
+        ^actions.move.direction <direction-command> )}
+
+
+ sp {propose*turn
+   (state <s> ^io.input-link.area.view <area-view>
+              ^io.input-link.self.pose <e>
+              ^current-direction <current-direction>)
+   (<area-view> ^<current-direction>.type block
+        ^ { << north northeast northwest east west south southeast southwest >> <turn-direction> } normal )
+
+    # (<area-view> ^ { << north northeast northwest east west south southeast southwest >> <n-dir> } )
+    # (<area-view> ^<n-dir>.type <> block )
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name turn 
+        ^actions <a>)
+   (<a> ^move.direction <turn-direction>
+        ^radar.toggleRadar on )}
+
+
+sp {propose*radar-off
+   (state <s> ^io.input-link.radar <radar>)
+   (<radar> ^status on
+         ^battery < 80)
+        #  ^radar <r>)
+#   -(<r> ^ << energy health missiles tank >> <x>)
+-->
+   (<s> ^operator <o> + >)
+   (<o> ^name radar-off
+        ^actions.radar.toggleRadar off )}
+
+
+## Selection rules
+
+sp {select*radar-off*move
+   (state <s> ^operator <o1> +
+              ^operator <o2> +)
+   (<o1> ^name radar-off)
+   (<o2> ^name move)
+-->
+   (<s> ^operator <o1> > <o2>)}
+
+sp {select*radar-off*move-compare
+   (state <s> ^operator <o1> +
+              ^operator <o2> +
+              ^current-direction <current-direction>)
+   (<o1> ^name move
+         ^actions.move.direction <current-direction> )
+   (<o2> ^name move)
+-->
+   (<s> ^operator <o1> > <o2>)}
+
+
+sp {apply*move*create*current-direction
+   (state <s> ^operator <o>)
+   (<o> ^actions.move.direction <direction>)
+-->
+   (<s> ^current-direction <direction>)}
+
+
+sp {apply*move*remove*current-direction
+   (state <s> ^operator <o>
+              ^current-direction <direction>)
+   (<o> ^actions.move.direction <> <direction>)
+-->
+   (<s> ^current-direction <direction> -)}  
+
+sp {apply*operator*create-action-command
+   (state <s> ^operator <o>
+              ^io.output-link <ol>)
+   (<o> ^actions <act>)
+   (<act> ^<att> <value>)
+-->
+   (<ol> ^<att> <value>)}
+
+sp {apply*operator*remove-command
+   (state <s> ^operator.actions
+              ^io.output-link <ol>)
+   (<ol> ^<att> <value>)
+   (<value> ^status complete)
+-->
+   (<ol> ^<att> <value> -)}
+
