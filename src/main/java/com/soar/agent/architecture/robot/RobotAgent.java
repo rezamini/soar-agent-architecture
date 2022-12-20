@@ -104,14 +104,17 @@ public class RobotAgent {
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-smem.soar").toURI());
 
-            source = new
-            File(getClass().getResource("/rules/move-to-landmark-3.0-smem-epmem.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-3.0-smem-epmem.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/main/main-default.soar").toURI());
 
             // source = new File(getClass().getResource("/rules/move-random.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/advanced-move.soar").toURI());
+
+            source = new
+            File(getClass().getResource("/rules/explore-map-radar_1.0.soar").toURI());
 
             if (source != null) {
                 final Callable<Void> call = () -> {
