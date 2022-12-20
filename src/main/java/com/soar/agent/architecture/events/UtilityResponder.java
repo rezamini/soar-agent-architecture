@@ -7,6 +7,7 @@ import org.jsoar.util.events.SoarEvent;
 import org.jsoar.util.events.SoarEventListener;
 
 import com.soar.agent.architecture.enums.CellTypeEnum;
+import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 
@@ -31,9 +32,11 @@ public class UtilityResponder extends UtilityListener {
         });
 
         robotAgent.getEvents().addListener(AreaResponder.class, event -> {
-            if (robotAgent.getMove() != null && robotAgent.getMove().getDirection() != null && !robotAgent.getMove().getDirection().equals("")) {
+            if (robotAgent.getMove() != null && robotAgent.getMove().getDirection() != null
+                    && !robotAgent.getMove().getDirection().equals("")) {
                 areaResponder.setFormerLocaleInfo(robotAgent.getQMemory(), CellTypeEnum.NONE.getName());
-                areaResponder.setLocaleInfo(robotAgent.getQMemory(), robotAgent.getMove().getDirection(), CellTypeEnum.NORMAL.getName());
+                areaResponder.setLocaleInfo(robotAgent.getQMemory(), robotAgent.getMove().getDirection(),
+                        CellTypeEnum.NORMAL.getName());
             }
         });
     }
@@ -55,6 +58,17 @@ public class UtilityResponder extends UtilityListener {
             @Override
             public void onEvent(SoarEvent event) {
                 robotAgent.getEvents().fireEvent(memoryResponder);
+
+                // update the starting locale of the agent
+
+                double currentYaw = robot.getYaw(); // get the starting yaw
+
+                // convert back the yaw to degree and get the starting direction by the
+                // converted yaw which is the angle degree
+                DirectionEnum startingDirection = DirectionEnum.findByAngleDegree((int) Math.toDegrees(currentYaw));
+
+                robotAgent.getMove().setDirection(startingDirection.getName());
+                robotAgent.getEvents().fireEvent(areaResponder);
             }
         });
     }
@@ -71,13 +85,13 @@ public class UtilityResponder extends UtilityListener {
     }
 
     @Override
-    public void startOutputEventListener(){
-        
+    public void startOutputEventListener() {
+
     }
 
     @Override
-    public void startWorkingMemoryChangedEventListener(){
-        
+    public void startWorkingMemoryChangedEventListener() {
+
     }
 
 }

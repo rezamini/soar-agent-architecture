@@ -45,7 +45,7 @@ public class RobotAgent {
 
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
-
+        move = new Move(); //this need to be initialised otherwise it will throw an error if we are setting values from other classes
         SoarQMemoryAdapter.attach(threadedAgent.getAgent(), getQMemory());
         new CycleCountInput(threadedAgent.getInputOutput());
     }

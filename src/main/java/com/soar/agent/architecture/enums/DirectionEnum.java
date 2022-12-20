@@ -39,6 +39,17 @@ public enum DirectionEnum {
         return result;
     }
 
+    public static DirectionEnum findByAngleDegree(int degree) {
+        DirectionEnum result = null;
+        for (DirectionEnum direction : values()) {
+            if (direction.getAngle() == degree) {
+                result = direction;
+                break;
+            }
+        }
+        return result;
+    }
+
     //get the opposit direction of the current direction
     public DirectionEnum getOppositeDirection() {
         DirectionEnum[] array = values();
