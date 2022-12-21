@@ -1,22 +1,22 @@
 sp {propose*move
    (state <s> ^io.input-link.area.view <area-view>
-              ^io.input-link.self.pose <e>)
-            #   -^current-direction <current-direction>)
-   (<area-view> ^<direction-command>.type <> block )
+              ^io.input-link.area.locale.direction <current-direction>
+              ^io.input-link.self.pose <e> )
+   (<area-view> ^<current-direction>.type <> block )
    (<e> ^x <x> ^y <y>)
 -->
 # (write | proposing move : | <direction-command> )
    (<s> ^operator <o> + =)
    (<o> ^name move
-        ^actions.move.direction <direction-command> )}
+        ^actions.move.direction <current-direction> )}
 
 
  sp {propose*turn
    (state <s> ^io.input-link.area.view <area-view>
-              ^io.input-link.self.pose <e>
-              ^current-direction <current-direction>)
+              ^io.input-link.area.locale.direction <current-direction>
+              ^io.input-link.self.pose <e> )
    (<area-view> ^<current-direction>.type block
-        ^ { << north northeast northwest east west south southeast southwest >> <turn-direction> } normal )
+                ^<turn-direction>.type normal )
 
     # (<area-view> ^ { << north northeast northwest east west south southeast southwest >> <n-dir> } )
     # (<area-view> ^<n-dir>.type <> block )
@@ -49,31 +49,6 @@ sp {select*radar-off*move
    (<o2> ^name move)
 -->
    (<s> ^operator <o1> > <o2>)}
-
-sp {select*radar-off*move-compare
-   (state <s> ^operator <o1> +
-              ^operator <o2> +
-              ^current-direction <current-direction>)
-   (<o1> ^name move
-         ^actions.move.direction <current-direction> )
-   (<o2> ^name move)
--->
-   (<s> ^operator <o1> > <o2>)}
-
-
-sp {apply*move*create*current-direction
-   (state <s> ^operator <o>)
-   (<o> ^actions.move.direction <direction>)
--->
-   (<s> ^current-direction <direction>)}
-
-
-sp {apply*move*remove*current-direction
-   (state <s> ^operator <o>
-              ^current-direction <direction>)
-   (<o> ^actions.move.direction <> <direction>)
--->
-   (<s> ^current-direction <direction> -)}  
 
 sp {apply*operator*create-action-command
    (state <s> ^operator <o>
