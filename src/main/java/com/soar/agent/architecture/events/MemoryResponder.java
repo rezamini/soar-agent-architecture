@@ -2,6 +2,7 @@ package com.soar.agent.architecture.events;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jsoar.kernel.io.quick.QMemory;
@@ -229,7 +230,7 @@ public class MemoryResponder extends MemoryListener {
          * it accepts list of landmarks, in this case the detectedLandmark by the radar
          */
         @Override
-        public void updateMemoryLandmarks(List<Landmark> detectedLandmark) {
+        public void updateMemoryLandmarks(Map<Landmark, Boolean> detectedLandmark) {
                 synchronized (qMemory) {
                         // Main Landmarks Hierarchy
                         // QMemory radar = qMemory.subMemory("ranges.range");
@@ -237,10 +238,11 @@ public class MemoryResponder extends MemoryListener {
 
                         QMemory landmarks = radar.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
 
-                        for (int j = 0; j < robot.getWorld().getDetectedRadarLandmarks().size(); j++) {
-                                Landmark landmark = robot.getWorld().getDetectedRadarLandmarks().get(j);
+                        for(Entry<Landmark, Boolean> entry: robot.getWorld().getDetectedRadarLandmarks().entrySet()){
+                                Landmark landmark = entry.getKey();
+                                boolean isLive = entry.getValue(); // is within the radar
                                 boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
-
+                                
                                 // create a sub landmark with the landmark name - [name of landmark]
                                 String subName = MemoryEnum.LANDMARK_SUB.getName()
                                                 + UtilitiesEnum.DASHSEPERATOR.getName()
@@ -285,6 +287,12 @@ public class MemoryResponder extends MemoryListener {
 
                                         subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
                                                         UtilitiesEnum.INACTIVESTATUS.getName());
+                                }
+
+                                //update the live data of radar. if any landmark is within radar range
+                                if(isLive){
+                                        QMemory liveLandmarks = landmarks.subMemory("live");
+                                        
                                 }
                         }
                 }

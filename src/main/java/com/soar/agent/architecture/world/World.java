@@ -21,9 +21,12 @@ public class World {
     private final List<Robot> robots = new ArrayList<Robot>();
     private final List<Shape> obstacles = new ArrayList<Shape>();
     private final List<Landmark> landmarks = new ArrayList<Landmark>();
+
+    // the boolean value is to indicate if landmark is reached by the agent
     private final Map<Landmark, Boolean> landmarkMap = new HashMap<Landmark, Boolean>();
 
-    private List<Landmark> detectedRadarLandmarks = new ArrayList<Landmark>();
+    // the Boolean value is to indicate if the landmark is within radar/if its live
+    private Map<Landmark, Boolean> detectedRadarLandmarks = new HashMap<Landmark, Boolean>();
 
     public World() {
 
@@ -77,7 +80,7 @@ public class World {
         return landmarkMap;
     }
 
-    public List<Landmark> getDetectedRadarLandmarks() {
+    public Map<Landmark, Boolean> getDetectedRadarLandmarks() {
         return detectedRadarLandmarks;
     }
 
@@ -156,6 +159,11 @@ public class World {
         double range = 2 * delta;
         double x = source.getShape().getCenterX() + 2 * dx;
         double y = source.getShape().getCenterY() + 2 * dy;
+
+        // set all the values to false and then check the landmarks one by one. later in
+        // the loop the values will be set to true if its within radar. this has to be
+        // called outside the while loop
+        detectedRadarLandmarks.replaceAll((k, v) -> v = false);
         if (collides(source.getShape(), x, y)) {
             return 0.0;
         }
@@ -196,26 +204,31 @@ public class World {
     }
 
     public void radarDetectLandmark(Robot robot, double radarX, double radarY, double radarRange) {
-        //get a instance of the agent shape
+        // get a instance of the agent shape
         Rectangle2D agentShape = (Rectangle2D) robot.getShape().clone();
-        
-        //simulate a move with the radar positions
+
+        // simulate a move with the radar positions
         agentShape.setFrameFromCenter(radarX, radarY, radarX + robot.getRadius(), radarY + robot.getRadius());
 
-        //check if the agent will reach/hit any landmark with the current landmark positions (aka if radar can see and agent can hit the landmark)
-        for (Landmark landmark : landmarks) {
-            if(agentShape.contains(landmark.getLocation())){
-                if(!detectedRadarLandmarks.contains(landmark)){
-                    detectedRadarLandmarks.add(landmark);
-                }
-            }
+        // check if the agent will reach/hit any landmark with the current landmark
+        // positions (aka if radar can see and agent can hit the landmark)
+        // List<Landmark> tempLandmarks = new ArrayList<Landmark>();
 
+        for (Landmark landmark : landmarks) {
+
+            if (agentShape.contains(landmark.getLocation())) {
+                detectedRadarLandmarks.put(landmark, true);
+
+                // if(!tempLandmarks.contains(landmark)){
+                // tempLandmarks.add(landmark);
+                // }
+            }
         }
     }
 
     public void radarDetectLandmark(Robot robot, Radar radar) {
         Arc2D arc = robot.getRadarArc();
-        
+
         // robot position
         double robotCurrentX = robot.getShape().getCenterX();
         double robotCurrentY = robot.getShape().getCenterY();
@@ -235,6 +248,5 @@ public class World {
         robot.setRadarArc(arc);
 
     }
-
 
 }

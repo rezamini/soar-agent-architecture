@@ -31,7 +31,7 @@ sp {propose*move
 sp {propose*radar-off
    (state <s> ^io.input-link.radar <radar>)
    (<radar> ^status on
-         ^battery < 80)
+         ^battery <= 0)
         #  ^radar <r>)
 #   -(<r> ^ << energy health missiles tank >> <x>)
 -->
@@ -49,6 +49,9 @@ sp {select*radar-off*move
    (<o2> ^name move)
 -->
    (<s> ^operator <o1> > <o2>)}
+
+
+#create and remove output action commands
 
 sp {apply*operator*create-action-command
    (state <s> ^operator <o>

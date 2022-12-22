@@ -1,6 +1,7 @@
 package com.soar.agent.architecture.events;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jsoar.util.events.SoarEvent;
 
@@ -21,5 +22,7 @@ public abstract class MemoryListener implements SoarEvent{
     public abstract void updateMemoryLandmarks();
     public abstract void updateAndRemoveMemoryLandmarks();
     public abstract void updateMemoryRadar();
-    public abstract void updateMemoryLandmarks(List<Landmark> detectedLandmark);
+
+    //for radar purpose
+    public abstract void updateMemoryLandmarks(Map<Landmark, Boolean> detectedLandmark);
 }
