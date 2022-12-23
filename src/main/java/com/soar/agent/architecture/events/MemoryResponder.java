@@ -76,8 +76,9 @@ public class MemoryResponder extends MemoryListener {
                         QMemory landmarks = qMemory.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
 
                         for (Entry<Landmark, Boolean> entry : robot.getWorld().getLandmarkMap().entrySet()) {
-                                //if landmark is already reached then continue
-                                if(entry.getValue() == true) continue;
+                                // if landmark is already reached then continue
+                                if (entry.getValue() == true)
+                                        continue;
 
                                 Landmark landmark = entry.getKey();
                                 boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
@@ -85,7 +86,7 @@ public class MemoryResponder extends MemoryListener {
                                 // create a sub landmark with the landmark name - [name of landmark]
                                 String subName = MemoryEnum.LANDMARK_SUB.getName()
                                                 + UtilitiesEnum.DASHSEPERATOR.getName()
-                                                + landmark.name;
+                                                + landmark.getName();
                                 QMemory subLandmark = landmarks.subMemory(subName);
 
                                 // get current agent and landmark positions
@@ -110,7 +111,7 @@ public class MemoryResponder extends MemoryListener {
                                                 landmarkY);
 
                                 // set basic landmark information
-                                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
+                                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.getName());
                                 subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
                                 subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
                                 subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
@@ -130,8 +131,8 @@ public class MemoryResponder extends MemoryListener {
                                         // files
                                         subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
                                                         UtilitiesEnum.INACTIVESTATUS.getName());
-                                        
-                                        //update landmark map to indicate this landmark is reached; 
+
+                                        // update landmark map to indicate this landmark is reached;
                                         entry.setValue(true);
                                 }
 
@@ -159,7 +160,7 @@ public class MemoryResponder extends MemoryListener {
                                 // create a sub landmark with the landmark name - [name of landmark]
                                 String subName = MemoryEnum.LANDMARK_SUB.getName()
                                                 + UtilitiesEnum.DASHSEPERATOR.getName()
-                                                + landmark.name;
+                                                + landmark.getName();
                                 QMemory subLandmark = landmarks.subMemory(subName);
 
                                 // get current agent and landmark positions
@@ -184,7 +185,7 @@ public class MemoryResponder extends MemoryListener {
                                                 landmarkY);
 
                                 // set basic landmark information
-                                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
+                                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.getName());
                                 subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
                                 subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
                                 subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
@@ -238,11 +239,11 @@ public class MemoryResponder extends MemoryListener {
 
                         QMemory landmarks = radar.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
 
-                        for(Entry<Landmark, Boolean> entry: robot.getWorld().getDetectedRadarLandmarks().entrySet()){
+                        for (Entry<Landmark, Boolean> entry : robot.getWorld().getDetectedRadarLandmarks().entrySet()) {
                                 Landmark landmark = entry.getKey();
                                 boolean isLive = entry.getValue(); // is within the radar
                                 boolean isAgentReached = robot.getWorld().isLandmarkReached(landmark, robot);
-                                
+
                                 // create a sub landmark with the landmark name - [name of landmark]
                                 String subName = MemoryEnum.LANDMARK_SUB.getName()
                                                 + UtilitiesEnum.DASHSEPERATOR.getName()
@@ -289,10 +290,33 @@ public class MemoryResponder extends MemoryListener {
                                                         UtilitiesEnum.INACTIVESTATUS.getName());
                                 }
 
-                                //update the live data of radar. if any landmark is within radar range
-                                if(isLive){
-                                        QMemory liveLandmarks = landmarks.subMemory("live");
-                                        
+                                // update the live data of radar. if any landmark is within radar range
+                                if (isLive) {
+                                        // create a live and landmarks structure similar to detected landmarks
+                                        QMemory live = radar.subMemory("live");
+                                        QMemory liveLandmarks = live.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
+                                        QMemory liveSubLandmark = liveLandmarks.subMemory(subName);
+
+                                        // set basic landmark information
+                                        liveSubLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.getName());
+                                        liveSubLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
+                                        liveSubLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
+                                        liveSubLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
+                                                        landmark.getLocation().distance(agentXPose, agentYPose));
+                                        liveSubLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                                                        landmarkDirection);
+                                        liveSubLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                                        UtilitiesEnum.ACTIVESTATUS.getName());
+
+                                        if (isAgentReached) {
+                                                liveSubLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
+                                                liveSubLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                                                                UtilitiesEnum.REACHEDSTATUS.getName());
+
+                                                liveSubLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                                                UtilitiesEnum.INACTIVESTATUS.getName());
+                                        }
+
                                 }
                         }
                 }
