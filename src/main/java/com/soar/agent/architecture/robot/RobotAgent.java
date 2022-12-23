@@ -228,6 +228,7 @@ public class RobotAgent {
             @Override
             public void onCommandAdded(String commandName, Identifier commandId) {
                 removeMemoryPath("area.view");
+                removeMemoryPath("radar.live");
                 // removeMemoryPath("landmarks");
 
             }
