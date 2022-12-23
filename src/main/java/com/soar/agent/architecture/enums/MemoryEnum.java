@@ -23,6 +23,7 @@ public enum MemoryEnum {
   RADAR_ANGLE("angle"),
   RADAR_BATTERY("battery"),
   RADAR_STATUS("status"),
+  RADAR_LIVE("live"),
 
   ;
 

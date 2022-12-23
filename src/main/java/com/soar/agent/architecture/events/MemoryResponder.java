@@ -293,7 +293,7 @@ public class MemoryResponder extends MemoryListener {
                                 // update the live data of radar. if any landmark is within radar range
                                 if (isLive) {
                                         // create a live and landmarks structure similar to detected landmarks
-                                        QMemory live = radar.subMemory("live");
+                                        QMemory live = radar.subMemory(MemoryEnum.RADAR_LIVE.getName());
                                         QMemory liveLandmarks = live.subMemory(MemoryEnum.LANDMARK_MAIN.getName());
                                         QMemory liveSubLandmark = liveLandmarks.subMemory(subName);
 
