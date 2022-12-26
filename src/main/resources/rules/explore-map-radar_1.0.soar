@@ -31,9 +31,8 @@ sp {propose*move
 sp {propose*radar-off
    (state <s> ^io.input-link.radar <radar>)
    (<radar> ^status on
-         ^battery <= 0)
-        #  ^radar <r>)
-#   -(<r> ^ << energy health missiles tank >> <x>)
+         -^battery <= 0
+         -^live.landmarks <live-landmarks>)
 -->
    (<s> ^operator <o> + >)
    (<o> ^name radar-off

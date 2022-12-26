@@ -73,12 +73,15 @@ public class Robot {
             move(newX, newY);
         }
 
-        for (Radar range : ranges) {
-            range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
-            world.radarDetectLandmark(this, range);
+        //update radar related data only if radar is on
+        if(toggleRadar){
+            for (Radar range : ranges) {
+                range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
+                // world.radarDetectLandmark(this, range);
+            }
+            updateRadarBattery();
         }
 
-        updateRadarBattery();
 
     }
 
