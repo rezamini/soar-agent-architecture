@@ -115,6 +115,8 @@ public class RobotAgent {
 
             source = new
             File(getClass().getResource("/rules/explore-map-radar_1.0.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/explore-map-radar_2.0.soar").toURI());
 
             if (source != null) {
                 final Callable<Void> call = () -> {
@@ -203,6 +205,7 @@ public class RobotAgent {
 
                 try {
                     synchronized (threadedAgent.getAgent()) {
+                        System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
                         robot.setToggleRadar(bean.isToggleRadar());
                         context.setStatus("complete");
                     }

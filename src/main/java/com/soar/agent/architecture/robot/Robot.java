@@ -74,15 +74,18 @@ public class Robot {
         }
 
         //update radar related data only if radar is on
+        
         if(toggleRadar){
-            for (Radar range : ranges) {
-                range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
-                // world.radarDetectLandmark(this, range);
-            }
             updateRadarBattery();
+
+            //check the toggle again maybe battery has level has changed it
+            if(toggleRadar){
+                for (Radar range : ranges) {
+                    range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
+                    // world.radarDetectLandmark(this, range);
+                }    
+            }
         }
-
-
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {

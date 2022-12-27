@@ -1,19 +1,20 @@
-#This file has 3 propose rules. Move. Turn. Radar-off
-#Radar-off is happening if battery is 0 or lower and its on only when it sees a landmark
+#This file has 3 propose rules. Move-forward. Turn. Radar-off. Radar-on
+#Radar-off is happening if battery is 0 or lower and its on only when it does NOT sees a landmark
+#on every turn the radar will turn on regardless, if it sees a landmark it will off in the next move. if no landmark it stays on.
 
-sp {propose*move
+sp {propose*move-forward
    (state <s> ^io.input-link.area.view <area-view>
               ^io.input-link.area.locale.direction <current-direction>
-              ^io.input-link.self.pose <e> )
+              ^io.input-link.self.pose <e>  )
    (<area-view> ^<current-direction>.type <> block )
    (<e> ^x <x> ^y <y>)
 -->
 # (write | proposing move : | <direction-command> )
    (<s> ^operator <o> + =)
-   (<o> ^name move
-       ^actions <a>)
+   (<o> ^name move-forward
+        ^actions <a>)
    (<a> ^move.direction <current-direction> )}
-      #   ^radar.toggleRadar on )}
+        # ^radar.toggleRadar on )}
 
 
  sp {propose*turn
@@ -29,26 +30,38 @@ sp {propose*move
    (<s> ^operator <o> + =)
    (<o> ^name turn 
         ^actions <a>)
-   (<a> ^move.direction <turn-direction>
+   (<a> ^move.direction <turn-direction> 
         ^radar.toggleRadar on )}
 
-# sp {propose*radar-on
-#    (state <s> ^io.input-link.radar <radar>)
-#    (<radar> ^status off
-#          -^battery <= 0 )
-#          # ^live.landmarks <live-landmarks>)
-# -->
-#    (<s> ^operator <o> + >)
-#    (<o> ^name radar-on
-#         ^actions.radar.toggleRadar on )}
 
-sp {propose*radar-off
+# Radar propose rules
+
+sp {propose*radar-on
    (state <s> ^io.input-link.radar <radar>)
-   (<radar> ^status on
+   (<radar> ^status off
          -^battery <= 0
          -^live.landmarks <live-landmarks>)
 -->
-   (<s> ^operator <o> + =)
+   (<s> ^operator <o> + >)
+   (<o> ^name radar-on
+        ^actions.radar.toggleRadar on )}
+
+sp {propose*radar-off*has-battery*sees-landmark
+   (state <s> ^io.input-link.radar <radar>)
+   (<radar> ^status on
+         -^battery <= 0
+         ^live.landmarks <live-landmarks>)
+-->
+   (<s> ^operator <o> + >)
+   (<o> ^name radar-off
+        ^actions.radar.toggleRadar off )}
+        
+sp {propose*radar-off*no-battery
+   (state <s> ^io.input-link.radar <radar>)
+   (<radar> ^status on
+         ^battery <= 0)
+-->
+   (<s> ^operator <o> + >)
    (<o> ^name radar-off
         ^actions.radar.toggleRadar off )}
 
@@ -58,8 +71,8 @@ sp {propose*radar-off
 sp {select*radar-off*move
    (state <s> ^operator <o1> +
               ^operator <o2> +)
-   (<o1> ^name << radar-off >>)
-   (<o2> ^name move)
+   (<o1> ^name << radar-off radar-on >>)
+   (<o2> ^name move-forward)
 -->
    (<s> ^operator <o1> > <o2>)}
 
