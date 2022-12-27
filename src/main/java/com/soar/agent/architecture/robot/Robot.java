@@ -33,6 +33,7 @@ public class Robot {
 
         // initMultipleRobotRadar();
         initSingleRobotRadar();
+
     }
 
     private void initMultipleRobotRadar() {
@@ -53,6 +54,15 @@ public class Robot {
 
     public void move(double newX, double newY) {
         shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
+
+        //calc radar range and data in order to have radar data such as "live" at the beginning of agent phase
+        //this have to be called here to calc the radar from the agent new position and have the radar data from the beginning of agent lifecycle.
+        //alternative way is to call it from updateAndMove but the agent will not have some of the radar data at the beginning and
+        //some senarios might lack some data (for example if we need the radar to be on if it sees a landmark 
+        //and there is one in the current direction, then the radar will not turn on because of lack of initialise radar calc. as per
+        //explore-map-radar_1.0.soar)
+        calcRadar();
+        
     }
 
     public void updateAndMove(double dt) {
@@ -73,19 +83,7 @@ public class Robot {
             move(newX, newY);
         }
 
-        //update radar related data only if radar is on
-        
-        if(toggleRadar){
-            updateRadarBattery();
-
-            //check the toggle again maybe battery has level has changed it
-            if(toggleRadar){
-                for (Radar range : ranges) {
-                    range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
-                    // world.radarDetectLandmark(this, range);
-                }    
-            }
-        }
+        calcRadar();
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
@@ -120,6 +118,21 @@ public class Robot {
         }else{
             //off the radar if battery is not above 0
             toggleRadar = false;
+        }
+    }
+
+    public void calcRadar(){
+        //update radar related data only if radar is on
+        if(toggleRadar){
+            updateRadarBattery();
+
+            //check the toggle again maybe battery has level has changed it
+            if(toggleRadar){
+                for (Radar range : ranges) {
+                    range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
+                    // world.radarDetectLandmark(this, range);
+                }    
+            }
         }
     }
 

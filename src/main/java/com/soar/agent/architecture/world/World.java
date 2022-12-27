@@ -164,7 +164,6 @@ public class World {
         // the loop the values will be set to true if its within radar. this has to be
         // called outside the while loop
         detectedRadarLandmarks.replaceAll((k, v) -> v = false);
-        System.out.println("ASDASDASDASDADASDAASDASDSAD IT HITTING");
         if (collides(source.getShape(), x, y)) {
             return 0.0;
         }

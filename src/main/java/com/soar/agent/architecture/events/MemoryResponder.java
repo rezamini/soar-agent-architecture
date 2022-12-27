@@ -318,7 +318,7 @@ public class MemoryResponder extends MemoryListener {
 
                                                 //if is live and is reached then change the value to false so in the next round
                                                 //this landmark is not added to live structure. 
-                                                // this will enahce a senario that it sees the landmark and it off the radar.
+                                                // this will enhance a senario that it sees the landmark and it off the radar.
                                                 //since the radar is off and has no knowledge we change the value to let it know we reached it so it can turn on again.
                                                 //a.k.a : we pass the landmark turn on the radar again even if its same direction.
                         

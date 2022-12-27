@@ -50,6 +50,7 @@ public class MapLoader {
         world.extents.setFrame(0.0, 0.0, maxLine.value * CELL_SIZE, lines.length * CELL_SIZE);
 
         readObstacles(world, lines);
+        readLandmarks(world, lines);
         readRobots(world, lines);
 
         return new Result(world);
@@ -62,6 +63,23 @@ public class MapLoader {
             while (x != -1) {
                 x = readRectangle(world, line, x, y);
                 x = line.indexOf('#', x);
+            }
+        }
+    }
+
+    private void readLandmarks(World world, String[] lines) {
+        for (int y = 0; y < lines.length; ++y) {
+            final String line = lines[y];
+            for (int x = 0; x < line.length(); ++x) {
+                final char c = line.charAt(x);
+                final double cx = x * CELL_SIZE + CELL_SIZE / 2.0;
+                final double cy = y * CELL_SIZE + CELL_SIZE / 2.0;
+                
+                if(Character.isLetter(c) && Character.isLowerCase(c)){
+                    Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy));
+                    world.addLandmark(landmark);
+                    world.addLandmarkMap(landmark, false);
+                }
             }
         }
     }
@@ -80,10 +98,6 @@ public class MapLoader {
                     r.setTurnRate(Math.toRadians(25));
                     world.addRobot(r);
 
-                }else if(Character.isLetter(c) && Character.isLowerCase(c)){
-                    Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy));
-                    world.addLandmark(landmark);
-                    world.addLandmarkMap(landmark, false);
                 }
             }
         }
