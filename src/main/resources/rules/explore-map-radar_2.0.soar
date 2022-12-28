@@ -55,15 +55,6 @@ sp {propose*radar-off*has-battery*sees-landmark
    (<s> ^operator <o> + >)
    (<o> ^name radar-off
         ^actions.radar.toggleRadar off )}
-        
-sp {propose*radar-off*no-battery
-   (state <s> ^io.input-link.radar <radar>)
-   (<radar> ^status on
-         ^battery <= 0)
--->
-   (<s> ^operator <o> + >)
-   (<o> ^name radar-off
-        ^actions.radar.toggleRadar off )}
 
 
 ## Selection rules

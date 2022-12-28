@@ -63,8 +63,11 @@ public class MemoryResponder extends MemoryListener {
 
                         areaResponder.updateAreaMemory();
                         // events.fireEvent(areaResponder);
-                        updateMemoryLandmarks();
+                        
+                        //memory radar has to be called before memory landmarks.
                         updateMemoryRadar();
+                        updateMemoryLandmarks();
+                        
                 }
 
         }
@@ -268,26 +271,37 @@ public class MemoryResponder extends MemoryListener {
 
                                 // Calculate where and which direction the landmark is located from the agent
                                 // current position. Dynamic values & movements
-                                String landmarkDirection = calcLandmarkDirection(agentXPose, agentYPose, landmarkX,
+                                String landmarkDirection = calcLandmarkDirection(agentXPose, agentYPose,
+                                                landmarkX,
                                                 landmarkY);
 
-                                // set basic landmark information
-                                subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
-                                subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
-                                subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
-                                subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
-                                                landmark.getLocation().distance(agentXPose, agentYPose));
-                                subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), landmarkDirection);
-                                subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
-                                                UtilitiesEnum.ACTIVESTATUS.getName());
+                                // cross check this detected landmark with the all landmark map to see if it is
+                                // visited.
+                                // the all landmark map already contain a value to indicate this
+                                boolean isVisited = robot.getWorld().getLandmarkMap().get(landmark);
 
-                                if (isAgentReached) {
-                                        subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
+                                // only add or update the values if the agent did not visit this landmark
+                                if (!isVisited) {
+
+                                        // set basic landmark information
+                                        subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
+                                        subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
+                                        subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
+                                        subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
+                                                        landmark.getLocation().distance(agentXPose, agentYPose));
                                         subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
-                                                        UtilitiesEnum.REACHEDSTATUS.getName());
-
+                                                        landmarkDirection);
                                         subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
-                                                        UtilitiesEnum.INACTIVESTATUS.getName());
+                                                        UtilitiesEnum.ACTIVESTATUS.getName());
+
+                                        if (isAgentReached) {
+                                                subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
+                                                subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                                                                UtilitiesEnum.REACHEDSTATUS.getName());
+
+                                                subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
+                                                                UtilitiesEnum.INACTIVESTATUS.getName());
+                                        }
                                 }
 
                                 // update the live data of radar. if any landmark is within radar range
@@ -316,12 +330,16 @@ public class MemoryResponder extends MemoryListener {
                                                 liveSubLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
                                                                 UtilitiesEnum.INACTIVESTATUS.getName());
 
-                                                //if is live and is reached then change the value to false so in the next round
-                                                //this landmark is not added to live structure. 
-                                                // this will enhance a senario that it sees the landmark and it off the radar.
-                                                //since the radar is off and has no knowledge we change the value to let it know we reached it so it can turn on again.
-                                                //a.k.a : we pass the landmark turn on the radar again even if its same direction.
-                        
+                                                // if is live and is reached then change the value to false so in the
+                                                // next round
+                                                // this landmark is not added to live structure.
+                                                // this will enhance a senario that it sees the landmark and it off the
+                                                // radar.
+                                                // since the radar is off and has no knowledge we change the value to
+                                                // let it know we reached it so it can turn on again.
+                                                // a.k.a : we pass the landmark turn on the radar again even if its same
+                                                // direction.
+
                                                 entry.setValue(false);
                                         }
 

@@ -42,6 +42,17 @@ sp {propose*move
 #    (<o> ^name radar-on
 #         ^actions.radar.toggleRadar on )}
 
+
+# sp {wander*elaborate*move*radar-on
+#    :i-support
+#    (state <s> ^operator <o>
+#               ^io.input-link.radar <radar>)
+#    (<radar> ^status off)
+#    (<o> ^name move 
+#         ^actions <a>)
+# -->
+#    (<a> ^radar.toggleRadar on)}
+
 sp {propose*radar-off
    (state <s> ^io.input-link.radar <radar>)
    (<radar> ^status on
