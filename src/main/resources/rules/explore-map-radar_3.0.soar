@@ -1,0 +1,135 @@
+#This file has 5 propose rules. Move-forward. Turn. move-radar-landmark. Radar-off. Radar-on
+#Radar-off is happening if battery is 0 or lower and its on only when it does NOT sees a landmark.
+#if it sees a landmark it will off. if no landmark it stays on.
+#the turn on and off of the radar is entirely contolled by the respective operators
+#unlike previous versions the turn operator will not turn on the radar and it is now handled Radar-off/Radar-on operators.
+
+
+sp {propose*move-forward
+   (state <s> ^io.input-link.area.view <area-view>
+              ^io.input-link.area.locale.direction <current-direction>
+              ^io.input-link.self.pose <e>  )
+   (<area-view> ^<current-direction>.type <> block )
+   (<e> ^x <x> ^y <y>)
+-->
+# (write | proposing move : | <direction-command> )
+   (<s> ^operator <o> + =)
+   (<o> ^name move-forward
+        ^actions <a>)
+   (<a> ^move.direction <current-direction> )}
+
+
+ sp {propose*turn
+   (state <s> ^io.input-link.area.view <area-view>
+              ^io.input-link.area.locale.direction <current-direction>
+              ^io.input-link.self.pose <e> )
+   (<area-view> ^<current-direction>.type block
+                ^<turn-direction>.type normal )
+
+    # (<area-view> ^ { << north northeast northwest east west south southeast southwest >> <n-dir> } )
+    # (<area-view> ^<n-dir>.type <> block )
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name turn 
+        ^actions <a>)
+   (<a> ^move.direction <turn-direction> )}
+
+
+sp {propose*move-radar-landmark
+   (state <s> ^io.input-link.self.pose <e>
+              ^io.input-link.radar.live.landmarks.<radar-landmarks> <live-landmark>
+              ^io.input-link.area.view <area-view>)
+   (<e> ^x <x> ^y <y>)
+   (<live-landmark> ^direction-command <direction-command> )
+   (<live-landmark> ^distance <landmark-distance> )
+   (<area-view> ^<direction-command>.type <> block )
+   
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name move-radar-landmark
+        ^distance <landmark-distance>
+        ^actions <a>)
+   (<a> ^move.direction <direction-command> )}
+
+
+# Radar propose rules
+
+sp {propose*radar-on
+   (state <s> ^io.input-link.radar <radar>)
+   (<radar> ^status off
+         -^battery <= 0
+         -^live.landmarks <live-landmarks>)
+-->
+   (<s> ^operator <o> + >)
+   (<o> ^name radar-on
+        ^actions.radar.toggleRadar on )}
+
+sp {propose*radar-off
+   (state <s> ^io.input-link.radar <radar>)
+   (<radar> ^status on
+         -^battery <= 0
+         ^live.landmarks <live-landmarks>)
+-->
+   (<s> ^operator <o> + >)
+   (<o> ^name radar-off
+        ^actions.radar.toggleRadar off )}
+
+
+## Selection rules
+
+sp {select*radar-off*move
+   (state <s> ^operator <o1> +
+              ^operator <o2> +)
+   (<o1> ^name << radar-off radar-on >>)
+   (<o2> ^name << turn move-forward move-radar-landmark >>)
+-->
+   (<s> ^operator <o1> > <o2>)}
+
+sp {select*move-radar-landmark
+   (state <s> ^operator <o1> +
+              ^operator <o2> +)
+   (<o1> ^name move-radar-landmark )
+   (<o2> ^name move-forward )
+-->
+   (<s> ^operator <o1> > <o2>)}
+
+sp {select*move-radar-landmark*shortest-distance
+    (state <s> ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-radar-landmark
+            ^distance <distance1> )
+    (<o2> ^name move-radar-landmark
+            ^distance <distance2> > <distance1> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+# sp {select*move-radar-landmark*prefer-forward-than-others
+#     (state <s> ^operator <o1> +
+#                 ^operator <o2> +
+#                 ^io.input-link.area.locale.direction <lastdirection> )
+#     (<o1> ^name << move-radar-landmark >>
+#             ^actions.move.direction <lastdirection> )
+#     (<o2> ^name << move-radar-landmark >>
+#             ^actions.move.direction <direction> )
+# -->
+# (<s> ^operator <o1> > <o2>)}
+
+
+#create and remove output action commands
+
+sp {apply*operator*create-action-command
+   (state <s> ^operator <o>
+              ^io.output-link <ol>)
+   (<o> ^actions <act>)
+   (<act> ^<att> <value>)
+-->
+   (<ol> ^<att> <value>)}
+
+sp {apply*operator*remove-command
+   (state <s> ^operator.actions
+              ^io.output-link <ol>)
+   (<ol> ^<att> <value>)
+   (<value> ^status complete)
+-->
+   (<ol> ^<att> <value> -)}
+

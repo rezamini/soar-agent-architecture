@@ -1,4 +1,4 @@
-#This file has 3 propose rules. Move-forward. Turn. Radar-off. Radar-on
+#This file has 4 propose rules. Move-forward. Turn. Radar-off. Radar-on
 #Radar-off is happening if battery is 0 or lower and its on only when it does NOT sees a landmark
 #on every turn the radar will turn on regardless, if it sees a landmark it will off in the next move. if no landmark it stays on.
 
