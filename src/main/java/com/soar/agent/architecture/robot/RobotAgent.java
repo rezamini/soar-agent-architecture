@@ -207,7 +207,13 @@ public class RobotAgent {
 
                 try {
                     synchronized (threadedAgent.getAgent()) {
-                        robot.setToggleRadar(bean.isToggleRadar());
+                        //set the radar status only if there is battery otherwise it be set to off
+                        if(robot.getRadarBattery() > 0 ){
+                            robot.setToggleRadar(bean.isToggleRadar());
+                        }else if(robot.getRadarBattery() <= 0){
+                            robot.setToggleRadar(false);
+                        }
+                        
                         context.setStatus("complete");
                     }
 
