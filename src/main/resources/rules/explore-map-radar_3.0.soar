@@ -5,6 +5,28 @@
 #unlike previous versions the turn operator will not turn on the radar and it is now handled Radar-off/Radar-on operators.
 
 
+sp {initialize*state*preferable*turn-directions
+   (state <ss> ^type state)
+   -->
+   (<ss> ^preferable-turn-directions <ne> <nw> <sw> <se> ) 
+   
+   (<ne> ^value northeast ^prefer northeast) 
+   (<ne> ^value northeast ^prefer east)
+   (<ne> ^value northeast ^prefer north)
+   
+   (<nw> ^value northwest ^prefer northwest)
+   (<nw> ^value northwest ^prefer west)
+   (<nw> ^value northwest ^prefer north)
+
+   (<sw> ^value southwest ^prefer southwest)
+   (<sw> ^value southwest ^prefer south)
+   (<sw> ^value southwest ^prefer west)
+
+   (<se> ^value southeast ^prefer southeast)
+   (<se> ^value southeast ^prefer south)
+   (<se> ^value southeast ^prefer east)
+}
+
 sp {propose*move-forward
    (state <s> ^io.input-link.area.view <area-view>
               ^io.input-link.area.locale.direction <current-direction>
@@ -103,16 +125,20 @@ sp {select*move-radar-landmark*shortest-distance
 -->
 (<s> ^operator <o1> > <o2>)}
 
-# sp {select*move-radar-landmark*prefer-forward-than-others
-#     (state <s> ^operator <o1> +
-#                 ^operator <o2> +
-#                 ^io.input-link.area.locale.direction <lastdirection> )
-#     (<o1> ^name << move-radar-landmark >>
-#             ^actions.move.direction <lastdirection> )
-#     (<o2> ^name << move-radar-landmark >>
-#             ^actions.move.direction <direction> )
-# -->
-# (<s> ^operator <o1> > <o2>)}
+sp {select*turn*pick-prefered-turn-directions
+    (state <s> ^operator <o1> + 
+               #  ^operator <o2> +
+                ^preferable-turn-directions <ptd>
+                ^io.input-link.area.locale.direction <current-direction> )
+    (<pd> ^value <current-direction>
+        ^prefer <prefer-direction> )
+    (<o1> ^name turn
+            ^actions.move.direction <prefer-direction> )
+   #  (<o2> ^name << move-forward move-radar-landmark >>
+   #          ^cell-type << block >>  )
+    
+-->
+(<s> ^operator <o1> > )}
 
 
 #create and remove output action commands
