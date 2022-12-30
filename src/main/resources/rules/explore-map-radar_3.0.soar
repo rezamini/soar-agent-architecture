@@ -62,16 +62,16 @@ sp {propose*move-radar-landmark
               ^io.input-link.radar.live.landmarks.<radar-landmarks> <live-landmark>
               ^io.input-link.area.view <area-view>)
    (<e> ^x <x> ^y <y>)
-   (<live-landmark> ^direction-command <direction-command> )
+   (<live-landmark> ^relative-direction-command <relative-direction-command> )
    (<live-landmark> ^distance <landmark-distance> )
-   (<area-view> ^<direction-command>.type <> block )
+   (<area-view> ^<relative-direction-command>.type <> block )
    
 -->
    (<s> ^operator <o> + =)
    (<o> ^name move-radar-landmark
         ^distance <landmark-distance>
         ^actions <a>)
-   (<a> ^move.direction <direction-command> )}
+   (<a> ^move.direction <relative-direction-command> )}
 
 
 # Radar propose rules

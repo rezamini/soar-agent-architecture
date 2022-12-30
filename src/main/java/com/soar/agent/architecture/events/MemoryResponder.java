@@ -400,6 +400,7 @@ public class MemoryResponder extends MemoryListener {
         private String calcRelativeLandmarkDirection(double agentX, double agentY, double landmarkX, double landmarkY) {
                 double angle = Math.atan2(landmarkY - agentY, landmarkX - agentX);
 
+                //with 10 degrees
                 if (angle >= -Math.PI / 8 && angle < Math.PI / 8) {
                         return DirectionEnum.EAST.getName();
                 } else if (angle >= Math.PI / 8 && angle < 3 * Math.PI / 8) {
