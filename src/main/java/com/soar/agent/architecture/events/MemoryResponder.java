@@ -63,11 +63,11 @@ public class MemoryResponder extends MemoryListener {
 
                         areaResponder.updateAreaMemory();
                         // events.fireEvent(areaResponder);
-                        
-                        //memory radar has to be called before memory landmarks.
+
+                        // memory radar has to be called before memory landmarks.
                         updateMemoryRadar();
                         updateMemoryLandmarks();
-                        
+
                 }
 
         }
@@ -275,6 +275,18 @@ public class MemoryResponder extends MemoryListener {
                                                 landmarkX,
                                                 landmarkY);
 
+                                // Calculate where and which direction the landmark is located from the agent
+                                // current position. This provide a relative landmark and is not exact and
+                                // specific as
+                                // the original calcLandmarkDirection method. this could be useful in certain
+                                // scenarios
+                                // specially to avoid zigzag movements and direction when agent is moving
+                                // towards
+                                // the landmark
+                                String landmarkRelativeDirection = calcRelativeLandmarkDirection(agentXPose, agentYPose,
+                                                landmarkX,
+                                                landmarkY);
+
                                 // cross check this detected landmark with the all landmark map to see if it is
                                 // visited.
                                 // the all landmark map already contain a value to indicate this
@@ -291,12 +303,17 @@ public class MemoryResponder extends MemoryListener {
                                                         landmark.getLocation().distance(agentXPose, agentYPose));
                                         subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
                                                         landmarkDirection);
+                                        subLandmark.setString(MemoryEnum.RELATIVE_DIRECTION_COMMAND.getName(),
+                                                        landmarkRelativeDirection);
                                         subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
                                                         UtilitiesEnum.ACTIVESTATUS.getName());
 
                                         if (isAgentReached) {
                                                 subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
                                                 subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                                                                UtilitiesEnum.REACHEDSTATUS.getName());
+
+                                                subLandmark.setString(MemoryEnum.RELATIVE_DIRECTION_COMMAND.getName(),
                                                                 UtilitiesEnum.REACHEDSTATUS.getName());
 
                                                 subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
@@ -319,12 +336,18 @@ public class MemoryResponder extends MemoryListener {
                                                         landmark.getLocation().distance(agentXPose, agentYPose));
                                         liveSubLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
                                                         landmarkDirection);
+                                        liveSubLandmark.setString(MemoryEnum.RELATIVE_DIRECTION_COMMAND.getName(),
+                                                        landmarkRelativeDirection);
                                         liveSubLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
                                                         UtilitiesEnum.ACTIVESTATUS.getName());
 
                                         if (isAgentReached) {
                                                 liveSubLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
                                                 liveSubLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                                                                UtilitiesEnum.REACHEDSTATUS.getName());
+
+                                                liveSubLandmark.setString(
+                                                                MemoryEnum.RELATIVE_DIRECTION_COMMAND.getName(),
                                                                 UtilitiesEnum.REACHEDSTATUS.getName());
 
                                                 liveSubLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
@@ -370,6 +393,38 @@ public class MemoryResponder extends MemoryListener {
                         }
                 }
 
+        }
+
+        // this will try to calculate the relative landmark direction to avoid zigzag
+        // situations
+        private String calcRelativeLandmarkDirection(double agentX, double agentY, double landmarkX, double landmarkY) {
+                double angle = Math.atan2(landmarkY - agentY, landmarkX - agentX);
+
+                if (angle >= -Math.PI / 8 && angle < Math.PI / 8) {
+                        return DirectionEnum.EAST.getName();
+                } else if (angle >= Math.PI / 8 && angle < 3 * Math.PI / 8) {
+                        return DirectionEnum.NORTHEAST.getName();
+                } else if (angle >= 3 * Math.PI / 8 && angle < 5 * Math.PI / 8) {
+                        return DirectionEnum.NORTH.getName();
+                } else if (angle >= 5 * Math.PI / 8 && angle < 7 * Math.PI / 8) {
+                        return DirectionEnum.NORTHWEST.getName();
+                } else if (angle >= 7 * Math.PI / 8 || angle < -7 * Math.PI / 8) {
+                        return DirectionEnum.WEST.getName();
+                } else if (angle >= -7 * Math.PI / 8 && angle < -5 * Math.PI / 8) {
+                        return DirectionEnum.SOUTHWEST.getName();
+                } else if (angle >= -5 * Math.PI / 8 && angle < -3 * Math.PI / 8) {
+                        return DirectionEnum.SOUTH.getName();
+                } else if (angle >= -3 * Math.PI / 8 && angle < -Math.PI / 8) {
+                        return DirectionEnum.SOUTHEAST.getName();
+                } else {
+                        return DirectionEnum.EAST.getName();
+                }
+
+                // double distance = Math.sqrt((landmarkX - agentX) * (landmarkX - agentX)
+                // + (landmarkY - agentY) * (landmarkY - agentY));
+                // if (distance < threshold) {
+                // return UtilitiesEnum.REACHEDSTATUS.getName();
+                // }
         }
 
         private String calcLandmarkDirectionSimple(double agentX, double agentY, double landmarkX, double landmarkY) {

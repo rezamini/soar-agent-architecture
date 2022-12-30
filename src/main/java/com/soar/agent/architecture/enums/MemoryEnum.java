@@ -11,6 +11,7 @@ public enum MemoryEnum {
   YAW("yaw"),
   DISTANCE("distance"),
   DIRECTION_COMMAND("direction-command"),
+  RELATIVE_DIRECTION_COMMAND("relative-direction-command"),
   
   //Landmark Memory Enums  
   LANDMARK_MAIN("landmarks"),
