@@ -146,6 +146,9 @@ public class MemoryResponder extends MemoryListener {
                                         robot.getWorld().getLandmarks().size() == 0
                                                         ? UtilitiesEnum.INACTIVESTATUS.getName()
                                                         : UtilitiesEnum.ACTIVESTATUS.getName());
+                        // add total landmarks
+                        landmarks.setInteger(MemoryEnum.TOTAL_LANDMARKS.getName(),
+                                        robot.getWorld().getLandmarkMap().size());
                 }
 
         }
@@ -275,6 +278,10 @@ public class MemoryResponder extends MemoryListener {
                                                 landmarkX,
                                                 landmarkY);
 
+                                // add total landmarks
+                                landmarks.setInteger(MemoryEnum.TOTAL_LANDMARKS.getName(),
+                                                robot.getWorld().getDetectedRadarLandmarks().size());
+
                                 // Calculate where and which direction the landmark is located from the agent
                                 // current position. This provide a relative landmark and is not exact and
                                 // specific as
@@ -400,7 +407,7 @@ public class MemoryResponder extends MemoryListener {
         private String calcRelativeLandmarkDirection(double agentX, double agentY, double landmarkX, double landmarkY) {
                 double angle = Math.atan2(landmarkY - agentY, landmarkX - agentX);
 
-                //with 10 degrees
+                // with 10 degrees
                 if (angle >= -Math.PI / 8 && angle < Math.PI / 8) {
                         return DirectionEnum.EAST.getName();
                 } else if (angle >= Math.PI / 8 && angle < 3 * Math.PI / 8) {
