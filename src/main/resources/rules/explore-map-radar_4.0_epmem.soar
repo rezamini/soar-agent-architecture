@@ -1,9 +1,35 @@
-#This file has 5 propose rules. Move-forward. Turn. move-radar-landmark. Radar-off. Radar-on With the use of epmem capbilities.
+#This file has 6 propose rules. Move-forward. Turn. move-radar-landmark. Radar-off. Radar-on & move-radar-landmark-epmem With the use of epmem capbilities.
 #Radar-off is happening if battery is 0 or lower and its on only when it does NOT sees a landmark.
 #if it sees a landmark it will off. if no landmark it stays on.
 #the turn on and off of the radar is entirely contolled by the respective operators
 #unlike previous versions the turn operator will not turn on the radar and it is now handled Radar-off/Radar-on operators.
+# if epmem query is successful (query based on location and radar live data) then move-radar-landmark-epmem is proposed and used instead of the move-radar-landmark.
 
+#Enable Epmem
+#Note: this command provide the full epmem setting of the agent in the debugger
+#epmem --force
+
+epmem --set trigger dc
+epmem --set learning on
+epmem --set balance 0
+watch --epmem
+
+wm activation --set activation on
+# epmem --set phase selection
+
+#set epmem db settings
+# epmem --set database file
+epmem --set path src/main/resources/databases/epmem/explore-epmem-db.sqlite
+epmem --set append-database on
+epmem --set lazy-commit off
+epmem --set optimization performance
+epmem --init
+
+#exclude pre-set constant variables
+epmem --set exclusions preferable-turn-directions
+epmem --set exclusions opposite
+epmem --set exclusions prefer
+epmem --set exclusions value
 
 sp {initialize*state*preferable*turn-directions
    (state <ss> ^type state)
@@ -34,7 +60,6 @@ sp {propose*move-forward
    (<area-view> ^<current-direction>.type <> block )
    (<e> ^x <x> ^y <y>)
 -->
-# (write | proposing move : | <direction-command> )
    (<s> ^operator <o> + =)
    (<o> ^name move-forward
         ^actions <a>)
@@ -47,9 +72,6 @@ sp {propose*move-forward
               ^io.input-link.self.pose <e> )
    (<area-view> ^<current-direction>.type block
                 ^<turn-direction>.type normal )
-
-    # (<area-view> ^ { << north northeast northwest east west south southeast southwest >> <n-dir> } )
-    # (<area-view> ^<n-dir>.type <> block )
 -->
    (<s> ^operator <o> + =)
    (<o> ^name turn 
@@ -67,7 +89,7 @@ sp {propose*move-radar-landmark
    (<area-view> ^<relative-direction-command>.type <> block )
    
 -->
-   (<s> ^operator <o> + =)
+   (<s> ^operator <o> + = )
    (<o> ^name move-radar-landmark
         ^distance <landmark-distance>
         ^actions <a>)
@@ -97,15 +119,56 @@ sp {propose*radar-off
         ^actions.radar.toggleRadar off )}
 
 
+sp {apply*get-epmem
+   (state <s> ^epmem.command <cmd>
+              ^io.input-link.self.pose <e> 
+              ^io.input-link.radar.live.landmarks <radar-landmarks> )
+   (<e> ^x <x> ^y <y>)
+-->
+(write | apply [get-epmem]  | <e>)
+   (<cmd> ^query <q>)
+   (<q> ^self.pose <e>
+        ^radar.live.landmarks <radar-landmarks> )
+}
+
+sp {epmem*query*result*move-radar-landmark-epmem
+   (state <s> ^io.input-link.self.pose <e>
+              ^io.input-link.area.view <area-view>
+              ^epmem.result <epmem-result> )
+   (<e> ^x <x> ^y <y>)
+   (<epmem> ^success <success>
+            ^retrieved <epmem-retrieved-result>)
+    (<epmem-retrieved-result> ^radar.live.landmarks.<radar-landmarks> <live-landmark>)
+   (<live-landmark> ^relative-direction-command <relative-direction-command> )
+   (<live-landmark> ^distance <landmark-distance> )
+   (<area-view> ^<relative-direction-command>.type <> block )
+   
+-->
+# (write (crlf) |======= Episodic Memory (EPMEM): <relative-direction-command> : | <relative-direction-command> )
+   (<s> ^operator <o> + > )
+   (<o> ^name move-radar-landmark-epmem
+        ^distance <landmark-distance>
+        ^actions <a>)
+   (<a> ^move.direction <relative-direction-command> )}
+
+
 ## Selection rules
 
 sp {select*radar-off*move
    (state <s> ^operator <o1> +
               ^operator <o2> +)
    (<o1> ^name << radar-off radar-on >>)
-   (<o2> ^name << turn move-forward move-radar-landmark >>)
+   (<o2> ^name << turn move-forward move-radar-landmark move-radar-landmark-epmem >>)
 -->
    (<s> ^operator <o1> > <o2>)}
+
+sp {select*move-radar-landmark-epmem
+   (state <s> ^operator <o1> + 
+                ^operator <o2> +)
+   (<o1> ^name move-radar-landmark-epmem )
+   (<o2> ^name move-radar-landmark )
+-->
+   (<s> ^operator <o1> > )}
 
 sp {select*move-radar-landmark
    (state <s> ^operator <o1> +
@@ -121,6 +184,16 @@ sp {select*move-radar-landmark*shortest-distance
     (<o1> ^name move-radar-landmark
             ^distance <distance1> )
     (<o2> ^name move-radar-landmark
+            ^distance <distance2> > <distance1> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+sp {select*move-radar-landmark-epmem*shortest-distance
+    (state <s> ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-radar-landmark-epmem
+            ^distance <distance1> )
+    (<o2> ^name move-radar-landmark-epmem
             ^distance <distance2> > <distance1> )
 -->
 (<s> ^operator <o1> > <o2>)}

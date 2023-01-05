@@ -20,7 +20,7 @@ watch --epmem
 
 #set epmem db settings
 # epmem --set database file
-epmem --set path src/main/resources/databases/epmem/epmem-db.sqlite
+epmem --set path src/main/resources/databases/epmem/epmem-db2.sqlite
 epmem --set append-database on
 epmem --set lazy-commit off
 epmem --set optimization performance
