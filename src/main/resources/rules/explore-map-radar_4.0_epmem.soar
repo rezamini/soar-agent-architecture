@@ -57,6 +57,12 @@ sp {initialize*state*preferable*turn-directions
    (<se> ^value southeast ^prefer east)
 }
 
+# sp {initialize*state*epmem-check
+#    (state <ss> ^type state)
+#    -->
+#    (<ss> ^epmem-checked false) 
+# }
+
 sp {propose*move-forward
    (state <s> ^io.input-link.area.view <area-view>
               ^io.input-link.area.locale.direction <current-direction>
@@ -112,16 +118,30 @@ sp {propose*radar-on
    (<o> ^name radar-on
         ^actions.radar.toggleRadar on )}
 
-sp {propose*radar-off
-   (state <s> ^io.input-link.radar <radar>)
+# sp {propose*radar-off
+#    (state <s> ^io.input-link.radar <radar>)
+#    (<radar> ^status on
+#          -^battery <= 0
+#          ^live.landmarks <live-landmarks>
+#          -^epmem.result <epmem-result>)
+# -->
+#    (<s> ^operator <o> + >)
+#    (<o> ^name radar-off
+#         ^actions.radar.toggleRadar off )}
+
+sp {propose*radar-off-when-epmem-exists
+   (state <s> ^io.input-link.radar <radar>
+               ^epmem.result <epmem-result>)
    (<radar> ^status on
-         -^battery <= 0
-         ^live.landmarks <live-landmarks>)
+         -^battery <= 0)
+
+   (<epmem> ^success <success>
+   ^retrieved <epmem-retrieved-result>)
+   (<epmem-retrieved-result> ^radar.live.landmarks <live-landmarks-epmem>)
 -->
    (<s> ^operator <o> + >)
-   (<o> ^name radar-off
+   (<o> ^name radar-off-epmem
         ^actions.radar.toggleRadar off )}
-
 
 # sp {apply*get-epmem
 #    (state <s> ^epmem.command <cmd>
@@ -147,6 +167,16 @@ sp {apply*query-epmem-check-total-landmarks
    (<q> ^radar <radar> )
    (<radar> ^landmarks.total <total-landmarks> )}
 
+sp {apply*epmem-checked-to-any-operator
+   :i-support
+   (state <s> ^operator <op>
+              ^io.input-link.cycle-count > 2
+              ^epmem.result.graph-match 1
+              ^epmem.result.success <success-query> )
+   (<op> ^name <any>)
+-->
+   (<op> ^epmem-checked true)}
+
 sp {monitor*query-epmem-check-total-landmarks-result
    (state <s> ^io.input-link.cycle-count 3
               ^epmem.result.graph-match 1
@@ -154,10 +184,12 @@ sp {monitor*query-epmem-check-total-landmarks-result
 -->
 (write | All landmark exists in epmem (graph-match = 1)  |)}
 
+
 sp {apply*second-query-epmem-if-previous-query-is-matched
    (state <s> ^epmem.command <cmd>
-              ^epmem.result.graph-match 1
-              ^epmem.result.success <success-query> 
+            #   ^epmem.result.graph-match 1
+            #   ^epmem.result.success <success-query> 
+              ^epmem-checked true
               ^io.input-link.self.pose <e>
               ^io.input-link.radar.live.landmarks <radar-landmarks>  )
 -->
@@ -193,7 +225,7 @@ sp {epmem*query*result*move-radar-landmark-epmem
 sp {select*radar-off*move
    (state <s> ^operator <o1> +
               ^operator <o2> +)
-   (<o1> ^name << radar-off radar-on >>)
+   (<o1> ^name << radar-off-epmem radar-off radar-on >>)
    (<o2> ^name << turn move-forward move-radar-landmark move-radar-landmark-epmem >>)
 -->
    (<s> ^operator <o1> > <o2>)}
@@ -267,4 +299,19 @@ sp {apply*operator*remove-command
    (<value> ^status complete)
 -->
    (<ol> ^<att> <value> -)}
+
+   sp {apply*move*create*epmem-checked
+   (state <s> ^operator <o>)
+   (<o> ^name <any>
+        ^epmem-checked <epmem-checked>)
+-->
+   (<s> ^epmem-checked <epmem-checked>)}
+
+# sp {apply*move*remove*epmem-checked
+#    (state <s> ^operator <o>
+#               ^epmem-checked <epmem-checked>)
+#    (<o> ^name <any>
+#         ^epmem-checked <> <epmem-checked>)
+# -->
+#    (<s> ^epmem-checked <epmem-checked> -)}  
 
