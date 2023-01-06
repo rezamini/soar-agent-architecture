@@ -3,6 +3,10 @@
 #if it sees a landmark it will off. if no landmark it stays on.
 #the turn on and off of the radar is entirely contolled by the respective operators
 #unlike previous versions the turn operator will not turn on the radar and it is now handled Radar-off/Radar-on operators.
+
+#it first check if all landmarks are recorded in epmem,
+#if not only working memory data and operators being used, if all landmarks recorded then the current situation is 
+#this utelises the cycle-count to check and query at first, graph-match to check if its a match(if not recorded graph match will be 0) along other data 
 # if epmem query is successful (query based on location and radar live data) then move-radar-landmark-epmem is proposed and used instead of the move-radar-landmark.
 
 #Enable Epmem
@@ -119,17 +123,49 @@ sp {propose*radar-off
         ^actions.radar.toggleRadar off )}
 
 
-sp {apply*get-epmem
-   (state <s> ^epmem.command <cmd>
+# sp {apply*get-epmem
+#    (state <s> ^epmem.command <cmd>
+#               ^io.input-link.self.pose <e> 
+#               ^io.input-link.radar.live.landmarks <radar-landmarks> )
+#    (<e> ^x <x> ^y <y>)
+# -->
+# (write | apply [get-epmem]  | <e>)
+#    (<cmd> ^query <q>)
+#    (<q> ^self.pose <e>
+#         ^radar.live.landmarks <radar-landmarks> )
+# }
+
+sp {apply*query-epmem-check-total-landmarks
+   (state <s> ^io.input-link.cycle-count 2
+              ^epmem.command <cmd>
               ^io.input-link.self.pose <e> 
-              ^io.input-link.radar.live.landmarks <radar-landmarks> )
+              ^io.input-link.landmarks.total <total-landmarks> )
    (<e> ^x <x> ^y <y>)
 -->
-(write | apply [get-epmem]  | <e>)
+(write | Query to check if all landmarks are recorded in epmem |)
    (<cmd> ^query <q>)
-   (<q> ^self.pose <e>
-        ^radar.live.landmarks <radar-landmarks> )
-}
+   (<q> ^radar <radar> )
+   (<radar> ^landmarks.total <total-landmarks> )}
+
+sp {monitor*query-epmem-check-total-landmarks-result
+   (state <s> ^io.input-link.cycle-count 3
+              ^epmem.result.graph-match 1
+              ^epmem.result.success <success-query> )
+-->
+(write | All landmark exists in epmem (graph-match = 1)  |)}
+
+sp {apply*second-query-epmem-if-previous-query-is-matched
+   (state <s> ^epmem.command <cmd>
+              ^epmem.result.graph-match 1
+              ^epmem.result.success <success-query> 
+              ^io.input-link.self.pose <e>
+              ^io.input-link.radar.live.landmarks <radar-landmarks>  )
+-->
+(write | Starting next epmem query based on current situation |)
+   (<cmd> ^query <q> - )
+   (<cmd> ^query <q2>)
+   (<q2> ^self.pose <e>
+        ^radar.live.landmarks <radar-landmarks> )}
 
 sp {epmem*query*result*move-radar-landmark-epmem
    (state <s> ^io.input-link.self.pose <e>
@@ -138,13 +174,13 @@ sp {epmem*query*result*move-radar-landmark-epmem
    (<e> ^x <x> ^y <y>)
    (<epmem> ^success <success>
             ^retrieved <epmem-retrieved-result>)
+   # (<success> ^self <e>) #this make sure its the
     (<epmem-retrieved-result> ^radar.live.landmarks.<radar-landmarks> <live-landmark>)
    (<live-landmark> ^relative-direction-command <relative-direction-command> )
    (<live-landmark> ^distance <landmark-distance> )
    (<area-view> ^<relative-direction-command>.type <> block )
    
 -->
-# (write (crlf) |======= Episodic Memory (EPMEM): <relative-direction-command> : | <relative-direction-command> )
    (<s> ^operator <o> + > )
    (<o> ^name move-radar-landmark-epmem
         ^distance <landmark-distance>
@@ -165,7 +201,7 @@ sp {select*radar-off*move
 sp {select*move-radar-landmark-epmem
    (state <s> ^operator <o1> + 
                 ^operator <o2> +)
-   (<o1> ^name move-radar-landmark-epmem )
+   (<o1> ^name << move-radar-landmark-epmem >> )
    (<o2> ^name move-radar-landmark )
 -->
    (<s> ^operator <o1> > )}
