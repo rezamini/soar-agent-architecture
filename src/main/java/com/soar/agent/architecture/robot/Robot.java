@@ -68,20 +68,32 @@ public class Robot {
     public void updateAndMove(double dt) {
         yaw += dt * turnRate;
         // yaw += dt;
+        System.out.println("--------------------------");
+        System.out.println("X: "+shape.getCenterX());
+        System.out.println("Y: "+shape.getCenterY());
+        System.out.println("dt: "+dt);
+        System.out.println("turnRate: "+turnRate);
+        System.out.println("yaw: "+yaw);
 
         while (yaw < 0.0)
             yaw += 2.0 * Math.PI;
         while (yaw > 2.0 * Math.PI)
             yaw -= 2.0 * Math.PI;
 
-        final double dx = Math.cos(yaw) * speed;
-        final double dy = Math.sin(yaw) * speed;
+        final double dx = Math.round(Math.cos(yaw)) * speed;
+        final double dy = Math.round(Math.sin(yaw)) * speed;
+
+
 
         final double newX = shape.getCenterX() + dx;
         final double newY = shape.getCenterY() + dy;
         if (!world.willCollide(this, newX, newY)) {
             move(newX, newY);
+            System.out.println("dx: "+dx);
+            System.out.println("dy: "+dy );
+            System.out.println("newY: "+newY );
         }
+
 
         calcRadar();
     }
