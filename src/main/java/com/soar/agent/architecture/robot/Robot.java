@@ -18,8 +18,8 @@ public class Robot {
     private double tempYaw; // for checking agent temp surrounding
     private double speed;
     private double turnRate;
-    public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
-    // public final double radius = shapeWidth * shapeHeight;
+    // public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
+    public final double shapeArea = shapeWidth * shapeHeight;
     public Radar[] ranges;
 
     public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, -10.0, 25.0, Arc2D.PIE);
@@ -56,7 +56,7 @@ public class Robot {
 
     public void move(double newX, double newY) {
         // shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
-        shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeWidth);
+        shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
 
 
         //calc radar range and data in order to have radar data such as "live" at the beginning of agent phase
@@ -95,9 +95,9 @@ public class Robot {
         final double newY = shape.getCenterY() + dy;
         if (!world.willCollide(this, newX, newY)) {
             move(newX, newY);
-            System.out.println("dx: "+dx);
-            System.out.println("dy: "+dy );
-            System.out.println("newY: "+newY );
+            // System.out.println("dx: "+dx);
+            // System.out.println("dy: "+dy );
+            // System.out.println("newY: "+newY );
         }
 
 
@@ -189,8 +189,8 @@ public class Robot {
         this.turnRate = turnRate;
     }
 
-    public double getRadius() {
-        return radius;
+    public double getShapeArea() {
+        return shapeArea;
     }
 
     public double getShapeWidth() {

@@ -101,21 +101,21 @@ public class World {
     }
 
     public boolean willCollide(Robot r, double newX, double newY) {
-        final double radius = r.getRadius();
+        double area = r.getShapeArea();
 
-        if (!extents.contains(newX + radius, newY + radius) ||
-                !extents.contains(newX + radius, newY - radius) ||
-                !extents.contains(newX - radius, newY - radius) ||
-                !extents.contains(newX - radius, newY + radius)) {
+        if (!extents.contains(newX + area, newY + area) ||
+                !extents.contains(newX + area, newY - area) ||
+                !extents.contains(newX - area, newY - area) ||
+                !extents.contains(newX - area, newY + area)) {
             return true;
         }
 
         for (Shape s : obstacles) {
 
-            if (s.contains(newX + radius, newY + radius) ||
-                    s.contains(newX + radius, newY - radius) ||
-                    s.contains(newX - radius, newY - radius) ||
-                    s.contains(newX - radius, newY + radius)) {
+            if (s.contains(newX + area, newY + area) ||
+                    s.contains(newX + area, newY - area) ||
+                    s.contains(newX - area, newY - area) ||
+                    s.contains(newX - area, newY + area)) {
                 return true;
             }
         }
@@ -140,20 +140,20 @@ public class World {
         // }
         // }
 
-        final Point2D newPoint = new Point2D.Double(newX, newY);
-        for (Robot other : robots) {
-            if (r != other) {
-                if (newPoint.distance(other.getShape().getCenterX(), other.getShape().getCenterY()) < radius
-                        + other.getRadius()) {
-                    return true;
-                }
-            }
-        }
+        // final Point2D newPoint = new Point2D.Double(newX, newY);
+        // for (Robot other : robots) {
+        //     if (r != other) {
+        //         if (newPoint.distance(other.getShape().getCenterX(), other.getShape().getCenterY()) < area
+        //                 + other.getShapeArea()) {
+        //             return true;
+        //         }
+        //     }
+        // }
         return false;
     }
 
     public double getCollisionRange(Robot source, double angle) {
-        final double delta = source.getRadius() / 2.0;
+        final double delta = source.getShapeArea() / 2.0;
         final double dx = delta * Math.cos(angle);
         final double dy = delta * Math.sin(angle);
         double range = 2 * delta;
@@ -208,7 +208,7 @@ public class World {
         Rectangle2D agentShape = (Rectangle2D) robot.getShape().clone();
 
         // simulate a move with the radar positions
-        agentShape.setFrameFromCenter(radarX, radarY, radarX + robot.getRadius(), radarY + robot.getRadius());
+        agentShape.setFrameFromCenter(radarX, radarY, radarX + robot.getShapeWidth(), radarY + robot.getShapeHeight());
 
         // check if the agent will reach/hit any landmark with the current landmark
         // positions (aka if radar can see and agent can hit the landmark)

@@ -15,7 +15,7 @@ public class MoveResponder implements MoveListenerEvent{
         currentDirection = DirectionEnum.findByName(move.getDirection());
 
         if(currentDirection != null){
-            robot.setYaw(Math.toRadians(currentDirection.getAngle()));
+            robot.setYaw(Math.toRadians(90));
             robot.getWorld().updateAndMoveAgents(0);
     
             //better to get ui repaint from a method than the ui class directly. to keep them seperate at initial level for changes.

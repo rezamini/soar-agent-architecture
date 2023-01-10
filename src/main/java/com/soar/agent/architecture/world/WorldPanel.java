@@ -148,7 +148,7 @@ public class WorldPanel extends JPanel {
         }
         
         if (robot == selection) {
-            final double selR = robot.getRadius() * 1.4;
+            final double selR = robot.getShapeArea() * 1.4;
             final Ellipse2D sel = new Ellipse2D.Double(-selR, -selR, selR * 2.0, selR * 2.0);
             g2d.setColor(Color.BLUE);
             g2d.fill(sel);

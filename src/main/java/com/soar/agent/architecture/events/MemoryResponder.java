@@ -38,7 +38,7 @@ public class MemoryResponder extends MemoryListener {
                         qMemory.setDouble(
                                         buildMemoryPath(MemoryEnum.IDENTITY.getName(),
                                                         MemoryEnum.MINIMUM_BOUNDING_BOX.getName(), null),
-                                        robot.getRadius());
+                                        robot.getShapeArea());
 
                         final double x = robot.getShape().getCenterX();
                         final double y = robot.getShape().getCenterY();
