@@ -9,8 +9,9 @@ public class Robot {
     public final double widthMultiplier = 4.0;
     public final double heightMultiplier = 1.5;
     public final double shapeStartingPoint = 0.4;
-    public final Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4, shapeStartingPoint * widthMultiplier,
-            shapeStartingPoint * heightMultiplier);
+    public final double shapeWidth = shapeStartingPoint * widthMultiplier;
+    public final double shapeHeight = shapeStartingPoint * heightMultiplier;
+    public final Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4, shapeWidth, shapeHeight);
     private final World world;
     private final String name;
     private double yaw;
@@ -18,6 +19,7 @@ public class Robot {
     private double speed;
     private double turnRate;
     public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
+    // public final double radius = shapeWidth * shapeHeight;
     public Radar[] ranges;
 
     public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, -10.0, 25.0, Arc2D.PIE);
@@ -53,7 +55,9 @@ public class Robot {
     }
 
     public void move(double newX, double newY) {
-        shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
+        // shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
+        shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeWidth);
+
 
         //calc radar range and data in order to have radar data such as "live" at the beginning of agent phase
         //this have to be called here to calc the radar from the agent new position and have the radar data from the beginning of agent lifecycle.
@@ -68,12 +72,12 @@ public class Robot {
     public void updateAndMove(double dt) {
         yaw += dt * turnRate;
         // yaw += dt;
-        System.out.println("--------------------------");
-        System.out.println("X: "+shape.getCenterX());
-        System.out.println("Y: "+shape.getCenterY());
-        System.out.println("dt: "+dt);
-        System.out.println("turnRate: "+turnRate);
-        System.out.println("yaw: "+yaw);
+        // System.out.println("--------------------------");
+        // System.out.println("X: "+shape.getCenterX());
+        // System.out.println("Y: "+shape.getCenterY());
+        // System.out.println("dt: "+dt);
+        // System.out.println("turnRate: "+turnRate);
+        // System.out.println("yaw: "+yaw);
 
         while (yaw < 0.0)
             yaw += 2.0 * Math.PI;
@@ -82,6 +86,8 @@ public class Robot {
 
         final double dx = Math.round(Math.cos(yaw)) * speed;
         final double dy = Math.round(Math.sin(yaw)) * speed;
+        // final double dx = Math.cos(yaw) * speed;
+        // final double dy = Math.sin(yaw) * speed;
 
 
 
@@ -99,7 +105,6 @@ public class Robot {
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
-
         tempYaw = Math.toRadians(currentDirection.getAngle());
         tempYaw += dt * turnRate;
 
@@ -186,6 +191,14 @@ public class Robot {
 
     public double getRadius() {
         return radius;
+    }
+
+    public double getShapeWidth() {
+        return shapeWidth;
+    }
+
+    public double getShapeHeight() {
+        return shapeHeight;
     }
 
     public double getWidthMultiplier() {
