@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.jsoar.util.events.SoarEventManager;
 
+import com.lowagie.text.Rectangle;
 import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.robot.Robot;
@@ -100,6 +101,71 @@ public class World {
         return result;
     }
 
+    public boolean willCollide2(Robot r, double newX, double newY) {
+        double area = r.getShapeArea();
+        double agentWidth = r.getShapeWidth();
+        double agentHeight = r.getShapeHeight();
+
+        Rectangle2D tempShape = (Rectangle2D) r.getShape().clone();
+        tempShape.setFrameFromCenter(newX, newY, newX + agentWidth, newY + agentHeight);
+
+        if (!extents.contains(newX + area, newY + area) ||
+                !extents.contains(newX + area, newY - area) ||
+                !extents.contains(newX - area, newY - area) ||
+                !extents.contains(newX - area, newY + area)) {
+            return true;
+        }
+
+        for (Shape s : obstacles) {
+            if (newX + agentHeight >= s.getBounds().getX() && // r1 right edge past r2 left
+                    newX <= s.getBounds().getX() + s.getBounds().getWidth() && // r1 left edge past r2 right
+                    newY + agentWidth >= s.getBounds().getY() && // r1 top edge past r2 bottom
+                    newY <= s.getBounds().getY() + s.getBounds().getHeight()) { // r1 bottom edge past r2
+                                                                    
+                return true;
+            }
+
+            // if (s.contains(newX + area, newY + area) ||
+            // s.contains(newX + area, newY - area) ||
+            // s.contains(newX - area, newY - area) ||
+            // s.contains(newX - area, newY + area)) {
+            // return true;
+            // }
+        }
+
+        // for (Landmark landmark : landmarks) {
+        // System.out.println(landmark.getLocation().distance(newX+radius,
+        // newY+radius));
+        // // pose is x=5, y=11 for the north obstacle
+
+        // if (landmark.getLocation().distance(newX + radius, newY + radius) <
+        // Double.valueOf(1.40)
+        // ||
+        // landmark.getLocation().distance(newX + radius, newY - radius) <
+        // Double.valueOf(1.40) ||
+        // landmark.getLocation().distance(newX - radius, newY - radius) <
+        // Double.valueOf(1.40)||
+        // landmark.getLocation().distance(newX - radius, newY + radius)<
+        // Double.valueOf(1.40)
+
+        // ) {
+        // // return true;
+        // }
+        // }
+
+        // final Point2D newPoint = new Point2D.Double(newX, newY);
+        // for (Robot other : robots) {
+        // if (r != other) {
+        // if (newPoint.distance(other.getShape().getCenterX(),
+        // other.getShape().getCenterY()) < area
+        // + other.getShapeArea()) {
+        // return true;
+        // }
+        // }
+        // }
+        return false;
+    }
+
     public boolean willCollide(Robot r, double newX, double newY) {
         double area = r.getShapeArea();
 
@@ -142,12 +208,13 @@ public class World {
 
         // final Point2D newPoint = new Point2D.Double(newX, newY);
         // for (Robot other : robots) {
-        //     if (r != other) {
-        //         if (newPoint.distance(other.getShape().getCenterX(), other.getShape().getCenterY()) < area
-        //                 + other.getShapeArea()) {
-        //             return true;
-        //         }
-        //     }
+        // if (r != other) {
+        // if (newPoint.distance(other.getShape().getCenterX(),
+        // other.getShape().getCenterY()) < area
+        // + other.getShapeArea()) {
+        // return true;
+        // }
+        // }
         // }
         return false;
     }
@@ -215,7 +282,7 @@ public class World {
         // List<Landmark> tempLandmarks = new ArrayList<Landmark>();
 
         for (Landmark landmark : landmarks) {
-            
+
             if (agentShape.contains(landmark.getLocation())) {
                 detectedRadarLandmarks.put(landmark, true);
 

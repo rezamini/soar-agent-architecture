@@ -93,7 +93,7 @@ public class Robot {
 
         final double newX = shape.getCenterX() + dx;
         final double newY = shape.getCenterY() + dy;
-        if (!world.willCollide(this, newX, newY)) {
+        if (!world.willCollide2(this, newX, newY)) {
             move(newX, newY);
             // System.out.println("dx: "+dx);
             // System.out.println("dy: "+dy );
