@@ -118,14 +118,16 @@ public class Robot {
         while (tempYaw > 2.0 * Math.PI)
             tempYaw -= 2.0 * Math.PI;
 
-        final double dx = Math.cos(tempYaw) * speed;
-        final double dy = Math.sin(tempYaw) * speed;
+        final double dx = Math.round(Math.cos(tempYaw)) * speed;
+        final double dy = Math.round(Math.sin(tempYaw)) * speed;
 
         final double newX = shape.getCenterX() + dx;
         final double newY = shape.getCenterY() + dy;
 
+        double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
+
         // check to see if it will collide in every enum direction
-        boolean isObstacle = world.willCollide(this, newX, newY);
+        boolean isObstacle = world.willCollide(this, newX, newY, dimensions);
 
         return isObstacle;
     }
