@@ -101,12 +101,13 @@ public class World {
         return result;
     }
 
-    public boolean willCollide2(Robot r, double newX, double newY) {
-        double area = r.getShapeArea();
-        double agentWidth = r.getShapeWidth();
-        double agentHeight = r.getShapeHeight();
-
+    public boolean willCollide(Robot r, double newX, double newY, double[] dimensions) {
         Rectangle2D tempShape = (Rectangle2D) r.getShape().clone();
+
+        double area = r.getShapeArea();
+        double agentWidth = dimensions[0];
+        double agentHeight = dimensions[1];
+
         tempShape.setFrameFromCenter(newX, newY, newX + agentWidth, newY + agentHeight);
 
         if (!extents.contains(newX + area, newY + area) ||
@@ -117,52 +118,10 @@ public class World {
         }
 
         for (Shape s : obstacles) {
-            if (newX + agentHeight >= s.getBounds().getX() && // r1 right edge past r2 left
-                    newX <= s.getBounds().getX() + s.getBounds().getWidth() && // r1 left edge past r2 right
-                    newY + agentWidth >= s.getBounds().getY() && // r1 top edge past r2 bottom
-                    newY <= s.getBounds().getY() + s.getBounds().getHeight()) { // r1 bottom edge past r2
-                                                                    
+            if (tempShape.intersects(s.getBounds2D()) && s.intersects(tempShape)) {
                 return true;
             }
-
-            // if (s.contains(newX + area, newY + area) ||
-            // s.contains(newX + area, newY - area) ||
-            // s.contains(newX - area, newY - area) ||
-            // s.contains(newX - area, newY + area)) {
-            // return true;
-            // }
         }
-
-        // for (Landmark landmark : landmarks) {
-        // System.out.println(landmark.getLocation().distance(newX+radius,
-        // newY+radius));
-        // // pose is x=5, y=11 for the north obstacle
-
-        // if (landmark.getLocation().distance(newX + radius, newY + radius) <
-        // Double.valueOf(1.40)
-        // ||
-        // landmark.getLocation().distance(newX + radius, newY - radius) <
-        // Double.valueOf(1.40) ||
-        // landmark.getLocation().distance(newX - radius, newY - radius) <
-        // Double.valueOf(1.40)||
-        // landmark.getLocation().distance(newX - radius, newY + radius)<
-        // Double.valueOf(1.40)
-
-        // ) {
-        // // return true;
-        // }
-        // }
-
-        // final Point2D newPoint = new Point2D.Double(newX, newY);
-        // for (Robot other : robots) {
-        // if (r != other) {
-        // if (newPoint.distance(other.getShape().getCenterX(),
-        // other.getShape().getCenterY()) < area
-        // + other.getShapeArea()) {
-        // return true;
-        // }
-        // }
-        // }
         return false;
     }
 

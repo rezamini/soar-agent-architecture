@@ -93,11 +93,14 @@ public class Robot {
 
         final double newX = shape.getCenterX() + dx;
         final double newY = shape.getCenterY() + dy;
-        if (!world.willCollide2(this, newX, newY)) {
+
+        double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
+
+        if (!world.willCollide(this, newX, newY, dimensions)) {
             move(newX, newY);
-            // System.out.println("dx: "+dx);
-            // System.out.println("dy: "+dy );
-            // System.out.println("newY: "+newY );
+            System.out.println("dx: "+dx);
+            System.out.println("dy: "+dy );
+            System.out.println("newY: "+newY );
         }
 
 
@@ -151,6 +154,29 @@ public class Robot {
                 }    
             }
         }
+    }
+
+    /* Calculate the agent width and height based on the new direction which is caluculated in new dx and dy */
+    public double[] calcAgentDimensionsForDirection(double dx, double dy){
+        double result[] = new double[2];
+
+        double agentWidth = 0;
+        double agentHeight = 0;
+        
+        if((dx > 0 && dy == 0) || (dx > 0 && dy > 0) ){
+            agentWidth = shapeWidth;
+            agentHeight = shapeHeight;
+
+        }else if(dy > 0 && dx == 0){
+            agentHeight = shapeWidth;
+            agentWidth = shapeHeight;
+ 
+        }
+
+        result[0] = agentWidth;
+        result[1] = agentHeight;
+
+        return result;
     }
 
     public World getWorld() {
