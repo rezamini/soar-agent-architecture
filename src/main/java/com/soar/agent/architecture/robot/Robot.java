@@ -18,7 +18,8 @@ public class Robot {
     private double tempYaw; // for checking agent temp surrounding
     private double speed;
     private double turnRate;
-    // public final double radius = shape.getWidth() * shape.getHeight() + shapeStartingPoint;
+    // public final double radius = shape.getWidth() * shape.getHeight() +
+    // shapeStartingPoint;
     public final double shapeArea = shapeWidth * shapeHeight;
     public Radar[] ranges;
 
@@ -58,15 +59,19 @@ public class Robot {
         // shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
         shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
 
-
-        //calc radar range and data in order to have radar data such as "live" at the beginning of agent phase
-        //this have to be called here to calc the radar from the agent new position and have the radar data from the beginning of agent lifecycle.
-        //alternative way is to call it from updateAndMove but the agent will not have some of the radar data at the beginning and
-        //some senarios might lack some data (for example if we need the radar to be on if it sees a landmark 
-        //and there is one in the current direction, then the radar will not turn on because of lack of initialise radar calc. as per
-        //explore-map-radar_1.0.soar)
+        // calc radar range and data in order to have radar data such as "live" at the
+        // beginning of agent phase
+        // this have to be called here to calc the radar from the agent new position and
+        // have the radar data from the beginning of agent lifecycle.
+        // alternative way is to call it from updateAndMove but the agent will not have
+        // some of the radar data at the beginning and
+        // some senarios might lack some data (for example if we need the radar to be on
+        // if it sees a landmark
+        // and there is one in the current direction, then the radar will not turn on
+        // because of lack of initialise radar calc. as per
+        // explore-map-radar_1.0.soar)
         calcRadar();
-        
+
     }
 
     public void updateAndMove(double dt) {
@@ -89,8 +94,6 @@ public class Robot {
         // final double dx = Math.cos(yaw) * speed;
         // final double dy = Math.sin(yaw) * speed;
 
-
-
         final double newX = shape.getCenterX() + dx;
         final double newY = shape.getCenterY() + dy;
 
@@ -98,11 +101,10 @@ public class Robot {
 
         if (!world.willCollide(this, newX, newY, dimensions)) {
             move(newX, newY);
-            System.out.println("dx: "+dx);
-            System.out.println("dy: "+dy );
-            System.out.println("newY: "+newY );
+            // System.out.println("dx: " + dx);
+            // System.out.println("dy: " + dy);
+            // System.out.println("newY: " + newY);
         }
-
 
         calcRadar();
     }
@@ -133,48 +135,65 @@ public class Robot {
         if (radarBattery > 0) {
             radarBattery = radarBattery - 0.5;
 
-            //incase after the calculation the battery is at 0 or lower then switch off the radar
-            if(radarBattery <= 0 ) toggleRadar = false;
-        }else{
-            //off the radar if battery is not above 0
+            // incase after the calculation the battery is at 0 or lower then switch off the
+            // radar
+            if (radarBattery <= 0)
+                toggleRadar = false;
+        } else {
+            // off the radar if battery is not above 0
             toggleRadar = false;
         }
     }
 
-    public void calcRadar(){
-        //update radar related data only if radar is on
-        if(toggleRadar){
+    public void calcRadar() {
+        // update radar related data only if radar is on
+        if (toggleRadar) {
             updateRadarBattery();
 
-            //check the toggle again maybe battery has level has changed it
-            if(toggleRadar){
+            // check the toggle again maybe battery has level has changed it
+            if (toggleRadar) {
                 for (Radar range : ranges) {
                     range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
                     // world.radarDetectLandmark(this, range);
-                }    
+                }
             }
         }
     }
 
-    /* Calculate the agent width and height based on the new direction which is caluculated in new dx and dy */
-    public double[] calcAgentDimensionsForDirection(double dx, double dy){
+    /*
+     * Calculate the agent width and height based on the new direction which is
+     * caluculated in new dx and dy
+     */
+    public double[] calcAgentDimensionsForDirection(double dx, double dy) {
         double result[] = new double[2];
 
         double agentWidth = 0;
         double agentHeight = 0;
-        
-        if((dx > 0 && dy == 0) || (dx > 0 && dy > 0) ){
+        // (dx > 0 && dy > 0)
+
+        // left or right
+        if ((dx > 0 || dx < 0) && dy == 0) {
             agentWidth = shapeWidth;
             agentHeight = shapeHeight;
 
-        }else if(dy > 0 && dx == 0){
+            // up or down
+        } else if ((dy > 0 || dy < 0) && dx == 0) {
             agentHeight = shapeWidth;
             agentWidth = shapeHeight;
- 
+
+            // top right || top left
+        } else if ((dx > 0 && dy > 0) || (dx < 0 && dy > 0)) {
+            agentWidth = shapeWidth;
+            agentHeight = shapeWidth;
+            
+        // bottom right || bottom left
+        } else if((dx > 0 && dy < 0) || (dx < 0 && dy < 0)){
+            agentWidth = shapeWidth;
+            agentHeight = shapeWidth;
         }
 
-        result[0] = agentWidth;
-        result[1] = agentHeight;
+        result[0] = agentWidth - 0.1;
+        result[1] = agentHeight - 0.1;
 
         return result;
     }
@@ -262,6 +281,5 @@ public class Robot {
     public void setToggleRadar(boolean toggleRadar) {
         this.toggleRadar = toggleRadar;
     }
-
 
 }
