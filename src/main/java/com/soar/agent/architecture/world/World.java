@@ -104,7 +104,7 @@ public class World {
     public boolean willCollide(Robot r, double newX, double newY, double[] dimensions) {
         Rectangle2D tempShape = (Rectangle2D) r.getShape().clone();
 
-        double area = r.getShapeArea();
+        double area = r.getShapeArea() + r.getShapeStartingPoint();
         double agentWidth = dimensions[0];
         double agentHeight = dimensions[1];
 
@@ -126,7 +126,7 @@ public class World {
     }
 
     public boolean willCollide(Robot r, double newX, double newY) {
-        double area = r.getShapeArea();
+        double area = r.getShapeArea() + r.getShapeStartingPoint();;
 
         if (!extents.contains(newX + area, newY + area) ||
                 !extents.contains(newX + area, newY - area) ||
