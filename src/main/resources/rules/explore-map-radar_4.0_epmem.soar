@@ -322,3 +322,9 @@ sp {apply*operator*remove-command
 # -->
 #    (<s> ^epmem-checked <epmem-checked> -)}  
 
+sp {state*goal*reached
+   (state <s> ^io.input-link.landmarks.status inactive )
+   -->
+   (write | All Landmarks Explored !! |)
+   (halt)}
+

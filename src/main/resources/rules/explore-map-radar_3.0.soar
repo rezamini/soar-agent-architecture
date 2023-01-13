@@ -175,3 +175,9 @@ sp {apply*operator*remove-command
 -->
    (<ol> ^<att> <value> -)}
 
+sp {state*goal*reached
+   (state <s> ^io.input-link.landmarks.status inactive )
+   -->
+   (write | All Landmarks Explored !! |)
+   (halt)}
+

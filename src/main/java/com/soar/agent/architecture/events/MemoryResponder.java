@@ -142,8 +142,10 @@ public class MemoryResponder extends MemoryListener {
                         }
 
                         // set the status of the overal landmarks
+                        //Alternative way:
+                        //robot.getWorld().getLandmarkMap().values().stream().allMatch(value -> true)
                         landmarks.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
-                                        robot.getWorld().getLandmarks().size() == 0
+                                        !robot.getWorld().getLandmarkMap().containsValue(false)
                                                         ? UtilitiesEnum.INACTIVESTATUS.getName()
                                                         : UtilitiesEnum.ACTIVESTATUS.getName());
                         // add total landmarks
