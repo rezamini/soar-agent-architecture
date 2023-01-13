@@ -4,6 +4,7 @@ import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.world.World;
 import java.awt.geom.*;
+import java.text.DecimalFormat;
 
 public class Robot {
     public final double widthMultiplier = 4.0;
@@ -27,6 +28,8 @@ public class Robot {
 
     private double radarBattery;
     private boolean toggleRadar;
+    private double batteryDeduction = 0.1;
+    private DecimalFormat batteryDecimalFormat = new DecimalFormat("0.#");
 
     public Robot(World game, String name) {
         this.world = game;
@@ -106,7 +109,7 @@ public class Robot {
             // System.out.println("newY: " + newY);
         }
 
-        calcRadar();
+        // calcRadar();
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
@@ -133,12 +136,11 @@ public class Robot {
     }
 
     public void updateRadarBattery() {
-        // simply update and decrease radar battery on every move by 0.5
+        // simply update and decrease radar battery on every move by batteryDeduction
         if (radarBattery > 0) {
-            radarBattery = radarBattery - 0.5;
+            radarBattery = Double.valueOf(batteryDecimalFormat.format(radarBattery - batteryDeduction));
 
-            // incase after the calculation the battery is at 0 or lower then switch off the
-            // radar
+            // incase after the calculation the battery is at 0 or lower then switch off the radar
             if (radarBattery <= 0)
                 toggleRadar = false;
         } else {
@@ -187,9 +189,9 @@ public class Robot {
         } else if ((dx > 0 && dy > 0) || (dx < 0 && dy > 0)) {
             agentWidth = shapeWidth;
             agentHeight = shapeWidth;
-            
-        // bottom right || bottom left
-        } else if((dx > 0 && dy < 0) || (dx < 0 && dy < 0)){
+
+            // bottom right || bottom left
+        } else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
             agentWidth = shapeWidth;
             agentHeight = shapeWidth;
         }
