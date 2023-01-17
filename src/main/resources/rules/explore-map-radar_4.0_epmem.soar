@@ -137,7 +137,9 @@ sp {propose*radar-off-when-epmem-exists
 
    (<epmem> ^success <success>
    ^retrieved <epmem-retrieved-result>)
-   (<epmem-retrieved-result> ^radar.live.landmarks <live-landmarks-epmem>)
+   (<epmem-retrieved-result> ^radar.live.landmarks.<live-landmarks> <live-landmark>)
+
+   (<radar> ^live.landmarks.<live-landmarks> <current-landmark>)
 -->
    (<s> ^operator <o> + >)
    (<o> ^name radar-off-epmem
@@ -209,12 +211,13 @@ sp {apply*second-query-epmem-if-previous-query-is-matched
 sp {epmem*query*result*move-radar-landmark-epmem
    (state <s> ^io.input-link.self.pose <e>
               ^io.input-link.area.view <area-view>
-              ^epmem.result <epmem-result> )
+              ^epmem.result <epmem-result>
+              ^io.input-link.radar.live.landmarks.<current-radar-landmarks> <current-landmarks>)
    (<e> ^x <x> ^y <y>)
    (<epmem> ^success <success>
             ^retrieved <epmem-retrieved-result>)
    # (<success> ^self <e>) #this make sure its the
-    (<epmem-retrieved-result> ^radar.live.landmarks.<radar-landmarks> <live-landmark>)
+    (<epmem-retrieved-result> ^radar.live.landmarks.<current-radar-landmarks> <live-landmark>)
    (<live-landmark> ^direction-command <direction-command> )
    (<live-landmark> ^distance <landmark-distance> )
    (<area-view> ^<direction-command>.type <> block )
