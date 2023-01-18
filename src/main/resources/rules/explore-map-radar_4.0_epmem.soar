@@ -14,7 +14,7 @@
 #epmem --force
 
 epmem --set trigger dc
-epmem --set learning on
+epmem --set learning off
 epmem --set balance 0
 watch --epmem
 

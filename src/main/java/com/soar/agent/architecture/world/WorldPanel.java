@@ -209,8 +209,8 @@ public class WorldPanel extends JPanel {
                     Math.toDegrees(-range.getRadarAngle()) - 10.0, 25.0, Arc2D.PIE);
 
             drawShape(g2dIn, arc, Color.GREEN, Color.GREEN);
-
-            // draw radar battery level
+            drawShape(g2dIn, robot.getRadarArc(), Color.RED, Color.RED);
+            // draw radar battearcry level
             if (arc.getWidth() > 4) {
                 double fontHeight = 0.2 * 1.5;
                 prepareFont(g2dIn, fontHeight);
