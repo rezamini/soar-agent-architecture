@@ -110,10 +110,14 @@ public class World {
 
         tempShape.setFrameFromCenter(newX, newY, newX + agentWidth, newY + agentHeight);
 
-        if (!extents.contains(newX + area, newY + area) ||
-                !extents.contains(newX + area, newY - area) ||
-                !extents.contains(newX - area, newY - area) ||
-                !extents.contains(newX - area, newY + area)) {
+        // if (!extents.contains(newX + area, newY + area) ||
+        //         !extents.contains(newX + area, newY - area) ||
+        //         !extents.contains(newX - area, newY - area) ||
+        //         !extents.contains(newX - area, newY + area)) {
+        //     return true;
+        // }
+        
+        if(!extents.contains(tempShape)){
             return true;
         }
 
@@ -127,7 +131,6 @@ public class World {
 
     public boolean willCollide(Robot r, double newX, double newY) {
         double area = r.getShapeArea() + r.getShapeStartingPoint();
-        ;
 
         if (!extents.contains(newX + area, newY + area) ||
                 !extents.contains(newX + area, newY - area) ||
@@ -236,8 +239,8 @@ public class World {
             return true;
         }
 
-        // if (!extents.contains(newX_2, newY_2)) {
-        // return true;
+        // if (!extents.contains(newX_2, newY_2) || !extents.intersects(newX_2, newY_2, newX_2, newY_2)) {
+        //     return true;
         // }
 
         for (Shape s : obstacles) {
