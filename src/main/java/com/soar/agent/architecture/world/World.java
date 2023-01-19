@@ -181,40 +181,34 @@ public class World {
 
     public double getCollisionRange(Robot source, double angle) {
         // final double delta = source.getShapeArea() / 2.0;
-        double delta = 0.5;
+        double delta = 0.1;
         final double dx = delta * Math.round(Math.cos(angle));
         final double dy = delta * Math.round(Math.sin(angle));
-        double range = 2 * delta;
-        double x = source.getShape().getCenterX() + 2 * dx;
-        double y = source.getShape().getCenterY() + 2 * dy;
-
+        double range = delta;
+        double x = source.getShape().getCenterX() + dx;
+        double y = source.getShape().getCenterY() + dy;
         double newX_2 = x;
         double newY_2 = y;
 
-        if(dy == 0){
-             newY_2 = x * Math.sin(25) + y * Math.cos(25);
+        if (dy == 0) {
+            newY_2 = x * Math.sin(25) + y * Math.cos(25);
         }
 
-        if(dy < 0 || dy > 0){
-            newY_2 = (x - source.getShape().getCenterX()) * Math.sin(Math.toDegrees(25))
-                    + (y - source.getShape().getCenterY()) * Math.cos(Math.toDegrees(25)) + source.getShape().getCenterY();
+        if (dy < 0 || dy > 0) {
+            newY_2 = (x - source.getShape().getCenterX()) * Math.sin(25)
+                    + (y - source.getShape().getCenterY()) * Math.cos(25)
+                    + source.getShape().getCenterY();
         }
 
-        if(dx > 0 || dx < 0){
-            newX_2 = (x - source.getShape().getCenterX()) * Math.cos(Math.toDegrees(25))
-                    - (y - source.getShape().getCenterY()) * Math.sin(Math.toDegrees(25)) + source.getShape().getCenterX();
+        if (dx > 0 || dx < 0) {
+            newX_2 = (x - source.getShape().getCenterX()) * Math.cos(25)
+                    - (y - source.getShape().getCenterY()) * Math.sin(25)
+                    + source.getShape().getCenterX();
         }
 
-        if(dx == 0){
+        if (dx == 0) {
             newX_2 = x * Math.cos(25) - y * Math.sin(25);
         }
-        
-
-        // System.out.println("******************************************************");
-        // System.out.println(x + " : y : " + y + " : dx : "+dx + " : dy: "+dy );
-        // System.out.println(Math.round(newX_2) + " : newY_2 : "+Math.round(newY_2));
-        // System.out.println(newDx + " : newDy : "+newDy);
-        // System.out.println(x2  + " :  y2 : "+y2);
 
         // set all the values to false and then check the landmarks one by one. later in
         // the loop the values will be set to true if its within radar. this has to be
@@ -233,18 +227,17 @@ public class World {
             radarDetectLandmark(source, x, y, range);
         }
 
-
-
         return range - delta;
     }
 
     private boolean collides(Shape ignore, double x, double y, double newX_2, double newY_2) {
         if (!extents.contains(x, y)) {
+
             return true;
         }
 
         // if (!extents.contains(newX_2, newY_2)) {
-        //     return true;
+        // return true;
         // }
 
         for (Shape s : obstacles) {
@@ -254,7 +247,7 @@ public class World {
 
             if (ignore != s && s.contains(newX_2, newY_2)) {
                 return true;
-            }  
+            }
         }
         for (Robot r : robots) {
             if (ignore != r.getShape() && r.getShape().contains(x, y)) {

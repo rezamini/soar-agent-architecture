@@ -23,7 +23,6 @@ public class Robot {
     // shapeStartingPoint;
     public final double shapeArea = shapeWidth * shapeHeight;
     public Radar[] ranges;
-
     public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, -10.0, 25.0, Arc2D.PIE);
 
     private double radarBattery;

@@ -93,7 +93,7 @@ public class MapLoader {
                 final double cy = y * CELL_SIZE + CELL_SIZE / 2.0;
                 if (Character.isLetter(c) && Character.isUpperCase(c)) {
                     final Robot r = new Robot(world, Character.toString(c));
-                    r.setYaw(Math.toRadians(180));
+                    // r.setYaw(Math.toRadians(180));
                     r.move(cx, cy);
                     r.setSpeed(0.5);
                     r.setTurnRate(Math.toRadians(25));
