@@ -23,7 +23,7 @@ public class Robot {
     // shapeStartingPoint;
     public final double shapeArea = shapeWidth * shapeHeight;
     public Radar[] ranges;
-    public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, -10.0, 25.0, Arc2D.PIE);
+    public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, 0, 0, Arc2D.PIE);
 
     private double radarBattery;
     private boolean toggleRadar;
@@ -129,7 +129,7 @@ public class Robot {
 
         double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
 
-        // check to see if it will collide in every enum direction
+        // check to see if it will collide in every enum direction that is passed throught this method
         boolean isObstacle = world.willCollide(this, newX, newY, dimensions);
 
         return isObstacle;
@@ -158,7 +158,7 @@ public class Robot {
             if (toggleRadar) {
                 for (Radar range : ranges) {
                     range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
-                    // world.radarDetectLandmark(this, range);
+                    world.radarDetectLandmark(this, range);
                 }
             }
         }
