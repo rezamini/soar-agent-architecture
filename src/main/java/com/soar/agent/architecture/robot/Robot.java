@@ -158,7 +158,7 @@ public class Robot {
             if (toggleRadar) {
                 for (Radar range : ranges) {
                     range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
-                    world.radarDetectLandmark(this, range);
+                    // world.radarDetectLandmark(this, range);
                 }
             }
         }

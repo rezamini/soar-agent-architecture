@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.awt.geom.*;
+import java.awt.Polygon;
+import java.awt.geom.Area;
 
 import org.jsoar.util.events.SoarEventManager;
 
@@ -214,19 +217,23 @@ public class World {
             newX_2 = x * Math.cos(25) - y * Math.sin(25);
         }
 
+        Arc2D arc = source.getRadarArc();
+        arc.setArcByCenter(source.getShape().getCenterX(), source.getShape().getCenterY(), range, -10, 25, Arc2D.PIE);
+
         // set all the values to false and then check the landmarks one by one. later in
         // the loop the values will be set to true if its within radar. this has to be
         // called outside the while loop
         detectedRadarLandmarks.replaceAll((k, v) -> v = false);
-        if (collides(source.getShape(), x, y, newX_2, newY_2)) {
+        if (collides(source.getShape(), x, y, newX_2, newY_2, arc)) {
             return 0.0;
         }
-        while (!collides(source.getShape(), x, y, newX_2, newY_2)) {
+        while (!collides(source.getShape(), x, y, newX_2, newY_2, arc)) {
             x += dx;
             y += dy;
             newX_2 += dx;
             newY_2 += dy;
             range += delta;
+            arc.setArcByCenter(source.getShape().getCenterX(), source.getShape().getCenterY(), range, -10, 25, Arc2D.PIE);
 
             radarDetectLandmark(source, x, y, range);
         }
@@ -234,7 +241,7 @@ public class World {
         return range - delta;
     }
 
-    private boolean collides(Shape ignore, double x, double y, double newX_2, double newY_2) {
+    private boolean collides(Shape ignore, double x, double y, double newX_2, double newY_2, Arc2D arc) {
         if (!extents.contains(x, y)) {
 
             return true;
@@ -266,6 +273,13 @@ public class World {
 
             double distance = l.getLocation().distance(x, y);
 
+            Area arcArea = new Area(arc);
+
+            if(arcArea.contains(landmarkX, landmarkXY)){
+                System.out.println(l.getName());
+            }
+            
+
         }
         return false;
     }
@@ -294,88 +308,35 @@ public class World {
     }
 
     public void radarDetectLandmark(Robot robot, Radar radar) {
-        Arc2D arc = robot.getRadarArc();
+        
 
         // robot position
         double robotCurrentX = robot.getShape().getCenterX();
         double robotCurrentY = robot.getShape().getCenterY();
 
-        // end position of the range from the robot
-        double dx = Math.cos(robot.getYaw() + radar.getRadarAngle()) * radar.getRadarRange();
-        double dy = Math.sin(robot.getYaw() + radar.getRadarAngle()) * radar.getRadarRange();
-        double newX = robotCurrentX + dx;
-        double newY = robotCurrentY + dy;
-
-        // otherside of the arc
-        double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
-        double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
-
+        Arc2D arc = robot.getRadarArc();
         double radarRange = radar.getRadarRange();
-        Rectangle2D newRec = new Rectangle2D.Double(robotCurrentX - radarRange, robotCurrentY - radarRange,
-                radarRange * 2.0, radarRange * 2.0);
-        arc.setFrame(newRec);
+        arc.setArcByCenter(robotCurrentX, robotCurrentY, radarRange, -10, 25, Arc2D.PIE);
 
-        arc.setAngleExtent(25);
-        arc.setAngleStart(Math.toDegrees(radar.getRadarAngle()) - 10.0);
+        // // end position of the range from the robot
+        // double dx = Math.cos(robot.getYaw() + radar.getRadarAngle()) *
+        // radar.getRadarRange();
+        // double dy = Math.sin(robot.getYaw() + radar.getRadarAngle()) *
+        // radar.getRadarRange();
+        // double newX = robotCurrentX + dx;
+        // double newY = robotCurrentY + dy;
 
-        robot.setRadarArc(arc);
+        // // otherside of the arc
+        // double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
+        // double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
 
-        // arc.setArcByCenter(robot.getShape().getCenterX(),
-        // robot.getShape().getCenterY(), 2 * radar.getRadarRange(),
-        // -10.0, 25.0,
-        // Arc2D.PIE);
 
-        // arc.setFrameFromCenter(robotCurrentX, robotCurrentY, robotCurrentX +
-        // radar.getRadarRange(),
-        // robotCurrentY + radar.getRadarRange());
 
-        // System.out.println("XXXX AGENT : " + robot.getShape().getBounds());
-        // // System.out.println("XXXX AGENT 2: " + robot.getShape().getBounds2D());
-        // System.out.println(robot.getShape().getCenterX());
-        // // System.out.println(arc.getBounds2D());
-        // System.out.println(arc.getBounds2D().getX());
-        // System.out.println(landmarks.get( 1).getName());
+        // for (Landmark landmark : landmarks) {
+        //     double pointX = landmark.getLocation().getX();
+        //     double pointY = landmark.getLocation().getY();
 
-        double[] coords = new double[6];
-
-        for (Landmark landmark : landmarks) {
-            double pointX = landmark.getLocation().getX();
-            double pointY = landmark.getLocation().getY();
-
-            Rectangle2D pointRect = new Rectangle2D.Double(landmark.getLocation().getX(), landmark.getLocation().getY(),
-                    0.4, 0.4);
-            if (arc.getBounds2D().intersects(pointRect)) {
-                System.out.println(landmark.getName());
-            }
-
-            // double newAngle = Math.toDegrees(
-            //         Math.atan2(pointY - robotCurrentY, pointX - robotCurrentX)) - robot.getYaw();
-
-            // if (arc.getBounds2D().containsAngle(newAngle)) {
-            //     System.out.println("DECTEEEDDDDDDDDDDDDDDD !!!!!!");
-            //     System.out.println(landmark.getName());
-            // }
-
-            // double angle = Math.atan2(pointY - robotCurrentY, pointX - robotCurrentX) -
-            // robot.getYaw();
-            // double distance = Math.sqrt(Math.pow(pointX - robotCurrentX, 2) +
-            // Math.pow(pointY - robotCurrentY, 2));
-            // if (distance < radarRange && angle >= startAngle && angle <= endAngle) {
-            // // point (x, y) is within the radar range
-            // } else {
-            // // point (x, y) is not within the radar range
-            // }
-
-            // double distance = Math.sqrt(Math.pow(landmark.getLocation().getX() -
-            // robotCurrentX, 2) + Math.pow(landmark.getLocation().getY() - robotCurrentY,
-            // 2));
-            // if (distance < radarRange) {
-            // System.out.println(landmark.getName());
-            // } else {
-            // // point (x, y) is not within the radar range
-            // }
-
-        }
+        // }
     }
 
 }
