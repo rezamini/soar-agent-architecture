@@ -23,7 +23,8 @@ public class Robot {
     // shapeStartingPoint;
     public final double shapeArea = shapeWidth * shapeHeight;
     public Radar[] ranges;
-    public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, 0, 0, Arc2D.PIE);
+    // public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, 0, 0, Arc2D.PIE);
+    public Path2D radarShape = new Path2D.Double();
 
     private double radarBattery;
     private boolean toggleRadar;
@@ -158,7 +159,7 @@ public class Robot {
             if (toggleRadar) {
                 for (Radar range : ranges) {
                     range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw));
-                    // world.radarDetectLandmark(this, range);
+                    world.radarDetectLandmark(this, range);
                 }
             }
         }
@@ -262,14 +263,6 @@ public class Robot {
         return shapeStartingPoint;
     }
 
-    public Arc2D getRadarArc() {
-        return radarArc;
-    }
-
-    public void setRadarArc(Arc2D radarArc) {
-        this.radarArc = radarArc;
-    }
-
     public double getRadarBattery() {
         return radarBattery;
     }
@@ -286,4 +279,19 @@ public class Robot {
         this.toggleRadar = toggleRadar;
     }
 
+    public Path2D getRadarShape() {
+        return radarShape;
+    }
+
+    public void setRadarShape(Path2D radarShape) {
+        this.radarShape = radarShape;
+    }
+
+    // public Arc2D getRadarArc() {
+    //     return radarArc;
+    // }
+
+    // public void setRadarArc(Arc2D radarArc) {
+    //     this.radarArc = radarArc;
+    // }
 }

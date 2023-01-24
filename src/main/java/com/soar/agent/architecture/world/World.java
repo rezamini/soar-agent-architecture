@@ -217,23 +217,19 @@ public class World {
             newX_2 = x * Math.cos(25) - y * Math.sin(25);
         }
 
-        Arc2D arc = source.getRadarArc();
-        arc.setArcByCenter(source.getShape().getCenterX(), source.getShape().getCenterY(), range, -10, 25, Arc2D.PIE);
-
         // set all the values to false and then check the landmarks one by one. later in
         // the loop the values will be set to true if its within radar. this has to be
         // called outside the while loop
         detectedRadarLandmarks.replaceAll((k, v) -> v = false);
-        if (collides(source.getShape(), x, y, newX_2, newY_2, arc)) {
+        if (collides(source.getShape(), x, y, newX_2, newY_2)) {
             return 0.0;
         }
-        while (!collides(source.getShape(), x, y, newX_2, newY_2, arc)) {
+        while (!collides(source.getShape(), x, y, newX_2, newY_2)) {
             x += dx;
             y += dy;
             newX_2 += dx;
             newY_2 += dy;
             range += delta;
-            arc.setArcByCenter(source.getShape().getCenterX(), source.getShape().getCenterY(), range, -10, 25, Arc2D.PIE);
 
             radarDetectLandmark(source, x, y, range);
         }
@@ -241,7 +237,7 @@ public class World {
         return range - delta;
     }
 
-    private boolean collides(Shape ignore, double x, double y, double newX_2, double newY_2, Arc2D arc) {
+    private boolean collides(Shape ignore, double x, double y, double newX_2, double newY_2) {
         if (!extents.contains(x, y)) {
 
             return true;
@@ -267,20 +263,14 @@ public class World {
             }
         }
 
-        for (Landmark l : landmarks) {
-            double landmarkX = l.getLocation().getX();
-            double landmarkXY = l.getLocation().getY();
+        // for (Landmark l : landmarks) {
+        //     double landmarkX = l.getLocation().getX();
+        //     double landmarkXY = l.getLocation().getY();
 
-            double distance = l.getLocation().distance(x, y);
+        //     double distance = l.getLocation().distance(x, y);
 
-            Area arcArea = new Area(arc);
+        // }
 
-            if(arcArea.contains(landmarkX, landmarkXY)){
-                System.out.println(l.getName());
-            }
-            
-
-        }
         return false;
     }
 
@@ -308,15 +298,27 @@ public class World {
     }
 
     public void radarDetectLandmark(Robot robot, Radar radar) {
-        
 
         // robot position
         double robotCurrentX = robot.getShape().getCenterX();
         double robotCurrentY = robot.getShape().getCenterY();
-
-        Arc2D arc = robot.getRadarArc();
         double radarRange = radar.getRadarRange();
-        arc.setArcByCenter(robotCurrentX, robotCurrentY, radarRange, -10, 25, Arc2D.PIE);
+
+        robot.getRadarShape().reset();
+        robot.getRadarShape().moveTo(robotCurrentX, robotCurrentY);
+        robot.getRadarShape().append(new Arc2D.Double(robotCurrentX - radarRange, robotCurrentY - radarRange,
+                2 * radarRange, 2 * radarRange, Math.toDegrees(-robot.getYaw()) - 10, 25, Arc2D.PIE), true);
+
+        for (Landmark landmark : landmarks) {
+            if (robot.getRadarShape().contains(landmark.getLocation())) {
+                System.out.println(landmark.getName());
+            }
+        }
+
+        // Arc2D arc = robot.getRadarArc();
+        // double radarRange = radar.getRadarRange();
+        // arc.setArcByCenter(robotCurrentX, robotCurrentY, radarRange, -10, 25,
+        // Arc2D.PIE);
 
         // // end position of the range from the robot
         // double dx = Math.cos(robot.getYaw() + radar.getRadarAngle()) *
@@ -330,11 +332,9 @@ public class World {
         // double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
         // double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
 
-
-
         // for (Landmark landmark : landmarks) {
-        //     double pointX = landmark.getLocation().getX();
-        //     double pointY = landmark.getLocation().getY();
+        // double pointX = landmark.getLocation().getX();
+        // double pointY = landmark.getLocation().getY();
 
         // }
     }
