@@ -278,65 +278,60 @@ public class World {
         // get a instance of the agent shape
         Rectangle2D agentShape = (Rectangle2D) robot.getShape().clone();
 
+        //get and create shape radar with current data
+        Path2D shapeRadar = robot.calcShapeRadar(agentShape.getCenterX(), agentShape.getCenterY(), radarRange);
+
         // simulate a move with the radar positions
         agentShape.setFrameFromCenter(radarX, radarY, radarX + robot.getShapeWidth(), radarY + robot.getShapeHeight());
 
         // check if the agent will reach/hit any landmark with the current landmark
         // positions (aka if radar can see and agent can hit the landmark)
-        // List<Landmark> tempLandmarks = new ArrayList<Landmark>();
+        // Or if the created Path2D radar shape contains any shape. both are needed to perform better detections
 
         for (Landmark landmark : landmarks) {
-
-            if (agentShape.contains(landmark.getLocation())) {
+            if (agentShape.contains(landmark.getLocation()) || shapeRadar.contains(landmark.getLocation())) {
                 detectedRadarLandmarks.put(landmark, true);
-
-                // if(!tempLandmarks.contains(landmark)){
-                // tempLandmarks.add(landmark);
-                // }
             }
         }
     }
 
-    public void radarDetectLandmark(Robot robot, Radar radar) {
+    // public void radarDetectLandmark(Robot robot, Radar radar) {
 
-        // robot position
-        double robotCurrentX = robot.getShape().getCenterX();
-        double robotCurrentY = robot.getShape().getCenterY();
-        double radarRange = radar.getRadarRange();
+    //     // robot position
+    //     double robotCurrentX = robot.getShape().getCenterX();
+    //     double robotCurrentY = robot.getShape().getCenterY();
+    //     double radarRange = radar.getRadarRange();
 
-        robot.getRadarShape().reset();
-        robot.getRadarShape().moveTo(robotCurrentX, robotCurrentY);
-        robot.getRadarShape().append(new Arc2D.Double(robotCurrentX - radarRange, robotCurrentY - radarRange,
-                2 * radarRange, 2 * radarRange, Math.toDegrees(-robot.getYaw()) - 10, 25, Arc2D.PIE), true);
+    //     Path2D shapeRadar = robot.calcShapeRadar(robotCurrentX, robotCurrentY, radarRange);
 
-        for (Landmark landmark : landmarks) {
-            if (robot.getRadarShape().contains(landmark.getLocation())) {
-                System.out.println(landmark.getName());
-            }
-        }
+    //     for (Landmark landmark : landmarks) {
+    //         if (shapeRadar.contains(landmark.getLocation())) {
+    //             System.out.println(landmark.getName());
+    //         }
+    //     }
 
-        // Arc2D arc = robot.getRadarArc();
-        // double radarRange = radar.getRadarRange();
-        // arc.setArcByCenter(robotCurrentX, robotCurrentY, radarRange, -10, 25,
-        // Arc2D.PIE);
+    //     // Arc2D arc = robot.getRadarArc();
+    //     // double radarRange = radar.getRadarRange();
+    //     // arc.setArcByCenter(robotCurrentX, robotCurrentY, radarRange, -10, 25,
+    //     // Arc2D.PIE);
 
-        // // end position of the range from the robot
-        // double dx = Math.cos(robot.getYaw() + radar.getRadarAngle()) *
-        // radar.getRadarRange();
-        // double dy = Math.sin(robot.getYaw() + radar.getRadarAngle()) *
-        // radar.getRadarRange();
-        // double newX = robotCurrentX + dx;
-        // double newY = robotCurrentY + dy;
+    //     // // end position of the range from the robot
+    //     // double dx = Math.cos(robot.getYaw() + radar.getRadarAngle()) *
+    //     // radar.getRadarRange();
+    //     // double dy = Math.sin(robot.getYaw() + radar.getRadarAngle()) *
+    //     // radar.getRadarRange();
+    //     // double newX = robotCurrentX + dx;
+    //     // double newY = robotCurrentY + dy;
 
-        // // otherside of the arc
-        // double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
-        // double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
+    //     // // otherside of the arc
+    //     // double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
+    //     // double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
 
-        // for (Landmark landmark : landmarks) {
-        // double pointX = landmark.getLocation().getX();
-        // double pointY = landmark.getLocation().getY();
+    //     // for (Landmark landmark : landmarks) {
+    //     // double pointX = landmark.getLocation().getX();
+    //     // double pointY = landmark.getLocation().getY();
 
-        // }
-    }
+    //     // }
+    // }
 
 }
