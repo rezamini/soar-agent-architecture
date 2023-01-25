@@ -1,10 +1,15 @@
 package com.soar.agent.architecture.robot;
 
+import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.world.World;
+
+import bibliothek.extension.gui.dock.preference.preferences.choice.DefaultChoice.Entry;
+
 import java.awt.geom.*;
 import java.text.DecimalFormat;
+import java.util.Map;
 
 public class Robot {
     public final double widthMultiplier = 4.0;
@@ -23,7 +28,7 @@ public class Robot {
     // shapeStartingPoint;
     public final double shapeArea = shapeWidth * shapeHeight;
     public Radar[] ranges;
-    public Arc2D radarArc = new Arc2D.Double(0, 0, 0, 0, 0, 0, Arc2D.PIE);
+    private Path2D shapeRadar = new Path2D.Double();
 
     private double radarBattery;
     private boolean toggleRadar;
@@ -168,7 +173,7 @@ public class Robot {
      * Calculate the agent width and height based on the new direction which is
      * caluculated in new dx and dy
      */
-    public double[] calcAgentDimensionsForDirection(double dx, double dy) {
+    private double[] calcAgentDimensionsForDirection(double dx, double dy) {
         double result[] = new double[2];
 
         double agentWidth = 0;
@@ -200,6 +205,15 @@ public class Robot {
         result[1] = agentHeight - 0.1;
 
         return result;
+    }
+
+    public Path2D calcShapeRadar(double agentX, double agentY, double radarRange){
+        shapeRadar.reset();
+        shapeRadar.moveTo(agentX, agentY);
+        shapeRadar.append(new Arc2D.Double(agentX - radarRange, agentY - radarRange,
+                2 * radarRange, 2 * radarRange, Math.toDegrees(-yaw) - 10, 25, Arc2D.PIE), true);
+
+        return shapeRadar;
     }
 
     public World getWorld() {
@@ -262,14 +276,6 @@ public class Robot {
         return shapeStartingPoint;
     }
 
-    public Arc2D getRadarArc() {
-        return radarArc;
-    }
-
-    public void setRadarArc(Arc2D radarArc) {
-        this.radarArc = radarArc;
-    }
-
     public double getRadarBattery() {
         return radarBattery;
     }
@@ -286,4 +292,11 @@ public class Robot {
         this.toggleRadar = toggleRadar;
     }
 
+    public Path2D getShapeRadar() {
+        return shapeRadar;
+    }
+
+    public void setShapeRadar(Path2D shapeRadar) {
+        this.shapeRadar = shapeRadar;
+    }
 }
