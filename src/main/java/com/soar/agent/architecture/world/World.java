@@ -188,7 +188,7 @@ public class World {
 
     public double getCollisionRange(Robot source, double angle) {
         // final double delta = source.getShapeArea() / 2.0;
-        double delta = 0.1;
+        double delta = 0.2;
         final double dx = delta * Math.round(Math.cos(angle));
         final double dy = delta * Math.round(Math.sin(angle));
         double range = delta;
@@ -221,10 +221,10 @@ public class World {
         // the loop the values will be set to true if its within radar. this has to be
         // called outside the while loop
         detectedRadarLandmarks.replaceAll((k, v) -> v = false);
-        if (collides(source.getShape(), x, y, newX_2, newY_2)) {
+        if (collides(source, x, y, range)) {
             return 0.0;
         }
-        while (!collides(source.getShape(), x, y, newX_2, newY_2)) {
+        while (!collides(source, x, y, range)) {
             x += dx;
             y += dy;
             newX_2 += dx;
@@ -233,10 +233,23 @@ public class World {
 
             radarDetectLandmark(source, x, y, range);
         }
+        // if (collides(source.getShape(), x, y, newX_2, newY_2)) {
+        //     return 0.0;
+        // }
+        // while (!collides(source.getShape(), x, y, newX_2, newY_2)) {
+        //     x += dx;
+        //     y += dy;
+        //     newX_2 += dx;
+        //     newY_2 += dy;
+        //     range += delta;
+
+        //     radarDetectLandmark(source, x, y, range);
+        // }
 
         return range - delta;
     }
 
+    // check colides with Path2D radar shape
     private boolean collides(Shape ignore, double x, double y, double newX_2, double newY_2) {
         if (!extents.contains(x, y)) {
 
@@ -264,13 +277,29 @@ public class World {
         }
 
         // for (Landmark l : landmarks) {
-        //     double landmarkX = l.getLocation().getX();
-        //     double landmarkXY = l.getLocation().getY();
+        // double landmarkX = l.getLocation().getX();
+        // double landmarkXY = l.getLocation().getY();
 
-        //     double distance = l.getLocation().distance(x, y);
+        // double distance = l.getLocation().distance(x, y);
 
         // }
 
+        return false;
+    }
+
+    private boolean collides(Robot robot, double x, double y, double radarRange) {
+        // get and create shape radar with current data
+        Path2D shapeRadar = robot.calcShapeRadar(robot.getShape().getCenterX(), robot.getShape().getCenterY(), radarRange);
+
+        if(!extents.contains(shapeRadar.getBounds2D())){
+            return true;
+        }
+
+        for (Shape s : obstacles) {
+            if (shapeRadar.intersects(s.getBounds2D()) && s.intersects(shapeRadar.getBounds2D())) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -278,7 +307,7 @@ public class World {
         // get a instance of the agent shape
         Rectangle2D agentShape = (Rectangle2D) robot.getShape().clone();
 
-        //get and create shape radar with current data
+        // get and create shape radar with current data
         Path2D shapeRadar = robot.calcShapeRadar(agentShape.getCenterX(), agentShape.getCenterY(), radarRange);
 
         // simulate a move with the radar positions
@@ -286,7 +315,8 @@ public class World {
 
         // check if the agent will reach/hit any landmark with the current landmark
         // positions (aka if radar can see and agent can hit the landmark)
-        // Or if the created Path2D radar shape contains any shape. both are needed to perform better detections
+        // Or if the created Path2D radar shape contains any shape. both are needed to
+        // perform better detections
 
         for (Landmark landmark : landmarks) {
             if (agentShape.contains(landmark.getLocation()) || shapeRadar.contains(landmark.getLocation())) {
@@ -297,41 +327,42 @@ public class World {
 
     // public void radarDetectLandmark(Robot robot, Radar radar) {
 
-    //     // robot position
-    //     double robotCurrentX = robot.getShape().getCenterX();
-    //     double robotCurrentY = robot.getShape().getCenterY();
-    //     double radarRange = radar.getRadarRange();
+    // // robot position
+    // double robotCurrentX = robot.getShape().getCenterX();
+    // double robotCurrentY = robot.getShape().getCenterY();
+    // double radarRange = radar.getRadarRange();
 
-    //     Path2D shapeRadar = robot.calcShapeRadar(robotCurrentX, robotCurrentY, radarRange);
+    // Path2D shapeRadar = robot.calcShapeRadar(robotCurrentX, robotCurrentY,
+    // radarRange);
 
-    //     for (Landmark landmark : landmarks) {
-    //         if (shapeRadar.contains(landmark.getLocation())) {
-    //             System.out.println(landmark.getName());
-    //         }
-    //     }
+    // for (Landmark landmark : landmarks) {
+    // if (shapeRadar.contains(landmark.getLocation())) {
+    // System.out.println(landmark.getName());
+    // }
+    // }
 
-    //     // Arc2D arc = robot.getRadarArc();
-    //     // double radarRange = radar.getRadarRange();
-    //     // arc.setArcByCenter(robotCurrentX, robotCurrentY, radarRange, -10, 25,
-    //     // Arc2D.PIE);
+    // // Arc2D arc = robot.getRadarArc();
+    // // double radarRange = radar.getRadarRange();
+    // // arc.setArcByCenter(robotCurrentX, robotCurrentY, radarRange, -10, 25,
+    // // Arc2D.PIE);
 
-    //     // // end position of the range from the robot
-    //     // double dx = Math.cos(robot.getYaw() + radar.getRadarAngle()) *
-    //     // radar.getRadarRange();
-    //     // double dy = Math.sin(robot.getYaw() + radar.getRadarAngle()) *
-    //     // radar.getRadarRange();
-    //     // double newX = robotCurrentX + dx;
-    //     // double newY = robotCurrentY + dy;
+    // // // end position of the range from the robot
+    // // double dx = Math.cos(robot.getYaw() + radar.getRadarAngle()) *
+    // // radar.getRadarRange();
+    // // double dy = Math.sin(robot.getYaw() + radar.getRadarAngle()) *
+    // // radar.getRadarRange();
+    // // double newX = robotCurrentX + dx;
+    // // double newY = robotCurrentY + dy;
 
-    //     // // otherside of the arc
-    //     // double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
-    //     // double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
+    // // // otherside of the arc
+    // // double newX_2 = newX * Math.cos(25) - newY * Math.sin(25);
+    // // double newY_2 = newX * Math.sin(25) + newY * Math.cos(25);
 
-    //     // for (Landmark landmark : landmarks) {
-    //     // double pointX = landmark.getLocation().getX();
-    //     // double pointY = landmark.getLocation().getY();
+    // // for (Landmark landmark : landmarks) {
+    // // double pointX = landmark.getLocation().getX();
+    // // double pointY = landmark.getLocation().getY();
 
-    //     // }
+    // // }
     // }
 
 }
