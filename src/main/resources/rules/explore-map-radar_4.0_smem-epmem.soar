@@ -9,6 +9,19 @@
 #this utilises the cycle-count to check and query at first, graph-match to check if its a match(if not recorded graph match will be 0) along other data 
 # if epmem query is successful (query based on location and radar live data) then move-radar-landmark-epmem is proposed and used instead of the move-radar-landmark.
 
+
+# Enable smem
+smem --set learning on
+
+# Smem db settings
+# smem --set driver org.sqlite.JDBC //can be ommited. throws error once enabled
+# smem --set protocol jdbc:sqlite //can be ommited. throws error once enabled
+smem --set path src/main/resources/databases/smem/explore-smem-db.sqlite
+smem --set append-database on
+smem --set lazy-commit off
+smem --set optimization performance
+smem --init
+
 #Enable Epmem
 #Note: this command provide the full epmem setting of the agent in the debugger
 #epmem --force
@@ -35,27 +48,55 @@ epmem --set exclusions opposite
 epmem --set exclusions prefer
 epmem --set exclusions value
 
-sp {initialize*state*preferable*turn-directions
-   (state <ss> ^type state)
-   -->
-   (<ss> ^preferable-turn-directions <ne> <nw> <sw> <se> ) 
+# sp {smem*store*preferable-turn-directions
+#   (state <s> ^superstate nil)
+# --> 
+#    (write (crlf) |======= smem store preferable-turn-directions ========|)
+#    (cmd smem --add 
+#    |
+#    (<ss> ^preferable-turn-directions <ne> <nw> <sw> <se> ) 
    
-   (<ne> ^value northeast ^prefer northeast) 
-   (<ne> ^value northeast ^prefer east)
-   (<ne> ^value northeast ^prefer north)
+#    (<ne> ^value northeast ^prefer northeast) 
+#    (<ne> ^value northeast ^prefer east)
+#    (<ne> ^value northeast ^prefer north)
    
-   (<nw> ^value northwest ^prefer northwest)
-   (<nw> ^value northwest ^prefer west)
-   (<nw> ^value northwest ^prefer north)
+#    (<nw> ^value northwest ^prefer northwest)
+#    (<nw> ^value northwest ^prefer west)
+#    (<nw> ^value northwest ^prefer north)
 
-   (<sw> ^value southwest ^prefer southwest)
-   (<sw> ^value southwest ^prefer south)
-   (<sw> ^value southwest ^prefer west)
+#    (<sw> ^value southwest ^prefer southwest)
+#    (<sw> ^value southwest ^prefer south)
+#    (<sw> ^value southwest ^prefer west)
 
-   (<se> ^value southeast ^prefer southeast)
-   (<se> ^value southeast ^prefer south)
-   (<se> ^value southeast ^prefer east)
-}
+#    (<se> ^value southeast ^prefer southeast)
+#    (<se> ^value southeast ^prefer south)
+#    (<se> ^value southeast ^prefer east)
+#    | 
+#    )
+# }
+
+
+# sp {initialize*state*preferable*turn-directions
+#    (state <ss> ^type state)
+#    -->
+#    (<ss> ^preferable-turn-directions <ne> <nw> <sw> <se> ) 
+   
+#    (<ne> ^value northeast ^prefer northeast) 
+#    (<ne> ^value northeast ^prefer east)
+#    (<ne> ^value northeast ^prefer north)
+   
+#    (<nw> ^value northwest ^prefer northwest)
+#    (<nw> ^value northwest ^prefer west)
+#    (<nw> ^value northwest ^prefer north)
+
+#    (<sw> ^value southwest ^prefer southwest)
+#    (<sw> ^value southwest ^prefer south)
+#    (<sw> ^value southwest ^prefer west)
+
+#    (<se> ^value southeast ^prefer southeast)
+#    (<se> ^value southeast ^prefer south)
+#    (<se> ^value southeast ^prefer east)
+# }
 
 # sp {initialize*state*epmem-check
 #    (state <ss> ^type state)
@@ -156,6 +197,16 @@ sp {propose*radar-off-when-epmem-exists
 #    (<q> ^self.pose <e>
 #         ^radar.live.landmarks <radar-landmarks> )
 # }
+
+sp {smem*query
+   (state <s> ^io.input-link.area.locale.direction <l-dir>
+              ^smem.command <sc> )
+--> 
+   (write (crlf) |======= SMEM query started ========| <l-dir>)
+   (<sc> ^query <cue>)
+   (<cue> ^value <l-dir> )
+   (<cue> ^prefer <anyvalue> )
+}
 
 sp {apply*query-epmem-check-total-landmarks
    (state <s> ^io.input-link.cycle-count 2
@@ -279,9 +330,12 @@ sp {select*move-radar-landmark-epmem*shortest-distance
 sp {select*turn*pick-prefered-turn-directions
     (state <s> ^operator <o1> + 
                #  ^operator <o2> +
-                ^preferable-turn-directions <ptd>
-                ^io.input-link.area.locale.direction <current-direction> )
-    (<pd> ^value <current-direction>
+               #  ^preferable-turn-directions <ptd>
+                ^io.input-link.area.locale.direction <current-direction> 
+                ^smem.result.success <smem-result>
+                ^smem.result.retrieved <smem-retrieved>)
+                
+    (<smem-retrieved> ^value <current-direction>
         ^prefer <prefer-direction> )
     (<o1> ^name turn
             ^actions.move.direction <prefer-direction> )
@@ -289,6 +343,7 @@ sp {select*turn*pick-prefered-turn-directions
    #          ^cell-type << block >>  )
     
 -->
+(write (crlf) |======= operator selected based on Semantic Memory(SMEM) data ========| <smem-retrieved> )
 (<s> ^operator <o1> > )}
 
 
