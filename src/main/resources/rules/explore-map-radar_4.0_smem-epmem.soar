@@ -1,0 +1,333 @@
+#This file has 6 propose rules. Move-forward. Turn. move-radar-landmark. Radar-off. Radar-on & move-radar-landmark-epmem With the use of epmem capbilities.
+#Radar-off is happening if battery is 0 or lower and its on only when it does NOT sees a landmark.
+#if it sees a landmark it will off. if no landmark it stays on.
+#the turn on and off of the radar is entirely contolled by the respective operators
+#unlike previous versions the turn operator will not turn on the radar and it is now handled Radar-off/Radar-on operators.
+
+#it first check if all landmarks are recorded in epmem,
+#if not then only working memory data and operators being used. if all landmarks recorded then the current situation is queried.
+#this utilises the cycle-count to check and query at first, graph-match to check if its a match(if not recorded graph match will be 0) along other data 
+# if epmem query is successful (query based on location and radar live data) then move-radar-landmark-epmem is proposed and used instead of the move-radar-landmark.
+
+#Enable Epmem
+#Note: this command provide the full epmem setting of the agent in the debugger
+#epmem --force
+
+epmem --set trigger dc
+epmem --set learning off
+epmem --set balance 0
+watch --epmem
+
+wm activation --set activation on
+# epmem --set phase selection
+
+#set epmem db settings
+# epmem --set database file
+epmem --set path src/main/resources/databases/epmem/explore-epmem-db.sqlite
+epmem --set append-database on
+epmem --set lazy-commit off
+epmem --set optimization performance
+epmem --init
+
+#exclude pre-set constant variables
+epmem --set exclusions preferable-turn-directions
+epmem --set exclusions opposite
+epmem --set exclusions prefer
+epmem --set exclusions value
+
+sp {initialize*state*preferable*turn-directions
+   (state <ss> ^type state)
+   -->
+   (<ss> ^preferable-turn-directions <ne> <nw> <sw> <se> ) 
+   
+   (<ne> ^value northeast ^prefer northeast) 
+   (<ne> ^value northeast ^prefer east)
+   (<ne> ^value northeast ^prefer north)
+   
+   (<nw> ^value northwest ^prefer northwest)
+   (<nw> ^value northwest ^prefer west)
+   (<nw> ^value northwest ^prefer north)
+
+   (<sw> ^value southwest ^prefer southwest)
+   (<sw> ^value southwest ^prefer south)
+   (<sw> ^value southwest ^prefer west)
+
+   (<se> ^value southeast ^prefer southeast)
+   (<se> ^value southeast ^prefer south)
+   (<se> ^value southeast ^prefer east)
+}
+
+# sp {initialize*state*epmem-check
+#    (state <ss> ^type state)
+#    -->
+#    (<ss> ^epmem-checked false) 
+# }
+
+sp {propose*move-forward
+   (state <s> ^io.input-link.area.view <area-view>
+              ^io.input-link.area.locale.direction <current-direction>
+              ^io.input-link.self.pose <e>  )
+   (<area-view> ^<current-direction>.type <> block )
+   (<e> ^x <x> ^y <y>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name move-forward
+        ^actions <a>)
+   (<a> ^move.direction <current-direction> )}
+
+
+ sp {propose*turn
+   (state <s> ^io.input-link.area.view <area-view>
+              ^io.input-link.area.locale.direction <current-direction>
+              ^io.input-link.self.pose <e> )
+   (<area-view> ^<current-direction>.type block
+                ^<turn-direction>.type normal )
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name turn 
+        ^actions <a>)
+   (<a> ^move.direction <turn-direction> )}
+
+
+sp {propose*move-radar-landmark
+   (state <s> ^io.input-link.self.pose <e>
+              ^io.input-link.radar.live.landmarks.<radar-landmarks> <live-landmark>
+              ^io.input-link.area.view <area-view>)
+   (<e> ^x <x> ^y <y>)
+   (<live-landmark> ^direction-command <direction-command> )
+   (<live-landmark> ^distance <landmark-distance> )
+   (<area-view> ^<direction-command>.type <> block )
+   
+-->
+   (<s> ^operator <o> + = )
+   (<o> ^name move-radar-landmark
+        ^distance <landmark-distance>
+        ^actions <a>)
+   (<a> ^move.direction <direction-command> )}
+
+
+# Radar propose rules
+
+sp {propose*radar-on
+   (state <s> ^io.input-link.radar <radar>)
+   (<radar> ^status off
+         -^battery <= 0
+         -^live.landmarks <live-landmarks>)
+-->
+   (<s> ^operator <o> + >)
+   (<o> ^name radar-on
+        ^actions.radar.toggleRadar on )}
+
+# sp {propose*radar-off
+#    (state <s> ^io.input-link.radar <radar>)
+#    (<radar> ^status on
+#          -^battery <= 0
+#          ^live.landmarks <live-landmarks>
+#          -^epmem.result <epmem-result>)
+# -->
+#    (<s> ^operator <o> + >)
+#    (<o> ^name radar-off
+#         ^actions.radar.toggleRadar off )}
+
+sp {propose*radar-off-when-epmem-exists
+   (state <s> ^io.input-link.radar <radar>
+               ^epmem.result <epmem-result>)
+   (<radar> ^status on
+         -^battery <= 0)
+
+   (<epmem> ^success <success>
+   ^retrieved <epmem-retrieved-result>)
+   (<epmem-retrieved-result> ^radar.live.landmarks.<live-landmarks> <live-landmark>)
+
+   (<radar> ^live.landmarks.<live-landmarks> <current-landmark>)
+-->
+   (<s> ^operator <o> + >)
+   (<o> ^name radar-off-epmem
+        ^actions.radar.toggleRadar off )}
+
+# sp {apply*get-epmem
+#    (state <s> ^epmem.command <cmd>
+#               ^io.input-link.self.pose <e> 
+#               ^io.input-link.radar.live.landmarks <radar-landmarks> )
+#    (<e> ^x <x> ^y <y>)
+# -->
+# (write | apply [get-epmem]  | <e>)
+#    (<cmd> ^query <q>)
+#    (<q> ^self.pose <e>
+#         ^radar.live.landmarks <radar-landmarks> )
+# }
+
+sp {apply*query-epmem-check-total-landmarks
+   (state <s> ^io.input-link.cycle-count 2
+              ^epmem.command <cmd>
+              ^io.input-link.self.pose <e> 
+              ^io.input-link.landmarks.total <total-landmarks> )
+   (<e> ^x <x> ^y <y>)
+-->
+(write | Query to check if all landmarks are recorded in epmem |)
+   (<cmd> ^query <q>)
+   (<q> ^radar <radar> )
+   (<radar> ^landmarks.total <total-landmarks> )}
+
+sp {apply*epmem-checked-to-any-operator
+   :i-support
+   (state <s> ^operator <op>
+              ^io.input-link.cycle-count > 2
+              ^epmem.result.graph-match 1
+              ^epmem.result.success <success-query> )
+   (<op> ^name <any>)
+-->
+   (<op> ^epmem-checked true)}
+
+sp {monitor*query-epmem-check-total-landmarks-result-success
+   (state <s> ^io.input-link.cycle-count 3
+              ^epmem.result.graph-match 1
+              ^epmem.result.success <success-query> )
+-->
+(write | Epmem Query Successful (graph-match = 1). Epmem data will be used alongside working memory.  |)}
+
+sp {monitor*query-epmem-check-total-landmarks-result-failed
+   (state <s> ^io.input-link.cycle-count 3
+              -^epmem.result.graph-match 1
+              -^epmem.result.success <success-query> )
+-->
+(write | All landmarks are NOT recorded in epmem. Only working memory data will be used.  |)}
+
+
+sp {apply*second-query-epmem-if-previous-query-is-matched
+   (state <s> ^epmem.command <cmd>
+            #   ^epmem.result.graph-match 1
+            #   ^epmem.result.success <success-query> 
+              ^epmem-checked true
+              ^io.input-link.self.pose <e>
+              ^io.input-link.radar.live.landmarks <radar-landmarks>  )
+-->
+(write | Starting next epmem query based on current situation |)
+   (<cmd> ^query <q> - )
+   (<cmd> ^query <q2>)
+   (<q2> ^self.pose <e>
+        ^radar.live.landmarks <radar-landmarks> )}
+
+sp {epmem*query*result*move-radar-landmark-epmem
+   (state <s> ^io.input-link.self.pose <e>
+              ^io.input-link.area.view <area-view>
+              ^epmem.result <epmem-result>
+              ^io.input-link.radar.live.landmarks.<current-radar-landmarks> <current-landmarks>)
+   (<e> ^x <x> ^y <y>)
+   (<epmem> ^success <success>
+            ^retrieved <epmem-retrieved-result>)
+   # (<success> ^self <e>) #this make sure its the
+    (<epmem-retrieved-result> ^radar.live.landmarks.<current-radar-landmarks> <live-landmark>)
+   (<live-landmark> ^direction-command <direction-command> )
+   (<live-landmark> ^distance <landmark-distance> )
+   (<area-view> ^<direction-command>.type <> block )
+   
+-->
+   (<s> ^operator <o> + > )
+   (<o> ^name move-radar-landmark-epmem
+        ^distance <landmark-distance>
+        ^actions <a>)
+   (<a> ^move.direction <direction-command> )}
+
+
+## Selection rules
+
+sp {select*radar-off*move
+   (state <s> ^operator <o1> +
+              ^operator <o2> +)
+   (<o1> ^name << radar-off-epmem radar-off radar-on >>)
+   (<o2> ^name << turn move-forward move-radar-landmark move-radar-landmark-epmem >>)
+-->
+   (<s> ^operator <o1> > <o2>)}
+
+sp {select*move-radar-landmark-epmem
+   (state <s> ^operator <o1> + 
+                ^operator <o2> +)
+   (<o1> ^name << move-radar-landmark-epmem >> )
+   (<o2> ^name move-radar-landmark )
+-->
+   (<s> ^operator <o1> > )}
+
+sp {select*move-radar-landmark
+   (state <s> ^operator <o1> +
+              ^operator <o2> +)
+   (<o1> ^name move-radar-landmark )
+   (<o2> ^name move-forward )
+-->
+   (<s> ^operator <o1> > <o2>)}
+
+sp {select*move-radar-landmark*shortest-distance
+    (state <s> ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-radar-landmark
+            ^distance <distance1> )
+    (<o2> ^name move-radar-landmark
+            ^distance <distance2> > <distance1> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+sp {select*move-radar-landmark-epmem*shortest-distance
+    (state <s> ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-radar-landmark-epmem
+            ^distance <distance1> )
+    (<o2> ^name move-radar-landmark-epmem
+            ^distance <distance2> > <distance1> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+sp {select*turn*pick-prefered-turn-directions
+    (state <s> ^operator <o1> + 
+               #  ^operator <o2> +
+                ^preferable-turn-directions <ptd>
+                ^io.input-link.area.locale.direction <current-direction> )
+    (<pd> ^value <current-direction>
+        ^prefer <prefer-direction> )
+    (<o1> ^name turn
+            ^actions.move.direction <prefer-direction> )
+   #  (<o2> ^name << move-forward move-radar-landmark >>
+   #          ^cell-type << block >>  )
+    
+-->
+(<s> ^operator <o1> > )}
+
+
+#create and remove output action commands
+
+sp {apply*operator*create-action-command
+   (state <s> ^operator <o>
+              ^io.output-link <ol>)
+   (<o> ^actions <act>)
+   (<act> ^<att> <value>)
+-->
+   (<ol> ^<att> <value>)}
+
+sp {apply*operator*remove-command
+   (state <s> ^operator.actions
+              ^io.output-link <ol>)
+   (<ol> ^<att> <value>)
+   (<value> ^status complete)
+-->
+   (<ol> ^<att> <value> -)}
+
+   sp {apply*move*create*epmem-checked
+   (state <s> ^operator <o>)
+   (<o> ^name <any>
+        ^epmem-checked <epmem-checked>)
+-->
+   (<s> ^epmem-checked <epmem-checked>)}
+
+# sp {apply*move*remove*epmem-checked
+#    (state <s> ^operator <o>
+#               ^epmem-checked <epmem-checked>)
+#    (<o> ^name <any>
+#         ^epmem-checked <> <epmem-checked>)
+# -->
+#    (<s> ^epmem-checked <epmem-checked> -)}  
+
+sp {state*goal*reached
+   (state <s> ^io.input-link.landmarks.status inactive )
+   -->
+   (write | All Landmarks Explored !! |)
+   (halt)}
+
