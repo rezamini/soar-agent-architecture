@@ -113,6 +113,10 @@ public class MemoryResponder extends MemoryListener {
                                 String landmarkDirection = calcLandmarkDirection(agentXPose, agentYPose, landmarkX,
                                                 landmarkY);
 
+                                String landmarkRelativeDirection = calcRelativeLandmarkDirection(agentXPose, agentYPose,
+                                                landmarkX,
+                                                landmarkY);
+
                                 // set basic landmark information
                                 subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.getName());
                                 subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
@@ -120,6 +124,8 @@ public class MemoryResponder extends MemoryListener {
                                 subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
                                                 landmark.getLocation().distance(agentXPose, agentYPose));
                                 subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(), landmarkDirection);
+                                subLandmark.setString(MemoryEnum.RELATIVE_DIRECTION_COMMAND.getName(),
+                                                landmarkRelativeDirection);
                                 subLandmark.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
                                                 UtilitiesEnum.ACTIVESTATUS.getName());
 
@@ -128,6 +134,9 @@ public class MemoryResponder extends MemoryListener {
                                 if (isAgentReached) {
                                         subLandmark.setDouble(MemoryEnum.DISTANCE.getName(), 0.0);
                                         subLandmark.setString(MemoryEnum.DIRECTION_COMMAND.getName(),
+                                                        UtilitiesEnum.REACHEDSTATUS.getName());
+
+                                        subLandmark.setString(MemoryEnum.RELATIVE_DIRECTION_COMMAND.getName(),
                                                         UtilitiesEnum.REACHEDSTATUS.getName());
 
                                         // add a inactive status; this could be helpful in future usuage within .soar
@@ -142,8 +151,8 @@ public class MemoryResponder extends MemoryListener {
                         }
 
                         // set the status of the overal landmarks
-                        //Alternative way:
-                        //robot.getWorld().getLandmarkMap().values().stream().allMatch(value -> true)
+                        // Alternative way:
+                        // robot.getWorld().getLandmarkMap().values().stream().allMatch(value -> true)
                         landmarks.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
                                         !robot.getWorld().getLandmarkMap().containsValue(false)
                                                         ? UtilitiesEnum.INACTIVESTATUS.getName()
