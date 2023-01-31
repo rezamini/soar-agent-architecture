@@ -186,7 +186,7 @@ public class World {
         return false;
     }
 
-    public double getCollisionRange(Robot source, double angle) {
+    public double getCollisionRange(Robot source, double angle, boolean detectLandmarks) {
         // final double delta = source.getShapeArea() / 2.0;
         double delta = 0.2;
         final double dx = delta * Math.round(Math.cos(angle));
@@ -220,7 +220,9 @@ public class World {
         // set all the values to false and then check the landmarks one by one. later in
         // the loop the values will be set to true if its within radar. this has to be
         // called outside the while loop
-        detectedRadarLandmarks.replaceAll((k, v) -> v = false);
+        if (detectLandmarks) {
+            detectedRadarLandmarks.replaceAll((k, v) -> v = false);
+        }
         if (collides(source, x, y, range)) {
             return 0.0;
         }
@@ -231,19 +233,21 @@ public class World {
             newY_2 += dy;
             range += delta;
 
-            radarDetectLandmark(source, x, y, range);
+            if (detectLandmarks) {
+                radarDetectLandmark(source, x, y, range);
+            }
         }
         // if (collides(source.getShape(), x, y, newX_2, newY_2)) {
-        //     return 0.0;
+        // return 0.0;
         // }
         // while (!collides(source.getShape(), x, y, newX_2, newY_2)) {
-        //     x += dx;
-        //     y += dy;
-        //     newX_2 += dx;
-        //     newY_2 += dy;
-        //     range += delta;
+        // x += dx;
+        // y += dy;
+        // newX_2 += dx;
+        // newY_2 += dy;
+        // range += delta;
 
-        //     radarDetectLandmark(source, x, y, range);
+        // radarDetectLandmark(source, x, y, range);
         // }
 
         return range - delta;
@@ -289,9 +293,10 @@ public class World {
 
     private boolean collides(Robot robot, double x, double y, double radarRange) {
         // get and create shape radar with current data
-        Path2D shapeRadar = robot.calcShapeRadar(robot.getShape().getCenterX(), robot.getShape().getCenterY(), radarRange);
+        Path2D shapeRadar = robot.calcShapeRadar(robot.getShape().getCenterX(), robot.getShape().getCenterY(),
+                radarRange);
 
-        if(!extents.contains(shapeRadar.getBounds2D())){
+        if (!extents.contains(shapeRadar.getBounds2D())) {
             return true;
         }
 
