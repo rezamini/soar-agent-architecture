@@ -166,6 +166,8 @@ public class Robot {
                     // world.radarDetectLandmark(this, range);
                 }
             }
+        }else{
+            // world.getDetectedRadarLandmarks().replaceAll((k, v) -> v = false);
         }
     }
 

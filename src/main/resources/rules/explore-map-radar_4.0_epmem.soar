@@ -14,7 +14,7 @@
 #epmem --force
 
 epmem --set trigger dc
-epmem --set learning off
+epmem --set learning on
 epmem --set balance 0
 watch --epmem
 
@@ -23,7 +23,7 @@ wm activation --set activation on
 
 #set epmem db settings
 # epmem --set database file
-epmem --set path src/main/resources/databases/epmem/explore-epmem-db.sqlite
+epmem --set path src/main/resources/databases/epmem/explore-epmem-db2.sqlite
 epmem --set append-database on
 epmem --set lazy-commit off
 epmem --set optimization performance

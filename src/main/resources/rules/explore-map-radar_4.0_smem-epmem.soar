@@ -1,11 +1,12 @@
-#This file has 6 propose rules. Move-forward. Turn. move-radar-landmark. Radar-off. Radar-on & move-radar-landmark-epmem With the use of epmem capbilities.
-#Radar-off is happening if battery is 0 or lower and its on only when it does NOT sees a landmark.
-#if it sees a landmark it will off. if no landmark it stays on.
+#This file has 6 propose rules. Move-forward. Turn. Radar-off-epmem. Radar-on & move-radar-landmark-epmem With the use of epmem/smem capbilities.
+#Radar-off-epmem is happening if battery is 0 or lower and its on only when it has the epmem query with set of condition checking.
+#if no landmark it stays on.
 #the turn on and off of the radar is entirely contolled by the respective operators
 #unlike previous versions the turn operator will not turn on the radar and it is now handled Radar-off/Radar-on operators.
 
 #it first check if all landmarks are recorded in epmem,
 #if not then only working memory data and operators being used. if all landmarks recorded then the current situation is queried.
+#if they are all saved it will go to the landmarks directly using both the epmem/smem and working memory data.
 #this utilises the cycle-count to check and query at first, graph-match to check if its a match(if not recorded graph match will be 0) along other data 
 # if epmem query is successful (query based on location and radar live data) then move-radar-landmark-epmem is proposed and used instead of the move-radar-landmark.
 
@@ -161,27 +162,18 @@ sp {propose*radar-off-when-epmem-exists
    (<radar> ^status on
          -^battery <= 0)
 
-   (<epmem> ^success <success>
+   (<epmem-result> ^success <success>
    ^retrieved <epmem-retrieved-result>)
-   (<epmem-retrieved-result> ^radar.live.landmarks.<live-landmarks> <live-landmark>)
+   (<epmem-retrieved-result> ^radar.landmarks.<detected-radar-landmarks> <detected-epmem-landmark>)
+   
 
    (<radar> ^live.landmarks.<live-landmarks> <current-landmark>)
+   (<current-landmark> ^name <current-landmark-name>)
+   (<detected-epmem-landmark> ^name <current-landmark-name>)
 -->
    (<s> ^operator <o> + >)
    (<o> ^name radar-off-epmem
         ^actions.radar.toggleRadar off )}
-
-# sp {apply*get-epmem
-#    (state <s> ^epmem.command <cmd>
-#               ^io.input-link.self.pose <e> 
-#               ^io.input-link.radar.live.landmarks <radar-landmarks> )
-#    (<e> ^x <x> ^y <y>)
-# -->
-# (write | apply [get-epmem]  | <e>)
-#    (<cmd> ^query <q>)
-#    (<q> ^self.pose <e>
-#         ^radar.live.landmarks <radar-landmarks> )
-# }
 
 sp {smem*query
    (state <s> ^io.input-link.area.locale.direction <l-dir>
@@ -235,15 +227,13 @@ sp {apply*second-query-epmem-if-previous-query-is-matched
               ^epmem.command <cmd>
               ^io.input-link.landmarks <lnd>  
               ^io.input-link.self.pose <e>
-            #   ^io.input-link.radar.live.landmarks <radar-landmarks>  
-              )
+              ^io.input-link.landmarks.total <total-landmarks> )
 -->
 (write | Starting next epmem query based on current situation |)
    (<cmd> ^query <q> - )
    (<cmd> ^query <q2>)
-   (<q2> ^self.pose <e>
-        ^landmarks <lnd>
-   )}
+   (<q2> ^radar <radar>)
+   (<radar> ^landmarks.total <total-landmarks> )}
 
 sp {epmem*query*result*move-radar-landmark-epmem
    (state <s> ^io.input-link.self.pose <e>
@@ -261,6 +251,9 @@ sp {epmem*query*result*move-radar-landmark-epmem
    (<lnd> ^distance <landmark-distance> )
    (<lnd> ^name <landmark-name> )
    (<area-view> ^<direction-command>.type <> block)
+
+   (<epmem-retrieved-result> ^radar.landmarks.<detected-radar-landmarks> <detected-epmem-landmark>)
+   (<detected-epmem-landmark> ^name <landmark-name>)
    #  (<epmem-retrieved-result> ^radar.live.landmarks.<current-radar-landmarks> <live-landmark>)
    # (<live-landmark> ^direction-command <direction-command> )
    # (<live-landmark> ^distance <landmark-distance> )
@@ -277,7 +270,7 @@ sp {epmem*query*result*move-radar-landmark-epmem
 
 ## Selection rules
 
-sp {select*radar-off*move
+sp {select*radar-off-on
    (state <s> ^operator <o1> +
               ^operator <o2> +)
    (<o1> ^name << radar-off-epmem radar-off radar-on >>)
