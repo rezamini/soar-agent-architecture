@@ -284,7 +284,7 @@ sp {select*move-radar-landmark-epmem
    (<o1> ^name move-radar-landmark-epmem )
    (<o2> ^name move-forward )
 -->
-   (<s> ^operator <o1> > <o2>)}
+   (<s> ^operator <o1> > )}
 
 sp {select*move-radar-landmark-epmem*shortest-distance
     (state <s> ^operator <o1> + 
