@@ -141,7 +141,7 @@ sp {propose*radar-on
          -^battery <= 0
          -^live.landmarks <live-landmarks>)
 -->
-   (<s> ^operator <o> + >)
+   (<s> ^operator <o> + =)
    (<o> ^name radar-on
         ^actions.radar.toggleRadar on )}
 
@@ -171,7 +171,7 @@ sp {propose*radar-off-when-epmem-exists
    (<current-landmark> ^name <current-landmark-name>)
    (<detected-epmem-landmark> ^name <current-landmark-name>)
 -->
-   (<s> ^operator <o> + >)
+   (<s> ^operator <o> + =)
    (<o> ^name radar-off-epmem
         ^actions.radar.toggleRadar off )}
 
@@ -247,7 +247,7 @@ sp {epmem*query*result*move-radar-landmark-epmem
    (<epmem-result> ^success <success>
             ^retrieved <epmem-retrieved-result>)
    (<area-view> ^<current-direction>.type <> block )
-   (<lnd> ^relative-direction-command <direction-command> )
+   (<lnd> ^direction-command <direction-command> )
    (<lnd> ^distance <landmark-distance> )
    (<lnd> ^name <landmark-name> )
    (<area-view> ^<direction-command>.type <> block)
@@ -284,7 +284,7 @@ sp {select*move-radar-landmark-epmem
    (<o1> ^name move-radar-landmark-epmem )
    (<o2> ^name move-forward )
 -->
-   (<s> ^operator <o1> > )}
+   (<s> ^operator <o1> > <o2>)}
 
 sp {select*move-radar-landmark-epmem*shortest-distance
     (state <s> ^operator <o1> + 
