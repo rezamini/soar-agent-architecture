@@ -23,6 +23,10 @@ public class MemoryResponder extends MemoryListener {
         public MemoryResponder(Robot robot, RobotAgent robotAgent) {
                 super(robot, robotAgent);
                 areaResponder = new AreaResponder(robot, robotAgent);
+
+                robotAgent.getEvents().addListener(AreaResponder.class, event -> {
+                        areaResponder.updateAreaMemory();
+                });
         }
 
         @Override
@@ -61,8 +65,8 @@ public class MemoryResponder extends MemoryListener {
                                                         MemoryEnum.YAW.getName()),
                                         Math.toDegrees(robot.getYaw()));
 
-                        areaResponder.updateAreaMemory();
-                        // events.fireEvent(areaResponder);
+                        // areaResponder.updateAreaMemory();
+                        robotAgent.getEvents().fireEvent(areaResponder);
 
                         // memory radar has to be called before memory landmarks.
                         updateMemoryRadar();

@@ -1,15 +1,11 @@
 package com.soar.agent.architecture.robot;
 
-import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.world.World;
 
-import bibliothek.extension.gui.dock.preference.preferences.choice.DefaultChoice.Entry;
-
 import java.awt.geom.*;
 import java.text.DecimalFormat;
-import java.util.Map;
 
 public class Robot {
     public final double widthMultiplier = 4.0;
@@ -25,7 +21,6 @@ public class Robot {
     private double speed;
     private double turnRate;
     // public final double radius = shape.getWidth() * shape.getHeight() +
-    // shapeStartingPoint;
     public final double shapeArea = shapeWidth * shapeHeight;
     public Radar[] ranges;
     private Path2D shapeRadar = new Path2D.Double();
@@ -83,13 +78,6 @@ public class Robot {
 
     public void updateAndMove(double dt) {
         yaw += dt * turnRate;
-        // yaw += dt;
-        // System.out.println("--------------------------");
-        // System.out.println("X: "+shape.getCenterX());
-        // System.out.println("Y: "+shape.getCenterY());
-        // System.out.println("dt: "+dt);
-        // System.out.println("turnRate: "+turnRate);
-        // System.out.println("yaw: "+yaw);
 
         while (yaw < 0.0)
             yaw += 2.0 * Math.PI;
@@ -109,12 +97,7 @@ public class Robot {
 
         if (!world.willCollide(this, newX, newY, dimensions)) {
             move(newX, newY);
-            // System.out.println("dx: " + dx);
-            // System.out.println("dy: " + dy);
-            // System.out.println("newY: " + newY);
         }
-
-        // calcRadar();
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
