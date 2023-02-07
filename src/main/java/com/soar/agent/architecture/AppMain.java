@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import com.soar.agent.architecture.events.MoveResponder;
 import com.soar.agent.architecture.graph.NodeGraphUI;
+import com.soar.agent.architecture.graph.ShortestPathGraph;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 import com.soar.agent.architecture.world.PanelUI;
@@ -21,6 +22,7 @@ public class AppMain {
     private MoveResponder moveResponder = new MoveResponder();
     private static PanelUI panelUI;
     private NodeGraphUI graph;
+    private ShortestPathGraph graph2;
 
     public static void main(String[] args) throws IOException {
         // try {
@@ -119,6 +121,17 @@ public class AppMain {
             // only get one instance from nodeGraphui. Singleton pattern using getInstance
             // method.
             graph = NodeGraphUI.getInstance(agent.getThreadedAgent());
+        }
+    }
+
+    public void startGraph2() throws IOException {
+        if (agents != null && agents.size() > 0) {
+            RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
+
+            // only get one instance from nodeGraphui. Singleton pattern using getInstance
+            // method.
+            
+            graph2 = new ShortestPathGraph(agent.getThreadedAgent());
         }
     }
 
