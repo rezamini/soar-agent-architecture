@@ -20,6 +20,13 @@ import com.soar.agent.architecture.world.World;
 
 public class MapLoader {
     private final double CELL_SIZE = 2.0;
+
+    /*In this map matrix the values are as follows:
+     * Empty spaces are represented as 0
+     * Obstacles are represented as 1
+     * Landmarks are represented as 2
+     * Robot/Agent is represented as 3
+     */
     public int[][] mapMatrix;
 
     public static class Result {
@@ -52,9 +59,6 @@ public class MapLoader {
                 maxX = lines[i].length();
             }
         }
-
-        // System.out.println(lines.length);
-        // System.out.println(maxX);
         mapMatrix = new int[lines.length][maxX];
 
         final World world = new World();
@@ -63,9 +67,6 @@ public class MapLoader {
         readObstacles(world, lines);
         readLandmarks(world, lines);
         readRobots(world, lines);
-
-        // System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        // System.out.println(Arrays.deepToString(mapMatrix));
 
         return new Result(world);
     }
