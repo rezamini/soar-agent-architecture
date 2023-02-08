@@ -27,7 +27,7 @@ public class MapLoader {
      * Landmarks are represented as 2
      * Robot/Agent is represented as 3
      */
-    public int[][] mapMatrix;
+    private int[][] mapMatrix;
 
     public static class Result {
         public final World world;
@@ -67,7 +67,9 @@ public class MapLoader {
         readObstacles(world, lines);
         readLandmarks(world, lines);
         readRobots(world, lines);
-
+        
+        world.setMapMatrix(mapMatrix);
+        
         return new Result(world);
     }
 
@@ -169,9 +171,5 @@ public class MapLoader {
         final char newLine[] = Arrays.copyOf(line.toCharArray(), newLength);
         Arrays.fill(newLine, line.length(), newLine.length, ' ');
         return new String(newLine);
-    }
-
-    public int[][] getMapMatrix() {
-        return mapMatrix;
     }
 }

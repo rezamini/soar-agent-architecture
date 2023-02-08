@@ -59,7 +59,7 @@ public class ShortestPathGraph extends JPanel {
     private Map<String, JCheckBox> checboxMap = new HashMap<String, JCheckBox>();
     private List<Wme> inputList = new ArrayList<Wme>();
     private Set<String> uncheckNodeNames = new HashSet<String>();
-    public Graph graph;
+    public Graph graph = new SingleGraph("Map Nodes/Matrix");
     public SwingViewer viewer;
     public View view;
     protected static String styleSheet = "node {" +
@@ -128,7 +128,7 @@ public class ShortestPathGraph extends JPanel {
         mainFrame = new JFrame();
         nodesToolbar = new JToolBar(GraphEnum.TOOLBAR_TITLE.getName());
 
-        graph = exampleGraph();
+        // graph = exampleGraph();
 
         graph.setAttribute("ui.stylesheet", styleSheet);
         graph.setStrict(false);
@@ -141,11 +141,11 @@ public class ShortestPathGraph extends JPanel {
 
         view = viewer.addDefaultView(false, new SwingGraphRenderer());
 
-        AStar astar = new AStar(graph);
-        // astar.setCosts(new DistanceCosts());
- 		astar.compute("A", "E");
+        // AStar astar = new AStar(graph);
+        // // astar.setCosts(new DistanceCosts());
+ 		// astar.compute("A", "E");
  
- 		System.out.println(astar.getShortestPath());
+ 		// System.out.println(astar.getShortestPath());
 
         // // Edge lengths are stored in an attribute called "length"
 		// // The length of a path is the sum of the lengths of its edges
@@ -174,31 +174,30 @@ public class ShortestPathGraph extends JPanel {
         initialise();
     }
 
-    public static Graph exampleGraph() {
-		Graph g = new SingleGraph("example");
-		g.addNode("A").setAttribute("xy", 0, 1);
-		g.addNode("B").setAttribute("xy", 1, 2);
-		g.addNode("C").setAttribute("xy", 1, 1);
-		g.addNode("D").setAttribute("xy", 1, 0);
-		g.addNode("E").setAttribute("xy", 2, 2);
-		g.addNode("F").setAttribute("xy", 2, 1);
-		g.addEdge("AB", "A", "B").setAttribute("weight", 100);
-		g.addEdge("AC", "A", "C").setAttribute("weight", 0.5);
-		g.addEdge("AD", "A", "D").setAttribute("weight", 0.5);
-		g.addEdge("BC", "B", "C").setAttribute("weight", 0.5);
-		g.addEdge("CD", "C", "D").setAttribute("weight", 0.5);
-		g.addEdge("BE", "B", "E").setAttribute("weight", 100);
-		g.addEdge("CF", "C", "F").setAttribute("weight", 0.5);
-		g.addEdge("DF", "D", "F").setAttribute("weight", 0.5);
-		g.addEdge("EF", "E", "F").setAttribute("weight", 0.5);
+    public Graph exampleGraph() {
+		graph.addNode("A").setAttribute("xy", 0, 1);
+		graph.addNode("B").setAttribute("xy", 1, 2);
+		graph.addNode("C").setAttribute("xy", 1, 1);
+		graph.addNode("D").setAttribute("xy", 1, 0);
+		graph.addNode("E").setAttribute("xy", 2, 2);
+		graph.addNode("F").setAttribute("xy", 2, 1);
+		graph.addEdge("AB", "A", "B").setAttribute("weight", 100);
+		graph.addEdge("AC", "A", "C").setAttribute("weight", 0.5);
+		graph.addEdge("AD", "A", "D").setAttribute("weight", 0.5);
+		graph.addEdge("BC", "B", "C").setAttribute("weight", 0.5);
+		graph.addEdge("CD", "C", "D").setAttribute("weight", 0.5);
+		graph.addEdge("BE", "B", "E").setAttribute("weight", 100);
+		graph.addEdge("CF", "C", "F").setAttribute("weight", 0.5);
+		graph.addEdge("DF", "D", "F").setAttribute("weight", 0.5);
+		graph.addEdge("EF", "E", "F").setAttribute("weight", 0.5);
 
         // Node obstacle = g.addNode("O");
         // g.addEdge("AO", "A", "O", true).setAttribute("weight", 100.0);
 
-		g.nodes().forEach(n -> n.setAttribute("label", n.getId()));
-		g.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("weight")));
+		graph.nodes().forEach(n -> n.setAttribute("label", n.getId()));
+		graph.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("weight")));
 		
-		return g;
+		return graph;
 	}
 
     private void initialise() {

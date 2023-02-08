@@ -1,6 +1,7 @@
 package com.soar.agent.architecture;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -130,7 +131,6 @@ public class AppMain {
 
             // only get one instance from nodeGraphui. Singleton pattern using getInstance
             // method.
-            
             graph2 = new ShortestPathGraph(agent.getThreadedAgent());
         }
     }

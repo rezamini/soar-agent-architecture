@@ -26,6 +26,7 @@ public class World {
     private final List<Robot> robots = new ArrayList<Robot>();
     private final List<Shape> obstacles = new ArrayList<Shape>();
     private final List<Landmark> landmarks = new ArrayList<Landmark>();
+    public int[][] mapMatrix;
 
     // the boolean value is to indicate if landmark is reached by the agent
     private final Map<Landmark, Boolean> landmarkMap = new HashMap<Landmark, Boolean>();
@@ -87,6 +88,14 @@ public class World {
 
     public Map<Landmark, Boolean> getDetectedRadarLandmarks() {
         return detectedRadarLandmarks;
+    }
+
+    public int[][] getMapMatrix() {
+        return mapMatrix;
+    }
+
+    public void setMapMatrix(int[][] mapMatrix) {
+        this.mapMatrix = mapMatrix;
     }
 
     public void updateAndMoveAgents(double dt) {
