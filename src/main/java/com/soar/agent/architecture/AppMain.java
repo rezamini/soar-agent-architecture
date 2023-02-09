@@ -131,7 +131,8 @@ public class AppMain {
 
             // only get one instance from nodeGraphui. Singleton pattern using getInstance
             // method.
-            graph2 = new ShortestPathGraph(agent.getThreadedAgent());
+            graph2 = new ShortestPathGraph(agent.getThreadedAgent(), PanelUI.getWorld().getMapMatrix());
+            // graph2.addMapNodes();
         }
     }
 

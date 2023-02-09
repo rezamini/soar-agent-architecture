@@ -104,10 +104,9 @@ public class ShortestPathGraph extends JPanel {
             "text-size: 11;	" +
             "}";
 
-            static String my_graph = 
-            "DGS004\n" 
-            + "my 0 0\n" 
-            + "an A xy: 0,1\n" 
+    static String my_graph = "DGS004\n"
+            + "my 0 0\n"
+            + "an A xy: 0,1\n"
             + "an B xy: 1,2\n"
             + "an C xy: 2,2\n"
             + "an D xy: 1,0\n"
@@ -118,10 +117,9 @@ public class ShortestPathGraph extends JPanel {
             + "ae BC B C weight:1 \n"
             + "ae CF C F weight:2 \n"
             + "ae DE D E weight:1 \n"
-            + "ae EF E F weight:1 \n"
-            ;
+            + "ae EF E F weight:1 \n";
 
-    public ShortestPathGraph(ThreadedAgent agent) throws IOException {
+    public ShortestPathGraph(ThreadedAgent agent, int[][] mapMatrix) throws IOException {
         super(new BorderLayout());
         this.agent = agent;
 
@@ -129,6 +127,7 @@ public class ShortestPathGraph extends JPanel {
         nodesToolbar = new JToolBar(GraphEnum.TOOLBAR_TITLE.getName());
 
         // graph = exampleGraph();
+        graph = addMapNodes(mapMatrix);
 
         graph.setAttribute("ui.stylesheet", styleSheet);
         graph.setStrict(false);
@@ -143,62 +142,93 @@ public class ShortestPathGraph extends JPanel {
 
         // AStar astar = new AStar(graph);
         // // astar.setCosts(new DistanceCosts());
- 		// astar.compute("A", "E");
- 
- 		// System.out.println(astar.getShortestPath());
+        // astar.compute("A", "E");
+
+        // System.out.println(astar.getShortestPath());
 
         // // Edge lengths are stored in an attribute called "length"
-		// // The length of a path is the sum of the lengths of its edges
-		// Dijkstra dijkstra = new Dijkstra(Dijkstra.Element.EDGE, null, "length");
+        // // The length of a path is the sum of the lengths of its edges
+        // Dijkstra dijkstra = new Dijkstra(Dijkstra.Element.EDGE, null, "length");
         // // Compute the shortest paths in g from A to all nodes
-		// dijkstra.init(graph);
-		// dijkstra.setSource(graph.getNode("A"));
-		// dijkstra.compute();
+        // dijkstra.init(graph);
+        // dijkstra.setSource(graph.getNode("A"));
+        // dijkstra.compute();
 
         // // Print the shortest path from A to B
-		// System.out.println(dijkstra.getPath(graph.getNode("E")));
+        // System.out.println(dijkstra.getPath(graph.getNode("E")));
 
-        // 		// Print the lengths of all the shortest paths
-		// for (Node node : graph)
+        // // Print the lengths of all the shortest paths
+        // for (Node node : graph)
         // System.out.printf("%s->%s:%10.2f%n", dijkstra.getSource(), node,
-        //         dijkstra.getPathLength(node));
+        // dijkstra.getPathLength(node));
 
-    // // Color in blue all the nodes on the shortest path form A to B
-    // for (Node node : dijkstra.getPathNodes(graph.getNode("B")))
-    //     node.setAttribute("ui.style", "fill-color: blue;");
+        // // Color in blue all the nodes on the shortest path form A to B
+        // for (Node node : dijkstra.getPathNodes(graph.getNode("B")))
+        // node.setAttribute("ui.style", "fill-color: blue;");
 
-    // // Color in red all the edges in the shortest path tree
-    // for (Edge edge : dijkstra.getTreeEdges())
-    //     edge.setAttribute("ui.style", "fill-color: red;");
+        // // Color in red all the edges in the shortest path tree
+        // for (Edge edge : dijkstra.getTreeEdges())
+        // edge.setAttribute("ui.style", "fill-color: red;");
 
         initialise();
     }
 
+    /* add map node from map matrix */
+    public Graph addMapNodes(int[][] mapMatrix) {
+        for (int i = 0; i < mapMatrix.length; i++) {
+            for (int j = 0; j < mapMatrix[0].length; j++) {
+                Node node = graph.addNode(i + "-" + j);
+                node.setAttribute("x", i);
+                node.setAttribute("y", j);
+
+                if (mapMatrix[i][j] == 1) {
+                    node.setAttribute("ui.style", "fill-color: grey;");
+                } 
+                
+                // else if (mapMatrix[i][j] == 2) {
+                //     node.setAttribute("ui.style", "fill-color: yellow;");
+                // }else if (mapMatrix[i][j] == 3) {
+                //     node.setAttribute("ui.style", "fill-color: blue;");
+                // }
+
+                if (i > 0) {
+                    graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, true);
+                }
+
+                if (j > 0) {
+                    graph.addEdge(i + "-" + j + "-" + i + "-" + (j - 1), i + "-" + j, i + "-" + (j - 1), true);
+                }
+            }
+        }
+
+        return graph;
+    }
+
     public Graph exampleGraph() {
-		graph.addNode("A").setAttribute("xy", 0, 1);
-		graph.addNode("B").setAttribute("xy", 1, 2);
-		graph.addNode("C").setAttribute("xy", 1, 1);
-		graph.addNode("D").setAttribute("xy", 1, 0);
-		graph.addNode("E").setAttribute("xy", 2, 2);
-		graph.addNode("F").setAttribute("xy", 2, 1);
-		graph.addEdge("AB", "A", "B").setAttribute("weight", 100);
-		graph.addEdge("AC", "A", "C").setAttribute("weight", 0.5);
-		graph.addEdge("AD", "A", "D").setAttribute("weight", 0.5);
-		graph.addEdge("BC", "B", "C").setAttribute("weight", 0.5);
-		graph.addEdge("CD", "C", "D").setAttribute("weight", 0.5);
-		graph.addEdge("BE", "B", "E").setAttribute("weight", 100);
-		graph.addEdge("CF", "C", "F").setAttribute("weight", 0.5);
-		graph.addEdge("DF", "D", "F").setAttribute("weight", 0.5);
-		graph.addEdge("EF", "E", "F").setAttribute("weight", 0.5);
+        graph.addNode("A").setAttribute("xy", 0, 1);
+        graph.addNode("B").setAttribute("xy", 1, 2);
+        graph.addNode("C").setAttribute("xy", 1, 1);
+        graph.addNode("D").setAttribute("xy", 1, 0);
+        graph.addNode("E").setAttribute("xy", 2, 2);
+        graph.addNode("F").setAttribute("xy", 2, 1);
+        // graph.addEdge("AB", "A", "B").setAttribute("weight", 100);
+        // graph.addEdge("AC", "A", "C").setAttribute("weight", 0.5);
+        // graph.addEdge("AD", "A", "D").setAttribute("weight", 0.5);
+        // graph.addEdge("BC", "B", "C").setAttribute("weight", 0.5);
+        // graph.addEdge("CD", "C", "D").setAttribute("weight", 0.5);
+        // graph.addEdge("BE", "B", "E").setAttribute("weight", 100);
+        // graph.addEdge("CF", "C", "F").setAttribute("weight", 0.5);
+        // graph.addEdge("DF", "D", "F").setAttribute("weight", 0.5);
+        // graph.addEdge("EF", "E", "F").setAttribute("weight", 0.5);
 
         // Node obstacle = g.addNode("O");
         // g.addEdge("AO", "A", "O", true).setAttribute("weight", 100.0);
 
-		graph.nodes().forEach(n -> n.setAttribute("label", n.getId()));
-		graph.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("weight")));
-		
-		return graph;
-	}
+        graph.nodes().forEach(n -> n.setAttribute("label", n.getId()));
+        graph.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("weight")));
+
+        return graph;
+    }
 
     private void initialise() {
         removeAll();
