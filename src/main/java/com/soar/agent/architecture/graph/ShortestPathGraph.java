@@ -136,7 +136,7 @@ public class ShortestPathGraph extends JPanel {
         graph.setAttribute("ui.antialias");
 
         viewer = new SwingViewer(graph, SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-        viewer.enableAutoLayout();
+        // viewer.enableAutoLayout();
 
         view = viewer.addDefaultView(false, new SwingGraphRenderer());
 
@@ -178,25 +178,23 @@ public class ShortestPathGraph extends JPanel {
         for (int i = 0; i < mapMatrix.length; i++) {
             for (int j = 0; j < mapMatrix[0].length; j++) {
                 Node node = graph.addNode(i + "-" + j);
-                node.setAttribute("x", i);
-                node.setAttribute("y", j);
+                node.setAttribute("y", i);
+                node.setAttribute("x", j);
 
                 if (mapMatrix[i][j] == 1) {
-                    node.setAttribute("ui.style", "fill-color: grey;");
-                } 
-                
-                // else if (mapMatrix[i][j] == 2) {
-                //     node.setAttribute("ui.style", "fill-color: yellow;");
-                // }else if (mapMatrix[i][j] == 3) {
-                //     node.setAttribute("ui.style", "fill-color: blue;");
-                // }
+                    node.setAttribute("ui.style", "fill-color: #707070;"); // obstacles
+                } else if (mapMatrix[i][j] == 2) {
+                    node.setAttribute("ui.style", "fill-color: #BDB76B;"); //landmarks
+                }else if (mapMatrix[i][j] == 3) {
+                    node.setAttribute("ui.style", "fill-color: yellow;"); //agent
+                }
 
                 if (i > 0) {
-                    graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, true);
+                    graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, false);
                 }
 
                 if (j > 0) {
-                    graph.addEdge(i + "-" + j + "-" + i + "-" + (j - 1), i + "-" + j, i + "-" + (j - 1), true);
+                    graph.addEdge(i + "-" + j + "-" + i + "-" + (j - 1), i + "-" + j, i + "-" + (j - 1), false);
                 }
             }
         }
