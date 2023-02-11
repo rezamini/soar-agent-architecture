@@ -49,6 +49,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Color;
 
 public class ShortestPathGraph extends JPanel {
     private static ShortestPathGraph nodeGraphInstance;
@@ -63,8 +64,8 @@ public class ShortestPathGraph extends JPanel {
     public SwingViewer viewer;
     public View view;
     protected static String styleSheet = "node {" +
-            "fill-color: green, blue;" +
-            "size: 45px;" +
+            "fill-color: #DCDCDC;" +
+            "size: 40px;" +
             "text-size: 20;	" +
             "fill-mode: dyn-plain; " +
             "text-mode: normal; " +
@@ -102,7 +103,8 @@ public class ShortestPathGraph extends JPanel {
             "arrow-shape: arrow;" +
             "size: 2; " +
             "text-size: 11;	" +
-            "}";
+            "}" + 
+            "graph { fill-color: #EFEFEF; canvas-color: blue; }";
 
     static String my_graph = "DGS004\n"
             + "my 0 0\n"
@@ -184,7 +186,7 @@ public class ShortestPathGraph extends JPanel {
                 if (mapMatrix[i][j] == 1) {
                     node.setAttribute("ui.style", "fill-color: #707070;"); // obstacles
                 } else if (mapMatrix[i][j] == 2) {
-                    node.setAttribute("ui.style", "fill-color: #BDB76B;"); //landmarks
+                    node.setAttribute("ui.style", "fill-color: #CCCC00;"); //landmarks
                 }else if (mapMatrix[i][j] == 3) {
                     node.setAttribute("ui.style", "fill-color: yellow;"); //agent
                 }
