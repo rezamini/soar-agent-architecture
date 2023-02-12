@@ -175,6 +175,21 @@ public class ShortestPathGraph extends JPanel {
         initialise();
     }
 
+    public static ShortestPathGraph getInstance(ThreadedAgent agent, int[][] mapMatrix) throws IOException {
+        if (nodeGraphInstance == null) {
+            nodeGraphInstance = new ShortestPathGraph(agent, mapMatrix);
+
+        } else {
+            nodeGraphInstance.agent = agent;
+            // nodeGraphInstance.nodeGraph = new NodeGraph();
+            nodeGraphInstance.initialise();
+
+            nodeGraphInstance.mainFrame.setVisible(true);
+        }
+
+        return nodeGraphInstance;
+    }
+
     /* add map node from map matrix */
     public Graph addMapNodes(int[][] mapMatrix) {
         for (int i = 0; i < mapMatrix.length; i++) {
@@ -262,6 +277,10 @@ public class ShortestPathGraph extends JPanel {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void setFrameVisibility(boolean showFrame) {
+        nodeGraphInstance.mainFrame.setVisible(showFrame);
     }
 
 }

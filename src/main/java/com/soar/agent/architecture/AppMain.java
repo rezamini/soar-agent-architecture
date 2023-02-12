@@ -1,7 +1,6 @@
 package com.soar.agent.architecture;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,7 +22,7 @@ public class AppMain {
     private MoveResponder moveResponder = new MoveResponder();
     private static PanelUI panelUI;
     private NodeGraphUI graph;
-    private ShortestPathGraph graph2;
+    private ShortestPathGraph shortPathGraph;
 
     public static void main(String[] args) throws IOException {
         // try {
@@ -131,8 +130,7 @@ public class AppMain {
 
             // only get one instance from nodeGraphui. Singleton pattern using getInstance
             // method.
-            graph2 = new ShortestPathGraph(agent.getThreadedAgent(), PanelUI.getWorld().getMapMatrix());
-            // graph2.addMapNodes();
+            shortPathGraph = ShortestPathGraph.getInstance(agent.getThreadedAgent(), PanelUI.getWorld().getMapMatrix());
         }
     }
 
