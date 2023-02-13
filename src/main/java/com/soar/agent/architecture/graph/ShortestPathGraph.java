@@ -2,6 +2,7 @@ package com.soar.agent.architecture.graph;
 
 import java.io.IOException;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.swing.SwingGraphRenderer;
@@ -49,12 +50,98 @@ public class ShortestPathGraph {
                 }
 
                 if (i > 0) {
-                    graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, false);
+                    String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + j;
+                    Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + j, i + "-" + j, true);
+
+                    if (mapMatrix[i-1][j] == 1 || mapMatrix[i][j] == 1) {
+                        edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("weight", 100);
+                    }else{
+                        edge.setAttribute("ui.style", "fill-color: green;"); 
+                        edge.setAttribute("weight", 0.5); 
+                    }
                 }
 
                 if (j > 0) {
-                    graph.addEdge(i + "-" + j + "-" + i + "-" + (j - 1), i + "-" + j, i + "-" + (j - 1), false);
+                    String edgeId = i + "-" + j + "<-" + i + "-" + (j - 1);
+                    Edge edge = graph.addEdge(edgeId, i + "-" + (j - 1), i + "-" + j, true);
+
+                    if (mapMatrix[i][j-1] == 1 || mapMatrix[i][j] == 1) {
+                        edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("weight", 100);
+                    }else{
+                        edge.setAttribute("ui.style", "fill-color: green;"); 
+                        edge.setAttribute("weight", 0.5); 
+                    }
                 }
+
+                // if (i > 0) {
+                //     Edge edge = graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, true);
+
+
+                //     if (mapMatrix[i][j] == 1) {
+                //         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                //     }
+                //     // edge.setAttribute("ui.style", "fill-color: green;");
+                //     // edge.setAttribute("weight", 2);
+                // }
+
+                // if (j > 0) {
+                //     Edge edge = graph.addEdge(i + "-" + j + "-" + i + "-" + (j - 1), i + "-" + j, i + "-" + (j - 1), true);
+
+                //     if (mapMatrix[i][j] == 1) {
+                //         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                //     }
+
+                //     // edge.setAttribute("ui.style", "fill-color: blue;");
+                //     // edge.setAttribute("weight", 3);
+                // }
+
+                // if (i < mapMatrix.length - 1) {
+                //     Edge edge = graph.addEdge(i + "-" + j + "-" + (i + 1) + "-" + j, i + "-" + j, (i + 1) + "-" + j, true);
+                //     if (mapMatrix[i][j] == 1) {
+                //         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                //     }
+
+                //     // edge.setAttribute("ui.style", "fill-color: yellow;");
+                //     // edge.setAttribute("weight", 4);
+                // }
+
+                // if (j < mapMatrix[0].length - 1) {
+                //     Edge edge = graph.addEdge(i + "-" + j + "-" + i + "-" + (j + 1), i + "-" + j, i + "-" + (j + 1), true);
+                //     if (mapMatrix[i][j] == 1) {
+                //         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                //     }
+
+                //     // edge.setAttribute("ui.style", "fill-color: pink;");
+                //     // edge.setAttribute("weight", 5);
+                // }
+
+                // if (i > 0) {
+                //     Edge edgeI = graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, false);
+                //     if (mapMatrix[i][j] == 1) {
+                //         graph.getad
+                //         edgeI.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                //         edgeI.setAttribute("weight", 100);
+                //     } 
+                    
+                //     // else if (mapMatrix[i][j] == 2) {
+                //     //     graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, false); //landmarks
+                //     // }else if (mapMatrix[i][j] == 3) {
+                //     //     graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, false); //agent
+                //     // }
+
+                    
+                // }
+
+                // if (j > 0) {
+                //     Edge edgeJ = graph.addEdge(i + "-" + j + "-" + i + "-" + (j - 1), i + "-" + j, i + "-" + (j - 1), false);
+
+                //     if (mapMatrix[i][j] == 1) {
+                //         edgeJ.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                //         edgeJ.setAttribute("weight", 100);
+                //     } 
+                // }
             }
         }
 
