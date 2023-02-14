@@ -37,18 +37,16 @@ public class ShortestPathGraph {
             landmarkNodes.forEach(landmark -> {
                 astar.compute(agentNode.getId(), landmark.getId());
                 Path path = astar.getShortestPath();
-                colorPath(path.getNodePath());
+                colorPath(path.getNodePath(), (Color) landmark.getAttribute("ui.color"));
             });
         }
     }
 
-    private void colorPath(List<Node> nodes){
-        Color color = getRandomNodeColor();
+    private void colorPath(List<Node> nodes, Color color){
         for(Node node: nodes){
 
-            if(landmarkNodes.contains(node) || node.getId().equalsIgnoreCase(agentNode.getId())) continue; //its the landmark or agent node, dont color it
-            // System.out.println(getRandomNodeColor());
-            // node.setAttribute("ui.style", "fill-color: "+ "rgb(255, 255, 255)" + ";");
+            if(node.getId().equalsIgnoreCase(agentNode.getId())) continue; //its agent node, dont color it
+
             node.setAttribute("ui.color", color);
         }
     }
@@ -77,7 +75,7 @@ public class ShortestPathGraph {
                     node.setAttribute("ui.style", "fill-color: #707070;"); // obstacles
 
                 } else if (mapMatrix[i][j] == 2) {
-                    node.setAttribute("ui.style", "fill-color: #CCCC00;"); //landmarks
+                    node.setAttribute("ui.color", getRandomNodeColor()); //landmarks
                     landmarkNodes.add(node);
 
                 }else if (mapMatrix[i][j] == 3) {
@@ -90,10 +88,10 @@ public class ShortestPathGraph {
                     Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + j, i + "-" + j, false);
 
                     if (mapMatrix[i-1][j] == 1 || mapMatrix[i][j] == 1) {
-                        edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
                     }else{
-                        edge.setAttribute("ui.style", "fill-color: green;"); 
+                        // edge.setAttribute("ui.style", "fill-color: green;"); 
                         edge.setAttribute("weight", 0.5); 
                     }
                 }
@@ -103,10 +101,10 @@ public class ShortestPathGraph {
                     Edge edge = graph.addEdge(edgeId, i + "-" + (j - 1), i + "-" + j, false);
 
                     if (mapMatrix[i][j-1] == 1 || mapMatrix[i][j] == 1) {
-                        edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
                     }else{
-                        edge.setAttribute("ui.style", "fill-color: green;"); 
+                        // edge.setAttribute("ui.style", "fill-color: green;"); 
                         edge.setAttribute("weight", 0.5); 
                     }
                 }
