@@ -1,7 +1,11 @@
 package com.soar.agent.architecture.graph;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
+import org.graphstream.algorithm.AStar;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -9,16 +13,44 @@ import org.graphstream.ui.swing.SwingGraphRenderer;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.View;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.Path;
+import java.awt.Color;
 
 public class ShortestPathGraph {
     public Graph graph;
     public SwingViewer viewer;
     public View view;
+    private Node agentNode;
+    private List<Node> landmarkNodes = new ArrayList<Node>();
     
     public ShortestPathGraph(int[][] mapMatrix) throws IOException {
         this.graph = new SingleGraph("Map Nodes/Matrix");
         startGraph();
         addMapNodes(mapMatrix);
+        calculateShortPath();
+    }
+
+    private void calculateShortPath() {
+        if(landmarkNodes != null && landmarkNodes.size() > 0){
+            AStar astar = new AStar(graph);
+
+            landmarkNodes.forEach(landmark -> {
+                astar.compute(agentNode.getId(), landmark.getId());
+                Path path = astar.getShortestPath();
+                colorPath(path.getNodePath());
+            });
+        }
+    }
+
+    private void colorPath(List<Node> nodes){
+        Color color = getRandomNodeColor();
+        for(Node node: nodes){
+
+            if(landmarkNodes.contains(node) || node.getId().equalsIgnoreCase(agentNode.getId())) continue; //its the landmark or agent node, dont color it
+            // System.out.println(getRandomNodeColor());
+            // node.setAttribute("ui.style", "fill-color: "+ "rgb(255, 255, 255)" + ";");
+            node.setAttribute("ui.color", color);
+        }
     }
 
     public void startGraph(){
@@ -43,10 +75,14 @@ public class ShortestPathGraph {
 
                 if (mapMatrix[i][j] == 1) {
                     node.setAttribute("ui.style", "fill-color: #707070;"); // obstacles
+
                 } else if (mapMatrix[i][j] == 2) {
                     node.setAttribute("ui.style", "fill-color: #CCCC00;"); //landmarks
+                    landmarkNodes.add(node);
+
                 }else if (mapMatrix[i][j] == 3) {
                     node.setAttribute("ui.style", "fill-color: yellow;"); //agent
+                    agentNode = node;
                 }
 
                 if (i > 0) {
@@ -172,6 +208,28 @@ public class ShortestPathGraph {
         graph.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("weight")));
 
         return graph;
+    }
+
+    public Color getRandomNodeColor() {
+        Random random = new Random();
+
+        // float hue = random.nextFloat();
+        // // Saturation between 0.1 and 0.3
+        // float saturation = (random.nextInt(2000) + 1000) / 10000f;
+        // float luminance = 0.9f;
+        // Color color = Color.getHSBColor(hue, saturation, luminance);
+
+        int R = (int) (Math.random() * 256);
+        int G = (int) (Math.random() * 256);
+        int B = (int) (Math.random() * 256);
+        Color color = new Color(R, G, B); // random color, but can be bright or dull
+
+        final float hue = random.nextFloat();
+        final float saturation = 0.9f;// 1.0 for brilliant, 0.0 for dull
+        final float luminance = 1.0f; // 1.0 for brighter, 0.0 for black
+        color = Color.getHSBColor(hue, saturation, luminance);
+
+        return color;
     }
 
     protected static String styleSheet = "node {" +
