@@ -51,7 +51,7 @@ public class ShortestPathGraph {
 
                 if (i > 0) {
                     String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + j;
-                    Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + j, i + "-" + j, true);
+                    Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + j, i + "-" + j, false);
 
                     if (mapMatrix[i-1][j] == 1 || mapMatrix[i][j] == 1) {
                         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
@@ -64,7 +64,7 @@ public class ShortestPathGraph {
 
                 if (j > 0) {
                     String edgeId = i + "-" + j + "<-" + i + "-" + (j - 1);
-                    Edge edge = graph.addEdge(edgeId, i + "-" + (j - 1), i + "-" + j, true);
+                    Edge edge = graph.addEdge(edgeId, i + "-" + (j - 1), i + "-" + j, false);
 
                     if (mapMatrix[i][j-1] == 1 || mapMatrix[i][j] == 1) {
                         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
