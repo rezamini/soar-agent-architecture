@@ -166,7 +166,7 @@ public class PanelUI extends JPanel {
         bar.add(graphButton);
 
         // TEST SHORT PATH
-        JToggleButton graphButton2 = createButton("graph", "graph-clicked", true);
+        JToggleButton graphButton2 = createButton("path", "path-clicked", true);
         graphButton2.addActionListener((event) -> {
             try {
                 appMain.startGraph2();
@@ -175,7 +175,7 @@ public class PanelUI extends JPanel {
                 e1.printStackTrace();
             }
         });
-        graphButton2.setToolTipText("Open Memory Visualisation");
+        graphButton2.setToolTipText("Open Map Matrix Visualisation");
         bar.add(graphButton2);
 
         // push the rest of the icons/button to the end of the toolbar; right of toolbar
