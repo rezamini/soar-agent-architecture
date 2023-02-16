@@ -141,6 +141,7 @@ public class ShortestPathGraphUI extends JPanel {
         repaint();
 
         initGraphUI();
+        initZoomSlider();
     }
 
     private void initGraphUI() {
@@ -167,6 +168,33 @@ public class ShortestPathGraphUI extends JPanel {
                 e.printStackTrace();
             }
         });
+    }
+
+    private void initZoomSlider() {
+        JPanel containerPanel = new JPanel();
+        containerPanel.setOpaque(true);
+        containerPanel.setBackground(Color.WHITE);
+
+        zoomControlPanel = new JPanel(new BorderLayout());
+        zoomControlPanel.setOpaque(true);
+        zoomControlPanel.setBackground(Color.WHITE);
+
+        JButton zoomIn = new JButton("Find Shortest Path(s)");
+        // zoomIn.setIcon(new ImageIcon(NodeGraphUI.class.getResource("/images/graph/zoom-in.png")));
+
+        // zoomIn.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         nodeGraph.zoomIn();
+        //     }
+
+        // });
+
+        containerPanel.add(zoomIn);
+
+        zoomControlPanel.add(containerPanel, BorderLayout.LINE_END);
+
+        add(zoomControlPanel, BorderLayout.PAGE_END);
     }
 
     public void setFrameVisibility(boolean showFrame) {
