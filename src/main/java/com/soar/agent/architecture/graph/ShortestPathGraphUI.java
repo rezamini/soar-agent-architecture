@@ -82,7 +82,8 @@ public class ShortestPathGraphUI extends JPanel {
         // graph.setAttribute("ui.quality");
         // graph.setAttribute("ui.antialias");
 
-        // viewer = new SwingViewer(graph, SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        // viewer = new SwingViewer(graph,
+        // SwingViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         // viewer.enableAutoLayout();
 
         // view = viewer.addDefaultView(false, new SwingGraphRenderer());
@@ -180,15 +181,16 @@ public class ShortestPathGraphUI extends JPanel {
         zoomControlPanel.setBackground(Color.WHITE);
 
         JButton zoomIn = new JButton("Find Shortest Path(s)");
-        // zoomIn.setIcon(new ImageIcon(NodeGraphUI.class.getResource("/images/graph/zoom-in.png")));
+        // zoomIn.setIcon(new
+        // ImageIcon(NodeGraphUI.class.getResource("/images/graph/zoom-in.png")));
 
-        // zoomIn.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         nodeGraph.zoomIn();
-        //     }
+        zoomIn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                shortestPathGraph.calculateShortPath();
+            }
 
-        // });
+        });
 
         containerPanel.add(zoomIn);
 

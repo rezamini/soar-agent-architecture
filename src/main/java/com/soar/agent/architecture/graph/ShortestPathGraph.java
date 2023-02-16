@@ -2,6 +2,7 @@ package com.soar.agent.architecture.graph;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -27,10 +28,9 @@ public class ShortestPathGraph {
         this.graph = new SingleGraph("Map Nodes/Matrix");
         startGraph();
         addMapNodes(mapMatrix);
-        calculateShortPath();
     }
 
-    private void calculateShortPath() {
+    public void calculateShortPath() {
         if(landmarkNodes != null && landmarkNodes.size() > 0){
             AStar astar = new AStar(graph);
 
@@ -38,6 +38,7 @@ public class ShortestPathGraph {
                 astar.compute(agentNode.getId(), landmark.getId());
                 Path path = astar.getShortestPath();
                 colorPath(path.getNodePath(), (Color) landmark.getAttribute("ui.color"));
+                
             });
         }
     }
@@ -48,7 +49,11 @@ public class ShortestPathGraph {
             if(node.getId().equalsIgnoreCase(agentNode.getId())) continue; //its agent node, dont color it
 
             node.setAttribute("ui.color", color);
+            sleep();
+            
         }
+
+        
     }
 
     public void startGraph(){
@@ -229,6 +234,11 @@ public class ShortestPathGraph {
 
         return color;
     }
+
+    protected void sleep() {
+        try { graph.wait(1000); } catch (Exception e) {}
+    }
+
 
     protected static String styleSheet = "node {" +
     "fill-color: #DCDCDC;" +
