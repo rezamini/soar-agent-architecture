@@ -187,7 +187,7 @@ public class ShortestPathGraphUI extends JPanel {
         zoomIn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                shortestPathGraph.calculateShortPath();
+                shortestPathGraph.execute();
             }
 
         });

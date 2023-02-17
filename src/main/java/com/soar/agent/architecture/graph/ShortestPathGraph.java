@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.SwingWorker;
+
 import org.graphstream.algorithm.AStar;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -17,7 +19,7 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
 import java.awt.Color;
 
-public class ShortestPathGraph {
+public class ShortestPathGraph extends SwingWorker{
     public Graph graph;
     public SwingViewer viewer;
     public View view;
@@ -38,7 +40,6 @@ public class ShortestPathGraph {
                 astar.compute(agentNode.getId(), landmark.getId());
                 Path path = astar.getShortestPath();
                 colorPath(path.getNodePath(), (Color) landmark.getAttribute("ui.color"));
-                
             });
         }
     }
@@ -52,8 +53,6 @@ public class ShortestPathGraph {
             sleep();
             
         }
-
-        
     }
 
     public void startGraph(){
@@ -236,7 +235,13 @@ public class ShortestPathGraph {
     }
 
     protected void sleep() {
-        try { graph.wait(1000); } catch (Exception e) {}
+        try { Thread.sleep(1000); } catch (Exception e) {}
+    }
+
+    @Override
+    protected Object doInBackground() throws Exception {
+        calculateShortPath();
+        return null;
     }
 
 
@@ -282,5 +287,7 @@ public class ShortestPathGraph {
     "text-size: 11;	" +
     "}" + 
     "graph { fill-color: #EFEFEF; canvas-color: blue; }";
+
+
 
 }
