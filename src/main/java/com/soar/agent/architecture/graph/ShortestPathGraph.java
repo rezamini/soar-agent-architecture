@@ -2,7 +2,6 @@ package com.soar.agent.architecture.graph;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -19,7 +18,7 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
 import java.awt.Color;
 
-public class ShortestPathGraph extends SwingWorker{
+public class ShortestPathGraph extends SwingWorker {
     public Graph graph;
     public SwingViewer viewer;
     public View view;
@@ -113,113 +112,17 @@ public class ShortestPathGraph extends SwingWorker{
                     }
                 }
 
-                // if (i > 0) {
-                //     Edge edge = graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, true);
+                // graph.nodes().forEach(n -> n.setAttribute("label", n.getId()));
+                // graph.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("weight")));
 
-
-                //     if (mapMatrix[i][j] == 1) {
-                //         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
-                //     }
-                //     // edge.setAttribute("ui.style", "fill-color: green;");
-                //     // edge.setAttribute("weight", 2);
-                // }
-
-                // if (j > 0) {
-                //     Edge edge = graph.addEdge(i + "-" + j + "-" + i + "-" + (j - 1), i + "-" + j, i + "-" + (j - 1), true);
-
-                //     if (mapMatrix[i][j] == 1) {
-                //         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
-                //     }
-
-                //     // edge.setAttribute("ui.style", "fill-color: blue;");
-                //     // edge.setAttribute("weight", 3);
-                // }
-
-                // if (i < mapMatrix.length - 1) {
-                //     Edge edge = graph.addEdge(i + "-" + j + "-" + (i + 1) + "-" + j, i + "-" + j, (i + 1) + "-" + j, true);
-                //     if (mapMatrix[i][j] == 1) {
-                //         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
-                //     }
-
-                //     // edge.setAttribute("ui.style", "fill-color: yellow;");
-                //     // edge.setAttribute("weight", 4);
-                // }
-
-                // if (j < mapMatrix[0].length - 1) {
-                //     Edge edge = graph.addEdge(i + "-" + j + "-" + i + "-" + (j + 1), i + "-" + j, i + "-" + (j + 1), true);
-                //     if (mapMatrix[i][j] == 1) {
-                //         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
-                //     }
-
-                //     // edge.setAttribute("ui.style", "fill-color: pink;");
-                //     // edge.setAttribute("weight", 5);
-                // }
-
-                // if (i > 0) {
-                //     Edge edgeI = graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, false);
-                //     if (mapMatrix[i][j] == 1) {
-                //         graph.getad
-                //         edgeI.setAttribute("ui.style", "fill-color: red;"); // obstacles
-                //         edgeI.setAttribute("weight", 100);
-                //     } 
-                    
-                //     // else if (mapMatrix[i][j] == 2) {
-                //     //     graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, false); //landmarks
-                //     // }else if (mapMatrix[i][j] == 3) {
-                //     //     graph.addEdge(i + "-" + j + "-" + (i - 1) + "-" + j, i + "-" + j, (i - 1) + "-" + j, false); //agent
-                //     // }
-
-                    
-                // }
-
-                // if (j > 0) {
-                //     Edge edgeJ = graph.addEdge(i + "-" + j + "-" + i + "-" + (j - 1), i + "-" + j, i + "-" + (j - 1), false);
-
-                //     if (mapMatrix[i][j] == 1) {
-                //         edgeJ.setAttribute("ui.style", "fill-color: red;"); // obstacles
-                //         edgeJ.setAttribute("weight", 100);
-                //     } 
-                // }
             }
         }
 
         return graph;
     }
 
-    public Graph exampleGraph() {
-        graph.addNode("A").setAttribute("xy", 0, 1);
-        graph.addNode("B").setAttribute("xy", 1, 2);
-        graph.addNode("C").setAttribute("xy", 1, 1);
-        graph.addNode("D").setAttribute("xy", 1, 0);
-        graph.addNode("E").setAttribute("xy", 2, 2);
-        graph.addNode("F").setAttribute("xy", 2, 1);
-        // graph.addEdge("AB", "A", "B").setAttribute("weight", 100);
-        // graph.addEdge("AC", "A", "C").setAttribute("weight", 0.5);
-        // graph.addEdge("AD", "A", "D").setAttribute("weight", 0.5);
-        // graph.addEdge("BC", "B", "C").setAttribute("weight", 0.5);
-        // graph.addEdge("CD", "C", "D").setAttribute("weight", 0.5);
-        // graph.addEdge("BE", "B", "E").setAttribute("weight", 100);
-        // graph.addEdge("CF", "C", "F").setAttribute("weight", 0.5);
-        // graph.addEdge("DF", "D", "F").setAttribute("weight", 0.5);
-        // graph.addEdge("EF", "E", "F").setAttribute("weight", 0.5);
-
-        // Node obstacle = g.addNode("O");
-        // g.addEdge("AO", "A", "O", true).setAttribute("weight", 100.0);
-
-        graph.nodes().forEach(n -> n.setAttribute("label", n.getId()));
-        graph.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("weight")));
-
-        return graph;
-    }
-
     public Color getRandomNodeColor() {
         Random random = new Random();
-
-        // float hue = random.nextFloat();
-        // // Saturation between 0.1 and 0.3
-        // float saturation = (random.nextInt(2000) + 1000) / 10000f;
-        // float luminance = 0.9f;
-        // Color color = Color.getHSBColor(hue, saturation, luminance);
 
         int R = (int) (Math.random() * 256);
         int G = (int) (Math.random() * 256);
