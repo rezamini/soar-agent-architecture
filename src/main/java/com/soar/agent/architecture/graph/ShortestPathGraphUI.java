@@ -30,10 +30,12 @@ public class ShortestPathGraphUI extends JPanel {
     public SwingViewer viewer;
     public View view;
     public ShortestPathGraph shortestPathGraph;
+    public int[][] mapMatrix;
 
     public ShortestPathGraphUI(ThreadedAgent agent, int[][] mapMatrix) throws IOException {
         super(new BorderLayout());
         this.agent = agent;
+        this.mapMatrix = mapMatrix;
 
         mainFrame = new JFrame();
         shortestPathGraph = new ShortestPathGraph(mapMatrix);
@@ -100,19 +102,33 @@ public class ShortestPathGraphUI extends JPanel {
         startControlPanel.setOpaque(true);
         startControlPanel.setBackground(Color.WHITE);
 
-        JButton zoomIn = new JButton("Find Shortest Path(s)");
+        JButton startPathCalculation = new JButton("Find Shortest Path(s)");
+        JButton resetGraph = new JButton("Reset Graph");
         // zoomIn.setIcon(new
         // ImageIcon(NodeGraphUI.class.getResource("/images/graph/zoom-in.png")));
 
-        zoomIn.addActionListener(new ActionListener() {
+        startPathCalculation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 shortestPathGraph.execute();
             }
-
         });
 
-        containerPanel.add(zoomIn);
+        resetGraph.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    shortestPathGraph = new ShortestPathGraph(mapMatrix);
+                    initialise();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                
+            }
+        });
+
+        containerPanel.add(startPathCalculation);
+        containerPanel.add(resetGraph);
 
         startControlPanel.add(containerPanel, BorderLayout.LINE_END);
 
