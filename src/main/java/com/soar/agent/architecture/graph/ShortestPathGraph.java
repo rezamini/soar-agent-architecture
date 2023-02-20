@@ -29,6 +29,7 @@ public class ShortestPathGraph extends SwingWorker {
         this.graph = new SingleGraph("Map Nodes/Matrix");
         startGraph();
         addMapNodes(mapMatrix);
+        displayNodeAndEdgeNames();
     }
 
     public void calculateShortPath() {
@@ -75,14 +76,17 @@ public class ShortestPathGraph extends SwingWorker {
                 node.setAttribute("x", j);
 
                 if (mapMatrix[i][j] == 1) {
-                    node.setAttribute("ui.style", "fill-color: #707070;"); // obstacles
+                    node.setAttribute("ui.style", "fill-color: #707070; text-size: 12;"); // obstacles
+                    node.setAttribute("nodeName", "Block");
 
                 } else if (mapMatrix[i][j] == 2) {
                     node.setAttribute("ui.color", getRandomNodeColor()); //landmarks
+                    node.setAttribute("nodeName", "L"+i);
                     landmarkNodes.add(node);
 
                 }else if (mapMatrix[i][j] == 3) {
-                    node.setAttribute("ui.style", "fill-color: yellow;"); //agent
+                    node.setAttribute("ui.style", "fill-color: yellow; text-size: 12;"); //agent
+                    node.setAttribute("nodeName", "Agent");
                     agentNode = node;
                 }
 
@@ -112,13 +116,19 @@ public class ShortestPathGraph extends SwingWorker {
                     }
                 }
 
-                // graph.nodes().forEach(n -> n.setAttribute("label", n.getId()));
-                // graph.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("weight")));
-
+                
             }
         }
 
         return graph;
+    }
+
+    private void displayNodeAndEdgeNames(){
+        graph.nodes().forEach(n -> {
+
+            n.setAttribute("label", n.hasAttribute("nodeName") ? n.getAttribute("nodeName") : "");
+        });
+        // graph.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("weight")));
     }
 
     public Color getRandomNodeColor() {
@@ -155,6 +165,7 @@ public class ShortestPathGraph extends SwingWorker {
     "fill-mode: dyn-plain; " +
     "text-mode: normal; " +
     "text-alignment: center; " +
+    // "text-style: bold;" +
     // "shadow-mode: gradient-horizontal;" +
     // "shadow-color: grey;" +
     // "shadow-offset: 0px;" +
