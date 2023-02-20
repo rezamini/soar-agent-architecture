@@ -15,6 +15,7 @@ import org.jsoar.debugger.util.SwingTools;
 import org.jsoar.runtime.ThreadedAgent;
 
 import com.soar.agent.architecture.enums.GraphEnum;
+import com.soar.agent.architecture.world.World;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,25 +32,28 @@ public class ShortestPathGraphUI extends JPanel {
     public View view;
     public ShortestPathGraph shortestPathGraph;
     public int[][] mapMatrix;
+    public World world;
 
-    public ShortestPathGraphUI(ThreadedAgent agent, int[][] mapMatrix) throws IOException {
+    public ShortestPathGraphUI(ThreadedAgent agent, int[][] mapMatrix, World world) throws IOException {
         super(new BorderLayout());
         this.agent = agent;
         this.mapMatrix = mapMatrix;
+        this.world = world;
 
         mainFrame = new JFrame();
-        shortestPathGraph = new ShortestPathGraph(mapMatrix);
+        shortestPathGraph = new ShortestPathGraph(mapMatrix, world);
 
         initialise();
     }
 
-    public static ShortestPathGraphUI getInstance(ThreadedAgent agent, int[][] mapMatrix) throws IOException {
+    public static ShortestPathGraphUI getInstance(ThreadedAgent agent, int[][] mapMatrix, World world) throws IOException {
         if (nodeGraphInstance == null) {
-            nodeGraphInstance = new ShortestPathGraphUI(agent, mapMatrix);
+            nodeGraphInstance = new ShortestPathGraphUI(agent, mapMatrix, world);
 
         } else {
             nodeGraphInstance.agent = agent;
-            nodeGraphInstance.shortestPathGraph = new ShortestPathGraph(mapMatrix);
+            nodeGraphInstance.world = world;
+            nodeGraphInstance.shortestPathGraph = new ShortestPathGraph(mapMatrix, world);
             nodeGraphInstance.initialise();
 
             nodeGraphInstance.mainFrame.setVisible(true);
@@ -118,7 +122,7 @@ public class ShortestPathGraphUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    shortestPathGraph = new ShortestPathGraph(mapMatrix);
+                    shortestPathGraph = new ShortestPathGraph(mapMatrix, world);
                     initialise();
                 } catch (IOException e1) {
                     e1.printStackTrace();

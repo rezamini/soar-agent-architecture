@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.awt.geom.*;
@@ -29,7 +30,7 @@ public class World {
     public int[][] mapMatrix;
 
     // the boolean value is to indicate if landmark is reached by the agent
-    private final Map<Landmark, Boolean> landmarkMap = new HashMap<Landmark, Boolean>();
+    private final Map<Landmark, Boolean> landmarkMap = new LinkedHashMap<Landmark, Boolean>();
 
     // the Boolean value is to indicate if the landmark is within radar/if its live
     private Map<Landmark, Boolean> detectedRadarLandmarks = new HashMap<Landmark, Boolean>();

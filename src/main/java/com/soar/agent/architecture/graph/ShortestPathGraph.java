@@ -14,6 +14,10 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.swing.SwingGraphRenderer;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.View;
+
+import com.soar.agent.architecture.beans.Landmark;
+import com.soar.agent.architecture.world.World;
+
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
 import java.awt.Color;
@@ -24,9 +28,12 @@ public class ShortestPathGraph extends SwingWorker {
     public View view;
     private Node agentNode;
     private List<Node> landmarkNodes = new ArrayList<Node>();
-    
-    public ShortestPathGraph(int[][] mapMatrix) throws IOException {
+    private World world;
+
+    public ShortestPathGraph(int[][] mapMatrix, World world) throws IOException {
         this.graph = new SingleGraph("Map Nodes/Matrix");
+        this.world = world;
+
         startGraph();
         addMapNodes(mapMatrix);
         displayNodeAndEdgeNames();
@@ -69,6 +76,8 @@ public class ShortestPathGraph extends SwingWorker {
     }
 
     public Graph addMapNodes(int[][] mapMatrix) {
+
+        int landmarkCounter = 0;
         for (int i = 0; i < mapMatrix.length; i++) {
             for (int j = 0; j < mapMatrix[0].length; j++) {
                 Node node = graph.addNode(i + "-" + j);
@@ -81,7 +90,8 @@ public class ShortestPathGraph extends SwingWorker {
 
                 } else if (mapMatrix[i][j] == 2) {
                     node.setAttribute("ui.color", getRandomNodeColor()); //landmarks
-                    node.setAttribute("nodeName", "L"+i);
+                    Landmark landmark = (Landmark) world.getLandmarkMap().keySet().toArray()[landmarkCounter++];
+                    node.setAttribute("nodeName", landmark.getName());
                     landmarkNodes.add(node);
 
                 }else if (mapMatrix[i][j] == 3) {
