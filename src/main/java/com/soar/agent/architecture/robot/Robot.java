@@ -6,6 +6,7 @@ import com.soar.agent.architecture.world.World;
 
 import java.awt.geom.*;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 public class Robot {
     public final double widthMultiplier = 4.0;
@@ -97,7 +98,31 @@ public class Robot {
 
         if (!world.willCollide(this, newX, newY, dimensions)) {
             move(newX, newY);
+            updateMapMatrix(newX, newY); 
         }
+    }
+
+    public void updateMapMatrix(double newX, double newY){
+        int agentMatrixX = (int) Math.round( (newX - 1) / 2);
+        int agentMatrixY = (int) Math.round( (newY - 1) / 2);
+
+        int[][] currentMapMatrix = world.getMapMatrix();
+        for(int i=0; i<currentMapMatrix.length; i++) {
+            for(int j=0; j<currentMapMatrix[i].length; j++) {
+
+                //check if the cell is 3 which represents an agent
+                if(currentMapMatrix[i][j] == 3){
+                    //update the current position to empty space
+                    currentMapMatrix[i][j] = 0;
+
+                    //set the new agent position
+                    currentMapMatrix[agentMatrixY][agentMatrixX] = 3;
+                    break; 
+                }
+            }
+        }
+
+        // System.out.println(Arrays.deepToString(world.getMapMatrix()));
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
