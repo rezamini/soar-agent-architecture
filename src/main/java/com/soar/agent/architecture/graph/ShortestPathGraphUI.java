@@ -12,7 +12,10 @@ import org.graphstream.ui.swing_viewer.DefaultView;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.View;
 import org.jsoar.debugger.util.SwingTools;
+import org.jsoar.kernel.events.InputEvent;
 import org.jsoar.runtime.ThreadedAgent;
+import org.jsoar.util.events.SoarEvent;
+import org.jsoar.util.events.SoarEventListener;
 
 import com.soar.agent.architecture.enums.GraphEnum;
 import com.soar.agent.architecture.world.World;
@@ -67,6 +70,7 @@ public class ShortestPathGraphUI extends JPanel {
         revalidate();
         repaint();
 
+        initMemoryInputListener();
         initGraphUI();
         initZoomSlider();
     }
@@ -94,6 +98,17 @@ public class ShortestPathGraphUI extends JPanel {
                 System.err.println("****** ERROR in matrix graph init *****");
                 e.printStackTrace();
             }
+        });
+    }
+
+    private void initMemoryInputListener() {
+        agent.getEvents().addListener(InputEvent.class, new SoarEventListener() {
+
+            @Override
+            public void onEvent(SoarEvent event) {
+
+            }
+
         });
     }
 
