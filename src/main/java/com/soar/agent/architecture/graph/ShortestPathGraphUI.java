@@ -107,6 +107,13 @@ public class ShortestPathGraphUI extends JPanel {
             @Override
             public void onEvent(SoarEvent event) {
 
+                try {
+                    nodeGraphInstance.shortestPathGraph.updateAgentNode(world.getMapMatrix());
+
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
 
         });

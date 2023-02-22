@@ -133,6 +133,32 @@ public class ShortestPathGraph extends SwingWorker {
         return graph;
     }
 
+    public Graph updateAgentNode(int[][] mapMatrix) {
+        //update the previous node to an empty space
+        Node previousAgentNode = graph.getNode(agentNode.getId());
+        previousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC;");
+        previousAgentNode.setAttribute("nodeName", "");
+
+        for (int i = 0; i < mapMatrix.length; i++) {
+            for (int j = 0; j < mapMatrix[0].length; j++) {
+
+                if (mapMatrix[i][j] == 3) {
+                    Node node = graph.getNode(i + "-" + j);
+                    node.setAttribute("y", i);
+                    node.setAttribute("x", j);
+
+                    node.setAttribute("ui.style", "fill-color: yellow; text-size: 12;"); // agent
+                    node.setAttribute("nodeName", "Agent");
+                    agentNode = node;
+                    break;
+                }
+            }
+        }
+
+        displayNodeAndEdgeNames();
+        return graph;
+    }
+
     private void displayNodeAndEdgeNames(){
         graph.nodes().forEach(n -> {
 
