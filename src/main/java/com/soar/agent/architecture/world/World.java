@@ -27,7 +27,9 @@ public class World {
     private final List<Robot> robots = new ArrayList<Robot>();
     private final List<Shape> obstacles = new ArrayList<Shape>();
     private final List<Landmark> landmarks = new ArrayList<Landmark>();
-    public int[][] mapMatrix;
+    private int[][] mapMatrix;
+    private Integer agentMapMatrixX = null;
+    private Integer agentMapMatrixY = null;
 
     // the boolean value is to indicate if landmark is reached by the agent
     private final Map<Landmark, Boolean> landmarkMap = new LinkedHashMap<Landmark, Boolean>();
@@ -97,6 +99,22 @@ public class World {
 
     public void setMapMatrix(int[][] mapMatrix) {
         this.mapMatrix = mapMatrix;
+    }
+
+    public Integer getAgentMapMatrixX() {
+        return agentMapMatrixX;
+    }
+
+    public void setAgentMapMatrixX(Integer agentMapMatrixX) {
+        this.agentMapMatrixX = agentMapMatrixX;
+    }
+
+    public Integer getAgentMapMatrixY() {
+        return agentMapMatrixY;
+    }
+
+    public void setAgentMapMatrixY(int agentMapMatrixY) {
+        this.agentMapMatrixY = agentMapMatrixY;
     }
 
     public void updateAndMoveAgents(double dt) {

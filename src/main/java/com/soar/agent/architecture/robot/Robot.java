@@ -98,26 +98,32 @@ public class Robot {
 
         if (!world.willCollide(this, newX, newY, dimensions)) {
             move(newX, newY);
-            updateMapMatrix(newX, newY); 
+            updateMapMatrix(newX, newY);
         }
     }
 
-    public void updateMapMatrix(double newX, double newY){
-        int agentMatrixX = (int) Math.round( (newX - 1) / 2);
-        int agentMatrixY = (int) Math.round( (newY - 1) / 2);
+    public void updateMapMatrix(double newX, double newY) {
+        int agentMatrixX = (int) Math.round((newX - 1) / 2);
+        int agentMatrixY = (int) Math.round((newY - 1) / 2);
+        
+        // set the agent matrix location on a separate field that could be used in other
+        // places without looping the entire map if required
+        world.setAgentMapMatrixX(agentMatrixX);
+        world.setAgentMapMatrixY(agentMatrixY);
 
+        // update the agent location on the map matrix
         int[][] currentMapMatrix = world.getMapMatrix();
-        for(int i=0; i<currentMapMatrix.length; i++) {
-            for(int j=0; j<currentMapMatrix[i].length; j++) {
+        for (int i = 0; i < currentMapMatrix.length; i++) {
+            for (int j = 0; j < currentMapMatrix[i].length; j++) {
 
-                //check if the cell is 3 which represents an agent
-                if(currentMapMatrix[i][j] == 3){
-                    //update the current position to empty space
+                // check if the cell is 3 which represents an agent
+                if (currentMapMatrix[i][j] == 3) {
+                    // update the current position to empty space
                     currentMapMatrix[i][j] = 0;
 
-                    //set the new agent position
+                    // set the new agent position
                     currentMapMatrix[agentMatrixY][agentMatrixX] = 3;
-                    break; 
+                    break;
                 }
             }
         }
@@ -142,7 +148,8 @@ public class Robot {
 
         double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
 
-        // check to see if it will collide in every enum direction that is passed throught this method
+        // check to see if it will collide in every enum direction that is passed
+        // throught this method
         boolean isObstacle = world.willCollide(this, newX, newY, dimensions);
 
         return isObstacle;
@@ -153,7 +160,8 @@ public class Robot {
         if (radarBattery > 0) {
             radarBattery = Double.valueOf(batteryDecimalFormat.format(radarBattery - batteryDeduction));
 
-            // incase after the calculation the battery is at 0 or lower then switch off the radar
+            // incase after the calculation the battery is at 0 or lower then switch off the
+            // radar
             if (radarBattery <= 0)
                 toggleRadar = false;
         } else {
@@ -163,7 +171,7 @@ public class Robot {
     }
 
     public void calcRadar() {
-        
+
         if (toggleRadar) {
             updateRadarBattery();
 
@@ -174,7 +182,7 @@ public class Robot {
                     // world.radarDetectLandmark(this, range);
                 }
             }
-        }else{
+        } else {
             for (Radar range : ranges) {
                 range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw, false));
                 // world.radarDetectLandmark(this, range);
@@ -221,7 +229,7 @@ public class Robot {
         return result;
     }
 
-    public Path2D calcShapeRadar(double agentX, double agentY, double radarRange){
+    public Path2D calcShapeRadar(double agentX, double agentY, double radarRange) {
         shapeRadar.reset();
         shapeRadar.moveTo(agentX, agentY);
         shapeRadar.append(new Arc2D.Double(agentX - radarRange, agentY - radarRange,

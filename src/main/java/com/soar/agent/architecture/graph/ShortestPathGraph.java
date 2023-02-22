@@ -133,6 +133,9 @@ public class ShortestPathGraph extends SwingWorker {
         return graph;
     }
 
+    /*
+     * Update agent node location based on looping, finding and updating the mapMatrix 2d array
+     */
     public Graph updateAgentNode(int[][] mapMatrix) {
         //update the previous node to an empty space
         Node previousAgentNode = graph.getNode(agentNode.getId());
@@ -154,6 +157,29 @@ public class ShortestPathGraph extends SwingWorker {
                 }
             }
         }
+
+        displayNodeAndEdgeNames();
+        return graph;
+    }
+
+    /*
+     * Update agent node location based on new agent matrix x,y
+     */
+    public Graph updateAgentNode(Integer newAgentMapMatrixX, Integer newAgentMapMatrixY) {
+        if(newAgentMapMatrixX == null || newAgentMapMatrixY == null)  return graph;
+
+        //update the previous node to an empty space
+        Node previousAgentNode = graph.getNode(agentNode.getId());
+        previousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC;");
+        previousAgentNode.setAttribute("nodeName", "");
+
+        //update the new agent node location
+        Node newAgentNode = graph.getNode(newAgentMapMatrixY + "-" + newAgentMapMatrixX);
+        newAgentNode.setAttribute("ui.style", "fill-color: yellow; text-size: 12;"); // agent
+        newAgentNode.setAttribute("nodeName", "Agent");
+
+        //update and keep a copy of the new node
+        agentNode = newAgentNode;
 
         displayNodeAndEdgeNames();
         return graph;
