@@ -2,7 +2,10 @@ package com.soar.agent.architecture.graph;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.swing.SwingWorker;
@@ -27,8 +30,9 @@ public class ShortestPathGraph extends SwingWorker {
     public SwingViewer viewer;
     public View view;
     private Node agentNode;
-    private List<Node> landmarkNodes = new ArrayList<Node>();
+    private Map<Landmark, Node> landmarkNodes = new LinkedHashMap<Landmark, Node>();
     private World world;
+    private Map<Landmark, List<Node>> computedPaths = new LinkedHashMap<Landmark, List<Node>>();
 
     public ShortestPathGraph(int[][] mapMatrix, World world) throws IOException {
         this.graph = new SingleGraph("Map Nodes/Matrix");
@@ -36,6 +40,7 @@ public class ShortestPathGraph extends SwingWorker {
 
         startGraph();
         addMapNodes(mapMatrix);
+        calculateShortPath();
         displayNodeAndEdgeNames();
     }
 
@@ -43,10 +48,11 @@ public class ShortestPathGraph extends SwingWorker {
         if(landmarkNodes != null && landmarkNodes.size() > 0){
             AStar astar = new AStar(graph);
 
-            landmarkNodes.forEach(landmark -> {
-                astar.compute(agentNode.getId(), landmark.getId());
+            landmarkNodes.forEach((key, value) -> {
+                astar.compute(agentNode.getId(), value.getId());
                 Path path = astar.getShortestPath();
-                colorPath(path.getNodePath(), (Color) landmark.getAttribute("ui.color"));
+                computedPaths.put(key, path.getNodePath());
+                // colorPath(path.getNodePath(), (Color) value.getAttribute("ui.color"));
             });
         }
     }
@@ -92,7 +98,8 @@ public class ShortestPathGraph extends SwingWorker {
                     node.setAttribute("ui.color", getRandomNodeColor()); //landmarks
                     Landmark landmark = (Landmark) world.getLandmarkMap().keySet().toArray()[landmarkCounter++];
                     node.setAttribute("nodeName", landmark.getName());
-                    landmarkNodes.add(node);
+                    // landmarkNodes.add(node);
+                    landmarkNodes.put(landmark, node);
 
                 }else if (mapMatrix[i][j] == 3) {
                     node.setAttribute("ui.style", "fill-color: yellow; text-size: 12;"); //agent
@@ -215,7 +222,16 @@ public class ShortestPathGraph extends SwingWorker {
 
     @Override
     protected Object doInBackground() throws Exception {
-        calculateShortPath();
+        //loop throught the computed paths
+        if(computedPaths != null && computedPaths.size() > 0){
+            computedPaths.forEach((key, value) -> {
+
+                // check and get the original landmark node color, to be used for path coloring
+                if(landmarkNodes.get(key) != null){
+                    colorPath(value, (Color) landmarkNodes.get(key).getAttribute("ui.color"));
+                }
+            });
+        }
         return null;
     }
 
