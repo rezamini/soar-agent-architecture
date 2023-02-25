@@ -65,20 +65,21 @@ public class ShortestPathGraph extends SwingWorker {
     }
 
     private void sortPathByValue(Map<Landmark, List<Node>> computedPaths) {
-        List<Entry<Landmark, List<Node>>> sortedList = new LinkedList<Entry<Landmark, List<Node>>>(computedPaths.entrySet());
+        List<Entry<Landmark, List<Node>>> sortedList = new LinkedList<Entry<Landmark, List<Node>>>(
+                computedPaths.entrySet());
 
         // sort by the list size
         Collections.sort(sortedList, new Comparator<Entry<Landmark, List<Node>>>() {
             @Override
             public int compare(Entry<Landmark, List<Node>> o1, Entry<Landmark, List<Node>> o2) {
-                    // compare two object and return an integer
-                    return Integer.compare(o1.getValue().size(), o2.getValue().size());
+                // compare two object and return an integer
+                return Integer.compare(o1.getValue().size(), o2.getValue().size());
             }
         });
 
-        //set the sorted value back to computedPaths
+        // set the sorted value back to computedPaths
         computedPaths.clear();
-        for(Entry<Landmark, List<Node>> entry: sortedList){
+        for (Entry<Landmark, List<Node>> entry : sortedList) {
             computedPaths.put(entry.getKey(), entry.getValue());
         }
     }
@@ -254,6 +255,9 @@ public class ShortestPathGraph extends SwingWorker {
 
     @Override
     protected Object doInBackground() throws Exception {
+        // calculate the path again because agent node is changed
+        calculateShortPath();
+
         // loop throught the computed paths
         if (computedPaths != null && computedPaths.size() > 0) {
             computedPaths.forEach((key, value) -> {
