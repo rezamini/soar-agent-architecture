@@ -86,7 +86,7 @@ public class ShortestPathGraphUI extends JPanel {
                 mainFrame.setContentPane(nodeGraphInstance);
                 mainFrame.setSize(1100, 900);
                 mainFrame.setVisible(true);
-                mainFrame.setTitle(GraphEnum.FRAME_TITLE.getName());
+                mainFrame.setTitle(GraphEnum.FRAME_TITLE_MATRIX.getName());
                 mainFrame.setLocationRelativeTo(null);
 
                 // call(the nodegrapg is final variable now which is initialised in the
@@ -111,7 +111,6 @@ public class ShortestPathGraphUI extends JPanel {
                     nodeGraphInstance.shortestPathGraph.updateAgentNode(world.getAgentMapMatrixX(), world.getAgentMapMatrixY());
 
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -130,8 +129,6 @@ public class ShortestPathGraphUI extends JPanel {
 
         JButton startPathCalculation = new JButton("Find Shortest Path(s)");
         JButton resetGraph = new JButton("Reset Graph");
-        // zoomIn.setIcon(new
-        // ImageIcon(NodeGraphUI.class.getResource("/images/graph/zoom-in.png")));
 
         startPathCalculation.addActionListener(new ActionListener() {
             @Override
