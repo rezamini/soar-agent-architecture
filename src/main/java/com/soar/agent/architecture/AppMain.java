@@ -90,6 +90,9 @@ public class AppMain {
         // close graph if any instance is open
         closeGraph();
 
+        //close matrix graph if any instance is open
+        closeMatrixGraph();
+
         // close debugger if any instance is open
         closeDebugger();
     }
@@ -138,6 +141,12 @@ public class AppMain {
     public void closeGraph() throws IOException {
         if (graph != null) {
             graph.setFrameVisibility(false);
+        }
+    }
+
+    public void closeMatrixGraph() throws IOException {
+        if (shortPathGraph != null) {
+            shortPathGraph.setFrameVisibility(false);
         }
     }
 
