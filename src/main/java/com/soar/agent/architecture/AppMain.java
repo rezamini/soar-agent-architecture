@@ -22,7 +22,7 @@ public class AppMain {
     private MoveResponder moveResponder = new MoveResponder();
     private static PanelUI panelUI;
     private NodeGraphUI graph;
-    private ShortestPathGraphUI shortPathGraph;
+    private ShortestPathGraphUI matrixGraph;
 
     public static void main(String[] args) throws IOException {
         // try {
@@ -127,13 +127,13 @@ public class AppMain {
         }
     }
 
-    public void startGraph2() throws IOException {
+    public void startMatrixGraph() throws IOException {
         if (agents != null && agents.size() > 0) {
             RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
 
-            // only get one instance from nodeGraphui. Singleton pattern using getInstance
+            // only get one instance from matrixGraph. Singleton pattern using getInstance
             // method.
-            shortPathGraph = ShortestPathGraphUI.getInstance(agent.getThreadedAgent(),
+            matrixGraph = ShortestPathGraphUI.getInstance(agent.getThreadedAgent(),
                     PanelUI.getWorld().getMapMatrix(), PanelUI.getWorld());
         }
     }
@@ -145,8 +145,8 @@ public class AppMain {
     }
 
     public void closeMatrixGraph() throws IOException {
-        if (shortPathGraph != null) {
-            shortPathGraph.setFrameVisibility(false);
+        if (matrixGraph != null) {
+            matrixGraph.setFrameVisibility(false);
         }
     }
 

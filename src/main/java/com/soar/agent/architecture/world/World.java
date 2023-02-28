@@ -1,9 +1,6 @@
 package com.soar.agent.architecture.world;
 
 import java.awt.Shape;
-import java.awt.geom.Arc2D;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,14 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.awt.geom.*;
-import java.awt.Polygon;
-import java.awt.geom.Area;
 
 import org.jsoar.util.events.SoarEventManager;
 
-import com.lowagie.text.Rectangle;
 import com.soar.agent.architecture.beans.Landmark;
-import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.robot.Robot;
 
 public class World {

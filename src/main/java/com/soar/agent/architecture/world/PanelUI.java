@@ -169,7 +169,7 @@ public class PanelUI extends JPanel {
         JToggleButton graphButton2 = createButton("path", "path-clicked", true);
         graphButton2.addActionListener((event) -> {
             try {
-                appMain.startGraph2();
+                appMain.startMatrixGraph();
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
