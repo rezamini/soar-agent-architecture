@@ -131,6 +131,7 @@ public class ShortestPathGraph extends SwingWorker {
                     agentNode = node;
                 }
 
+                // START: edges for cardinal directions
                 if (i > 0) {
                     String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + j;
                     Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + j, i + "-" + j, false);
@@ -156,6 +157,40 @@ public class ShortestPathGraph extends SwingWorker {
                         edge.setAttribute("weight", 0.5);
                     }
                 }
+
+                //END
+
+
+                // START: edges for intercardinal/ordinal directions
+                if (i > 0 && j > 0) {
+                    // create edge to the northwest
+                    String edgeId = i + "-" + j + "-" + (i - 1) + "-" + (j - 1);
+                    Edge edge = graph.addEdge(edgeId, i + "-" + j, (i - 1) + "-" + (j - 1), false);
+
+                    if ( mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i][j] == 1) {
+                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("weight", 100);
+                    } else {
+                        // edge.setAttribute("ui.style", "fill-color: green;");
+                        edge.setAttribute("weight", 0.5);
+                    }
+                }
+
+                if (i > 0 && j < mapMatrix[0].length - 1) {
+                    // create edge to the northeast
+                    String edgeId = i + "-" + j + "-" + (i - 1) + "-" + (j + 1);
+                    Edge edge = graph.addEdge(edgeId, i + "-" + j, (i - 1) + "-" + (j + 1), false);
+
+                    if (mapMatrix[i - 1][j + 1] == 1 || mapMatrix[i][j] == 1) {
+                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("weight", 100);
+                    } else {
+                        // edge.setAttribute("ui.style", "fill-color: green;");
+                        edge.setAttribute("weight", 0.5);
+                    }
+                }
+
+                // END 
 
             }
         }
