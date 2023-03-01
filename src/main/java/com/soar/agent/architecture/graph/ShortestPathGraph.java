@@ -1,6 +1,8 @@
 package com.soar.agent.architecture.graph;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -21,6 +23,8 @@ import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.View;
 
 import com.soar.agent.architecture.beans.Landmark;
+import com.soar.agent.architecture.enums.DirectionEnum;
+import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.world.World;
 
 import org.graphstream.graph.Node;
@@ -35,6 +39,7 @@ public class ShortestPathGraph extends SwingWorker {
     private Map<Landmark, Node> landmarkNodes = new LinkedHashMap<Landmark, Node>();
     private World world;
     private Map<Landmark, List<Node>> computedPaths = new LinkedHashMap<Landmark, List<Node>>();
+    private Map<Landmark, List<String>> computedPathDirections = new LinkedHashMap<Landmark, List<String>>();
 
     public ShortestPathGraph(int[][] mapMatrix, World world) throws IOException {
         this.graph = new SingleGraph("Map Nodes/Matrix");
@@ -57,7 +62,54 @@ public class ShortestPathGraph extends SwingWorker {
             });
 
             sortPathByValue(computedPaths);
+
+            //convert computed nodes to actual directions
+            computedPaths.forEach((k, v) -> {
+                    convertToDirections(k, v);
+                    System.out.println(computedPathDirections);
+            });
         }
+    }
+
+    /*
+     * Convert computed landmark node to actual directions.
+     * this method has to be called for every landmark separately
+     */
+    private void convertToDirections(Landmark landmark, List<Node> paths) {
+
+        List<String> tempDirectionList = new ArrayList<String>();
+
+        // last node is the landmark position
+        // Node landmarkNode = paths.get(paths.size() - 1);
+
+        // start from second index as the first index is the agent current position.
+        // looping from 0 will result in epmty string for 0
+        for (int i = 1; i < paths.size(); i++) {
+            String direction = "";
+            Node path = paths.get(i);
+
+            int agentY = (int) agentNode.getAttribute("y");
+            int agentX = (int) agentNode.getAttribute("x");
+
+            int landmarkY = (int) path.getAttribute("y");
+            int landmarkX = (int) path.getAttribute("x");
+            System.out.println(agentY);
+
+            direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
+                    : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
+
+            direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
+                    : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
+
+            // copy the index 1 position to index 0 (agent current position)
+            if (i == 1) {
+                tempDirectionList.add(0, direction);
+            }
+
+            tempDirectionList.add(direction);
+        }
+
+        computedPathDirections.put(landmark, tempDirectionList);
     }
 
     private void sortPathByValue(Map<Landmark, List<Node>> computedPaths) {
@@ -158,8 +210,7 @@ public class ShortestPathGraph extends SwingWorker {
                     }
                 }
 
-                //END
-
+                // END
 
                 // START: edges for intercardinal/ordinal directions
                 if (i > 0 && j > 0) {
@@ -167,7 +218,7 @@ public class ShortestPathGraph extends SwingWorker {
                     String edgeId = i + "-" + j + "-" + (i - 1) + "-" + (j - 1);
                     Edge edge = graph.addEdge(edgeId, i + "-" + j, (i - 1) + "-" + (j - 1), false);
 
-                    if ( mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i][j] == 1) {
+                    if (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i][j] == 1) {
                         // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
                     } else {
@@ -190,7 +241,7 @@ public class ShortestPathGraph extends SwingWorker {
                     }
                 }
 
-                // END 
+                // END
 
             }
         }
