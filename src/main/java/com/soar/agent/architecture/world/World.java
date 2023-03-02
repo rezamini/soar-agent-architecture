@@ -21,6 +21,7 @@ public class World {
     private final List<Shape> obstacles = new ArrayList<Shape>();
     private final List<Landmark> landmarks = new ArrayList<Landmark>();
     private int[][] mapMatrix;
+    private int[][] completeMapMatrix;
     private Integer agentMapMatrixX = null;
     private Integer agentMapMatrixY = null;
 
@@ -92,6 +93,14 @@ public class World {
 
     public void setMapMatrix(int[][] mapMatrix) {
         this.mapMatrix = mapMatrix;
+    }
+
+    public int[][] getCompleteMapMatrix() {
+        return completeMapMatrix;
+    }
+
+    public void setCompleteMapMatrix(int[][] completeMapMatrix) {
+        this.completeMapMatrix = completeMapMatrix;
     }
 
     public Integer getAgentMapMatrixX() {

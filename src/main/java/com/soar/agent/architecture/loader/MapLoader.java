@@ -28,6 +28,7 @@ public class MapLoader {
      * Robot/Agent is represented as 3
      */
     private int[][] mapMatrix;
+    private int[][] completeMapMatrix;
 
     public static class Result {
         public final World world;
@@ -61,6 +62,9 @@ public class MapLoader {
         }
         mapMatrix = new int[lines.length][maxX];
 
+        //complete matrix
+        completeMapMatrix = new int[(int) (lines.length * CELL_SIZE + CELL_SIZE / 2.0) ][(int) (maxX * CELL_SIZE + CELL_SIZE / 2.0)];
+
         final World world = new World();
         world.extents.setFrame(0.0, 0.0, maxLine.value * CELL_SIZE, lines.length * CELL_SIZE);
 
@@ -69,6 +73,7 @@ public class MapLoader {
         readRobots(world, lines);
         
         world.setMapMatrix(mapMatrix);
+        world.setCompleteMapMatrix(completeMapMatrix);
         
         return new Result(world);
     }
@@ -105,6 +110,9 @@ public class MapLoader {
                     world.addLandmarkMap(landmark, false);
 
                     mapMatrix[y][x] = 2;
+
+                    //complete matrix
+                    completeMapMatrix[(int) cy][(int) cx] = 2;
                 }
             }
         }
@@ -127,6 +135,9 @@ public class MapLoader {
                     world.addRobot(r);
 
                     mapMatrix[y][x] = 3;
+
+                    //complete matrix
+                    completeMapMatrix[(int) cy][(int) cx] = 3;
                 }
             }
         }
@@ -146,6 +157,11 @@ public class MapLoader {
 
         double w = (i - start) * CELL_SIZE;
         world.addObstacle(new Rectangle2D.Double(start * CELL_SIZE, y * CELL_SIZE, w, CELL_SIZE));
+
+        //complete matrix
+        Arrays.fill(completeMapMatrix[(int)(y * CELL_SIZE + CELL_SIZE / 2.0)], (int)(start * CELL_SIZE + CELL_SIZE / 2.0), (int) (i * CELL_SIZE + CELL_SIZE / 2.0), 1);
+        Arrays.fill(completeMapMatrix[(int)((y + 1) * CELL_SIZE + CELL_SIZE / 4.0)], (int)(start * CELL_SIZE + CELL_SIZE / 2.0), (int) (i * CELL_SIZE + CELL_SIZE / 2.0), 1);
+        
         return i;
     }
 

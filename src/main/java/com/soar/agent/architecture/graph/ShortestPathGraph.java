@@ -66,7 +66,6 @@ public class ShortestPathGraph extends SwingWorker {
             //convert computed nodes to actual directions
             computedPaths.forEach((k, v) -> {
                     convertToDirections(k, v);
-                    System.out.println(computedPathDirections);
             });
         }
     }
@@ -93,7 +92,6 @@ public class ShortestPathGraph extends SwingWorker {
 
             int landmarkY = (int) path.getAttribute("y");
             int landmarkX = (int) path.getAttribute("x");
-            System.out.println(agentY);
 
             direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
                     : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
