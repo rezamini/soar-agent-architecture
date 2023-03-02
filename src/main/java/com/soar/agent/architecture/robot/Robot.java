@@ -103,8 +103,8 @@ public class Robot {
     }
 
     public void updateMapMatrix(double newX, double newY) {
-        int agentMatrixX = (int) Math.round((newX - 1) / 2.5);
-        int agentMatrixY = (int) Math.round((newY - 1) / 2.5);
+        int agentMatrixX = (int) Math.round((newX - 1) / 2);
+        int agentMatrixY = (int) Math.round((newY - 1) / 2);
         
         // set the agent matrix location on a separate field that could be used in other
         // places without looping the entire map if required
@@ -127,6 +127,14 @@ public class Robot {
                 }
             }
         }
+
+        world.setMapMatrix(currentMapMatrix);
+
+        // world.updateShortestPath();
+        // world.getShortestLandmarkDirections().forEach((k, v) -> {
+        //     System.out.println(k.getName());
+        //     System.out.println(v);
+        // });
 
         // System.out.println(Arrays.deepToString(world.getMapMatrix()));
     }

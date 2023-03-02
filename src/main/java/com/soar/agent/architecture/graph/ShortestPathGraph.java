@@ -63,13 +63,13 @@ public class ShortestPathGraph extends SwingWorker {
 
             sortPathByValue(computedPaths);
 
-            //convert computed nodes to actual directions
+            // convert computed nodes to actual directions
             computedPaths.forEach((k, v) -> {
-                    convertToDirections(k, v);
+                convertToDirections(k, v);
             });
 
-            System.out.println(computedPathDirections);
-
+            //set the computed path/directions to the world
+            world.setShortestLandmarkDirections(computedPathDirections);
         }
     }
 
@@ -107,7 +107,8 @@ public class ShortestPathGraph extends SwingWorker {
                 tempDirectionList.add(0, direction);
             }
 
-            // add each direction twice in order to be similar to the actual environment movements.
+            // add each direction twice in order to be similar to the actual environment
+            // movements.
             tempDirectionList.add(i, direction);
             tempDirectionList.add(i + 1, direction);
         }

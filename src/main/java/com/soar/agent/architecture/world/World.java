@@ -2,7 +2,9 @@ package com.soar.agent.architecture.world;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.awt.geom.*;
 import org.jsoar.util.events.SoarEventManager;
 
 import com.soar.agent.architecture.beans.Landmark;
+import com.soar.agent.architecture.graph.ShortestPathGraph;
 import com.soar.agent.architecture.robot.Robot;
 
 public class World {
@@ -31,8 +34,15 @@ public class World {
     // the Boolean value is to indicate if the landmark is within radar/if its live
     private Map<Landmark, Boolean> detectedRadarLandmarks = new HashMap<Landmark, Boolean>();
 
-    public World() {
+    private ShortestPathGraph shortestPathGraph;
+    private Map<Landmark, List<String>> shortestLandmarkDirections = new LinkedHashMap<Landmark, List<String>>();
 
+    public World() {
+        // try {
+        //     this.shortestPathGraph = new ShortestPathGraph(mapMatrix, this);
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
     }
 
     public SoarEventManager getEvents() {
@@ -117,6 +127,22 @@ public class World {
 
     public void setAgentMapMatrixY(int agentMapMatrixY) {
         this.agentMapMatrixY = agentMapMatrixY;
+    }
+
+    public Map<Landmark, List<String>> getShortestLandmarkDirections() {
+        return shortestLandmarkDirections;
+    }
+
+    public void setShortestLandmarkDirections(Map<Landmark, List<String>> shortestLandmarkDirections) {
+        this.shortestLandmarkDirections = shortestLandmarkDirections;
+    }
+
+    public ShortestPathGraph getShortestPathGraph() {
+        return shortestPathGraph;
+    }
+
+    public void setShortestPathGraph(ShortestPathGraph shortestPathGraph) {
+        this.shortestPathGraph = shortestPathGraph;
     }
 
     public void updateAndMoveAgents(double dt) {
@@ -358,6 +384,20 @@ public class World {
                 detectedRadarLandmarks.put(landmark, true);
             }
         }
+    }
+
+    public void updateShortestPath(){
+        if(shortestPathGraph != null){
+            System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZ");
+            try {
+                shortestPathGraph.updateAgentNode(agentMapMatrixX, agentMapMatrixY);
+                shortestPathGraph.calculateShortPath();
+                // setShortestLandmarkDirections(spg.get);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
     }
 
     // public void radarDetectLandmark(Robot robot, Radar radar) {

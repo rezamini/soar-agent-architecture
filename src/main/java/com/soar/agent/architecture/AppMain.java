@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import com.soar.agent.architecture.events.MoveResponder;
 import com.soar.agent.architecture.graph.NodeGraphUI;
+import com.soar.agent.architecture.graph.ShortestPathGraph;
 import com.soar.agent.architecture.graph.ShortestPathGraphUI;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
@@ -52,6 +53,13 @@ public class AppMain {
         for (RobotAgent agent : deadAgents) {
             agents.values().remove(agent);
             agent.dispose();
+        }
+
+        try {
+                PanelUI.getWorld().setShortestPathGraph(new ShortestPathGraph(PanelUI.getWorld().getMapMatrix(), PanelUI.getWorld()));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
