@@ -121,6 +121,8 @@ public class MemoryResponder extends MemoryListener {
                                                 landmarkX,
                                                 landmarkY);
 
+                                createShortPathDirection(subLandmark, landmark);
+
                                 // set basic landmark information
                                 subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.getName());
                                 subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
@@ -166,6 +168,23 @@ public class MemoryResponder extends MemoryListener {
                                         robot.getWorld().getLandmarkMap().size());
                 }
 
+        }
+
+        /*
+         * Create a sub Qmemory for the landmark shortest path(s).
+         * it could be use to add to current hierarchy
+         */
+        private QMemory createShortPathDirection(QMemory currentMemory, Landmark landmark) {
+                QMemory result = currentMemory.subMemory("path");
+
+                if (robot.getWorld().getShortestLandmarkDirections() != null) {
+                        List<String> landmarkPath = robot.getWorld().getShortestLandmarkDirections().get(landmark);
+                        for (int i = 0; i < landmarkPath.size(); i++) {
+                                result.setString(String.valueOf(i), landmarkPath.get(i));
+                        }
+                }
+
+                return result;
         }
 
         @Override
