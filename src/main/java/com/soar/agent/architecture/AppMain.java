@@ -45,6 +45,15 @@ public class AppMain {
                 existing.setRobot(robot);
             } else {
                 final RobotAgent newAgent = new RobotAgent();
+
+                //set an instance of shortest path here otherwise it will not be initialised at first load.
+                //this is before memory updates etc
+                try {
+                    robot.getWorld().setShortestPathGraph(new ShortestPathGraph(PanelUI.getWorld().getMapMatrix(), PanelUI.getWorld()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 newAgent.setRobot(robot);
                 agents.put(robot.getName(), newAgent);
             }
@@ -53,13 +62,6 @@ public class AppMain {
         for (RobotAgent agent : deadAgents) {
             agents.values().remove(agent);
             agent.dispose();
-        }
-
-        try {
-                PanelUI.getWorld().setShortestPathGraph(new ShortestPathGraph(PanelUI.getWorld().getMapMatrix(), PanelUI.getWorld()));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 

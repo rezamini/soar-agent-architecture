@@ -57,6 +57,9 @@ public class UtilityResponder extends UtilityListener {
 
             @Override
             public void onEvent(SoarEvent event) {
+                //calculate the shortest landmarks(s) path in the start
+                robot.getWorld().updateShortestPath();
+
                 robotAgent.getEvents().fireEvent(memoryResponder);
 
                 // update the starting locale of the agent

@@ -388,7 +388,6 @@ public class World {
 
     public void updateShortestPath(){
         if(shortestPathGraph != null){
-            System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZ");
             try {
                 shortestPathGraph.updateAgentNode(agentMapMatrixX, agentMapMatrixY);
                 shortestPathGraph.calculateShortPath();
