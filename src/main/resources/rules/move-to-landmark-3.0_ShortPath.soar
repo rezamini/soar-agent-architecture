@@ -36,6 +36,12 @@ sp {initialize*state*preferable*directions
    (<se> ^value southeast ^prefer east)
 }
 
+
+sp {initialize*state*move-index
+   (state <ss> ^superstate nil)
+-->
+   (<ss> ^move-index (format 0 ))}
+
 #
 #START: Proposal Rules
 #
@@ -44,12 +50,17 @@ sp {initialize*state*preferable*directions
 sp {propose*move-to-landmark
    (state <s> ^io.input-link.landmarks.<landmarks> <lnd>     
               ^io.input-link.self.pose <e>
-              ^io.input-link.area.<view> <area-view> )
+              ^io.input-link.area.<view> <area-view>
+              ^move-index <move-index> )
    (<e> ^x <x> ^y <y>)
    (<lnd> ^direction-command <direction-command> )
    (<lnd> ^distance <distance-agent> )
+   (<lnd> ^path <shortest-path> )
+   (<shortest-path> ^<move-index> <computed-path>)
+
    (<area-view> ^<direction-command>.type <cell-type>)
 -->
+(write (crlf) |dir-| <computed-path>)
    (<s> ^operator <o> + =)
    (<o> ^name move-to-landmark
         ^lnd <lnd>
@@ -117,6 +128,15 @@ sp {apply*move*remove-move
 #         ^direction-command <> <current-landmark-direction> )
 # -->
 #    (<s> ^current-landmark-direction <current-landmark-direction> -)} 
+
+sp {apply*move*update*move-index
+   (state <s> ^operator <o>
+              ^move-index <move-index>)
+   (<o> ^name { <name> << move-to-landmark move-random >> })
+-->
+   (<s> ^move-index <move-index> - 
+                    (format (+ (int  <move-index> ) 1 ) ) )}
+
 
 sp {apply*move*create*last-direction
    (state <s> ^operator <o>)
