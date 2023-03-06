@@ -156,8 +156,9 @@ public class MemoryResponder extends MemoryListener {
 
                         }
 
-                        //call and create shortest path hierarchy after the loop.
-                        // because the shortest path directions might have been be re-calculated in the previous loop
+                        // call and create shortest path hierarchy after the loop.
+                        // because the shortest path directions might have been be re-calculated in the
+                        // previous loop
                         createShortPathForLandmarks(landmarks);
 
                         // set the status of the overal landmarks
@@ -187,10 +188,19 @@ public class MemoryResponder extends MemoryListener {
                         QMemory result = currentMemory.subMemory(subName).subMemory("path");
 
                         if (robot.getWorld().getShortestLandmarkDirections() != null) {
-                                List<String> landmarkPath = robot.getWorld().getShortestLandmarkDirections().get(landmark);
-                                for (int i = 0; i < landmarkPath.size(); i++) {
-                                        result.setString(String.valueOf(i), landmarkPath.get(i));
+                                List<String> landmarkPath = robot.getWorld().getShortestLandmarkDirections()
+                                                .get(landmark);
+
+                                if (landmarkPath.size() > 0) {
+                                        for (int i = 0; i < landmarkPath.size(); i++) {
+                                                result.setString(String.valueOf(i), landmarkPath.get(i));
+                                        }
+                                }else{
+                                        //this will keep the ^path hirerachy otherwise 
+                                        //the ^path is entirely removed(from RobotAgent) if the list is empty
+                                        result.setString(String.valueOf(0), UtilitiesEnum.REACHEDSTATUS.getName());
                                 }
+
                         }
                 });
         }

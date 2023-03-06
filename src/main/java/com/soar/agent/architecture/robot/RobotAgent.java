@@ -244,6 +244,10 @@ public class RobotAgent {
                 removeMemoryPath("radar.live");
                 // removeMemoryPath("landmarks");
 
+                robot.getWorld().getLandmarkMap().forEach((landmark, v) -> {
+                    removeMemoryPath("landmarks.landmark-"+landmark.getName()+".path");
+                });
+
             }
         };
         outputManager.registerHandler(commandNameToListen, handler);
