@@ -121,8 +121,6 @@ public class MemoryResponder extends MemoryListener {
                                                 landmarkX,
                                                 landmarkY);
 
-                                createShortPathDirection(subLandmark, landmark);
-
                                 // set basic landmark information
                                 subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.getName());
                                 subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
@@ -152,9 +150,15 @@ public class MemoryResponder extends MemoryListener {
 
                                         // update landmark map to indicate this landmark is reached;
                                         entry.setValue(true);
+
+                                        robot.getWorld().updateShortestPath();
                                 }
 
                         }
+
+                        //call and create shortest path hierarchy after the loop.
+                        // because the shortest path directions might have been be re-calculated in the previous loop
+                        createShortPathForLandmarks(landmarks);
 
                         // set the status of the overal landmarks
                         // Alternative way:
@@ -171,20 +175,24 @@ public class MemoryResponder extends MemoryListener {
         }
 
         /*
-         * Create a sub Qmemory for the landmark shortest path(s).
+         * Create a ^path sub Qmemory for the landmarks that contains shortest path(s).
          * it could be use to add to current hierarchy
          */
-        private QMemory createShortPathDirection(QMemory currentMemory, Landmark landmark) {
-                QMemory result = currentMemory.subMemory("path");
+        private void createShortPathForLandmarks(QMemory currentMemory) {
+                robot.getWorld().getLandmarkMap().forEach((landmark, v) -> {
 
-                if (robot.getWorld().getShortestLandmarkDirections() != null) {
-                        List<String> landmarkPath = robot.getWorld().getShortestLandmarkDirections().get(landmark);
-                        for (int i = 0; i < landmarkPath.size(); i++) {
-                                result.setString(String.valueOf(i), landmarkPath.get(i));
+                        String subName = MemoryEnum.LANDMARK_SUB.getName()
+                                        + UtilitiesEnum.DASHSEPERATOR.getName()
+                                        + landmark.getName();
+                        QMemory result = currentMemory.subMemory(subName).subMemory("path");
+
+                        if (robot.getWorld().getShortestLandmarkDirections() != null) {
+                                List<String> landmarkPath = robot.getWorld().getShortestLandmarkDirections().get(landmark);
+                                for (int i = 0; i < landmarkPath.size(); i++) {
+                                        result.setString(String.valueOf(i), landmarkPath.get(i));
+                                }
                         }
-                }
-
-                return result;
+                });
         }
 
         @Override
