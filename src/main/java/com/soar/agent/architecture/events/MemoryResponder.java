@@ -187,18 +187,22 @@ public class MemoryResponder extends MemoryListener {
                                         + landmark.getName();
                         QMemory result = currentMemory.subMemory(subName).subMemory("path");
 
+                        // if landmark is already reached then continue and dont update the values
+                        if (v == true) {
+                                // this will keep the ^path hirerachy otherwise
+                                // the ^path is entirely removed(from RobotAgent) if the list is empty
+                                result.setString(String.valueOf(0), UtilitiesEnum.REACHEDSTATUS.getName());
+                                return;
+                        }
+
                         if (robot.getWorld().getShortestLandmarkDirections() != null) {
                                 List<String> landmarkPath = robot.getWorld().getShortestLandmarkDirections()
                                                 .get(landmark);
 
-                                if (landmarkPath.size() > 0) {
+                                if (landmarkPath != null && landmarkPath.size() > 0) {
                                         for (int i = 0; i < landmarkPath.size(); i++) {
                                                 result.setString(String.valueOf(i), landmarkPath.get(i));
                                         }
-                                }else{
-                                        //this will keep the ^path hirerachy otherwise 
-                                        //the ^path is entirely removed(from RobotAgent) if the list is empty
-                                        result.setString(String.valueOf(0), UtilitiesEnum.REACHEDSTATUS.getName());
                                 }
 
                         }
