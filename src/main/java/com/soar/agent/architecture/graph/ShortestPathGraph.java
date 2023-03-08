@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import javax.swing.SwingWorker;
 
 import org.graphstream.algorithm.AStar;
+import org.graphstream.algorithm.AStar.DistanceCosts;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -55,6 +56,12 @@ public class ShortestPathGraph extends SwingWorker {
         if (landmarkNodes != null && landmarkNodes.size() > 0) {
             AStar astar = new AStar(graph);
 
+            // set to compute the cost based on euclidean distance. The computed path is
+            // much more straight forward
+            // (Euclidean distance between two points in the Euclidean space is defined as
+            // the length of the line segment between two points)
+            astar.setCosts(new DistanceCosts());
+
             landmarkNodes.forEach((key, value) -> {
                 astar.compute(agentNode.getId(), value.getId());
                 Path path = astar.getShortestPath();
@@ -68,7 +75,7 @@ public class ShortestPathGraph extends SwingWorker {
                 convertToDirections(k, v);
             });
 
-            //set the computed path/directions to the world
+            // set the computed path/directions to the world
             world.setShortestLandmarkDirections(computedPathDirections);
         }
     }
