@@ -60,7 +60,9 @@ public class ShortestPathGraph extends SwingWorker {
             // much more straight forward
             // (Euclidean distance between two points in the Euclidean space is defined as
             // the length of the line segment between two points)
-            astar.setCosts(new DistanceCosts());
+
+            CustomCost customCost = new CustomCost();
+            astar.setCosts(customCost);
 
             landmarkNodes.forEach((key, value) -> {
                 astar.compute(agentNode.getId(), value.getId());
