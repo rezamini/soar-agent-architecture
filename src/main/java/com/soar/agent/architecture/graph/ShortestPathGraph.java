@@ -74,12 +74,66 @@ public class ShortestPathGraph extends SwingWorker {
 
             // convert computed nodes to actual directions
             computedPaths.forEach((k, v) -> {
-                convertToDirections(k, v);
+                // convertToDirections(k, v);
+                // System.out.println("XXXXXXXXXXX K : "+k.getName());
+                // System.out.println(v);
+
+                convertToDirectionsManhathanDistance(k, v);
+
+
+                
             });
 
             // set the computed path/directions to the world
             world.setShortestLandmarkDirections(computedPathDirections);
         }
+    }
+
+    private void convertToDirectionsManhathanDistance(Landmark landmark, List<Node> paths) {
+
+        List<String> tempDirectionList = new ArrayList<String>();
+
+        int agentY = (int) agentNode.getAttribute("y");
+        int agentX = (int) agentNode.getAttribute("x");
+
+        int landmarkY = (int) paths.get(paths.size() - 1).getAttribute("y");
+        int landmarkX = (int) paths.get(paths.size() - 1).getAttribute("x");
+
+        //Manhattan distance calculation Manhattan Distance = | x 1 − x 2 | + | y 1 − y 2 |
+        //Manhattan distance is more appropriate for measuring distance on a grid-like structure, such as a chessboard or a computer screen.
+        // math.abs to make number positive
+        int manhattanDistance = Math.abs(agentX - landmarkX) + Math.abs(agentY - landmarkY);
+        double totalMovements = manhattanDistance / world.getRobots().get(0).getSpeed();
+
+        double newMovmentPerNode = Math.round(totalMovements / paths.size());
+        // System.out.println(tempArr.length);
+
+        for (int i = 1; i < paths.size(); i++) {
+            String[] tempArr = new String[(int) newMovmentPerNode];
+
+            String direction = "";
+            Node path = paths.get(i);
+
+            int currentY = (int) path.getAttribute("y");
+            int currentX = (int) path.getAttribute("x");
+
+            direction += agentY < currentY ? DirectionEnum.NORTH.getName()
+                    : agentY > currentY ? DirectionEnum.SOUTH.getName() : "";
+
+            direction += agentX < currentX ? DirectionEnum.EAST.getName()
+                    : agentX > currentX ? DirectionEnum.WEST.getName() : "";
+
+            Arrays.fill(tempArr, 0, tempArr.length, direction);
+
+            if (i == 1) {
+                tempDirectionList.addAll(0, Arrays.asList(tempArr));
+            }
+
+            tempDirectionList.addAll(Arrays.asList(tempArr));
+        }
+
+        // System.out.println(tempDirectionList);
+        computedPathDirections.put(landmark, tempDirectionList);
     }
 
     /*
