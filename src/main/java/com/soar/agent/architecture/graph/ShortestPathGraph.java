@@ -91,6 +91,10 @@ public class ShortestPathGraph extends SwingWorker {
 
     private void convertToDirectionsManhathanDistance(Landmark landmark, List<Node> paths) {
 
+        if(landmark == null || paths == null || paths.size() <= 0){
+            return;
+        }
+        
         List<String> tempDirectionList = new ArrayList<String>();
 
         int agentY = (int) agentNode.getAttribute("y");
@@ -130,6 +134,12 @@ public class ShortestPathGraph extends SwingWorker {
             }
 
             tempDirectionList.addAll(Arrays.asList(tempArr));
+
+            //temp add extra element for small path sizes in order for landmark detection to completely happen
+            if(i == paths.size() - 1){
+                tempDirectionList.add(direction);
+            }
+            
         }
 
         // System.out.println(tempDirectionList);
