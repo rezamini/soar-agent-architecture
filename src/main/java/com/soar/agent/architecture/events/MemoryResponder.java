@@ -185,7 +185,7 @@ public class MemoryResponder extends MemoryListener {
                         String subName = MemoryEnum.LANDMARK_SUB.getName()
                                         + UtilitiesEnum.DASHSEPERATOR.getName()
                                         + landmark.getName();
-                        QMemory result = currentMemory.subMemory(subName).subMemory("path");
+                        QMemory result = currentMemory.subMemory(subName).subMemory(MemoryEnum.LANDMARK_PATH.getName());
 
                         // if landmark is already reached then continue and dont update the values
                         if (v == true) {

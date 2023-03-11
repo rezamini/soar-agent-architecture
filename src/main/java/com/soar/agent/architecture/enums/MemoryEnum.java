@@ -17,6 +17,7 @@ public enum MemoryEnum {
   LANDMARK_MAIN("landmarks"),
   LANDMARK_SUB("landmark"),
   TOTAL_LANDMARKS("total"),
+  LANDMARK_PATH("path"),
 
   //Radar Memory Enums
   RADAR_BASE("radar"),
