@@ -2,9 +2,7 @@ package com.soar.agent.architecture.world;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,11 +36,7 @@ public class World {
     private Map<Landmark, List<String>> shortestLandmarkDirections = new LinkedHashMap<Landmark, List<String>>();
 
     public World() {
-        // try {
-        //     this.shortestPathGraph = new ShortestPathGraph(mapMatrix, this);
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
+
     }
 
     public SoarEventManager getEvents() {
@@ -391,7 +385,6 @@ public class World {
             try {
                 shortestPathGraph.updateAgentNode(agentMapMatrixX, agentMapMatrixY);
                 shortestPathGraph.calculateShortPath();
-                // setShortestLandmarkDirections(spg.get);
             } catch (Exception e) {
                 e.printStackTrace();
             }

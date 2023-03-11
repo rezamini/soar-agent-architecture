@@ -150,44 +150,44 @@ public class ShortestPathGraph extends SwingWorker {
      * Convert computed landmark node to actual directions.
      * this method has to be called for every landmark separately
      */
-    private void convertToDirections(Landmark landmark, List<Node> paths) {
+    // private void convertToDirections(Landmark landmark, List<Node> paths) {
 
-        List<String> tempDirectionList = new ArrayList<String>();
+    //     List<String> tempDirectionList = new ArrayList<String>();
 
-        // last node is the landmark position
-        // Node landmarkNode = paths.get(paths.size() - 1);
+    //     // last node is the landmark position
+    //     // Node landmarkNode = paths.get(paths.size() - 1);
 
-        // start from second index as the first index is the agent current position.
-        // looping from 0 will result in epmty string for 0
-        for (int i = 1; i < paths.size(); i++) {
-            String direction = "";
-            Node path = paths.get(i);
+    //     // start from second index as the first index is the agent current position.
+    //     // looping from 0 will result in epmty string for 0
+    //     for (int i = 1; i < paths.size(); i++) {
+    //         String direction = "";
+    //         Node path = paths.get(i);
 
-            int agentY = (int) agentNode.getAttribute("y");
-            int agentX = (int) agentNode.getAttribute("x");
+    //         int agentY = (int) agentNode.getAttribute("y");
+    //         int agentX = (int) agentNode.getAttribute("x");
 
-            int landmarkY = (int) path.getAttribute("y");
-            int landmarkX = (int) path.getAttribute("x");
+    //         int landmarkY = (int) path.getAttribute("y");
+    //         int landmarkX = (int) path.getAttribute("x");
 
-            direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
-                    : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
+    //         direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
+    //                 : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
 
-            direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
-                    : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
+    //         direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
+    //                 : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
 
-            // copy the index 1 position to index 0 (agent current position)
-            if (i == 1) {
-                tempDirectionList.add(0, direction);
-            }
+    //         // copy the index 1 position to index 0 (agent current position)
+    //         if (i == 1) {
+    //             tempDirectionList.add(0, direction);
+    //         }
 
-            // add each direction twice in order to be similar to the actual environment
-            // movements.
-            tempDirectionList.add(i, direction);
-            tempDirectionList.add(i + 1, direction);
-        }
+    //         // add each direction twice in order to be similar to the actual environment
+    //         // movements.
+    //         tempDirectionList.add(i, direction);
+    //         tempDirectionList.add(i + 1, direction);
+    //     }
 
-        computedPathDirections.put(landmark, tempDirectionList);
-    }
+    //     computedPathDirections.put(landmark, tempDirectionList);
+    // }
 
     private void sortPathByValue(Map<Landmark, List<Node>> computedPaths) {
         List<Entry<Landmark, List<Node>>> sortedList = new LinkedList<Entry<Landmark, List<Node>>>(

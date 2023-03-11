@@ -6,7 +6,6 @@ import com.soar.agent.architecture.world.World;
 
 import java.awt.geom.*;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 
 public class Robot {
     public final double widthMultiplier = 4.0;
@@ -129,14 +128,6 @@ public class Robot {
         }
 
         world.setMapMatrix(currentMapMatrix);
-
-        // world.updateShortestPath();
-        // world.getShortestLandmarkDirections().forEach((k, v) -> {
-        //     System.out.println(k.getName());
-        //     System.out.println(v);
-        // });
-
-        // System.out.println(Arrays.deepToString(world.getMapMatrix()));
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
