@@ -8,6 +8,8 @@ import java.util.concurrent.Callable;
 
 import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.beans.Radar;
+import com.soar.agent.architecture.enums.MemoryEnum;
+import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
 import com.soar.agent.architecture.events.UtilityResponder;
 import org.jsoar.kernel.DebuggerProvider;
@@ -42,7 +44,8 @@ public class RobotAgent {
 
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
-        move = new Move(); //this need to be initialised otherwise it will throw an error if we are setting values from other classes
+        move = new Move(); // this need to be initialised otherwise it will throw an error if we are
+                           // setting values from other classes
         SoarQMemoryAdapter.attach(threadedAgent.getAgent(), getQMemory());
         new CycleCountInput(threadedAgent.getInputOutput());
     }
@@ -60,7 +63,7 @@ public class RobotAgent {
             // initialize the output command listener for later use
             initRadarCommandListenerObject();
             initMoveCommandListenerObject();
-            
+
             initCommandListener("move");
 
             // areaResponder = new AreaResponder(robot, this);
@@ -92,13 +95,13 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
-            source = new
-            File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
+            source = new File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-epmem.soar").toURI());
-            // source = new File(getClass().getResource("/rules/move-to-landmark-3.0-epmem-radar.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-3.0-epmem-radar.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-smem.soar").toURI());
 
@@ -115,7 +118,7 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/explore-map-radar_1.0.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/explore-map-radar_2.0.soar").toURI());
-            // source = new  
+            // source = new
             // File(getClass().getResource("/rules/explore-map-radar_3.0.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/explore-map-radar_4.0_epmem.soar").toURI());
@@ -210,13 +213,13 @@ public class RobotAgent {
 
                 try {
                     synchronized (threadedAgent.getAgent()) {
-                        //set the radar status only if there is battery otherwise it be set to off
-                        if(robot.getRadarBattery() > 0 ){
+                        // set the radar status only if there is battery otherwise it be set to off
+                        if (robot.getRadarBattery() > 0) {
                             robot.setToggleRadar(bean.isToggleRadar());
-                        }else if(robot.getRadarBattery() <= 0){
+                        } else if (robot.getRadarBattery() <= 0) {
                             robot.setToggleRadar(false);
                         }
-                        
+
                         context.setStatus("complete");
                     }
 
@@ -240,12 +243,24 @@ public class RobotAgent {
 
             @Override
             public void onCommandAdded(String commandName, Identifier commandId) {
+                // area.view
                 removeMemoryPath("area.view");
-                removeMemoryPath("radar.live");
-                // removeMemoryPath("landmarks");
 
+                // radar.live
+                removeMemoryPath(
+                        MemoryEnum.RADAR_BASE.getName() +
+                                UtilitiesEnum.DOTSEPERATOR.getName() +
+                                MemoryEnum.RADAR_LIVE.getName());
+
+                // landmarks.landmark-a.path
                 robot.getWorld().getLandmarkMap().forEach((landmark, v) -> {
-                    removeMemoryPath("landmarks.landmark-"+landmark.getName()+".path");
+                    removeMemoryPath(MemoryEnum.LANDMARK_MAIN.getName() +
+                            UtilitiesEnum.DOTSEPERATOR.getName() +
+                            MemoryEnum.LANDMARK_SUB.getName() +
+                            UtilitiesEnum.DASHSEPERATOR.getName() +
+                            landmark.getName() +
+                            UtilitiesEnum.DOTSEPERATOR.getName() +
+                            MemoryEnum.LANDMARK_PATH.getName());
                 });
 
             }
