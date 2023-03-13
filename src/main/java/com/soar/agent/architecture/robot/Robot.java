@@ -97,7 +97,8 @@ public class Robot {
 
         if (!world.willCollide(this, newX, newY, dimensions)) {
             move(newX, newY);
-            updateMapMatrix(newX, newY);
+            // updateMapMatrix(newX, newY);
+            updateCompleteMapMatrix(newX, newY, dx, dy);
         }
     }
 
@@ -128,6 +129,38 @@ public class Robot {
         }
 
         world.setMapMatrix(currentMapMatrix);
+    }
+
+    public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy) {
+        int agentMatrixX = (int) Math.round(newX + dx);
+        int agentMatrixY = (int) Math.round(newY + dy);
+        
+        // set the agent matrix location on a separate field that could be used in other
+        // places without looping the entire map if required
+        world.setAgentMapMatrixX(agentMatrixX);
+        world.setAgentMapMatrixY(agentMatrixY);
+
+        // update the agent location on the map matrix
+        int[][] currentMapMatrix = world.getCompleteMapMatrix();
+        
+
+        for (int i = 0; i < currentMapMatrix.length; i++) {
+            for (int j = 0; j < currentMapMatrix[i].length; j++) {
+
+                
+                // check if the cell is 3 which represents an agent
+                if (currentMapMatrix[i][j] == 3) {
+                    // update the current position to empty space
+                    currentMapMatrix[i][j] = 0;
+                    
+                    // set the new agent position
+                    currentMapMatrix[agentMatrixY][agentMatrixX] = 3;
+                    break;
+                }
+            }
+        }
+
+        world.setCompleteMapMatrix(currentMapMatrix);
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
