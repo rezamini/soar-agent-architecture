@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,6 +139,7 @@ public class MapLoader {
 
                     //complete matrix
                     completeMapMatrix[(int) cy][(int) cx] = 3;
+                    completeMapMatrix[(int) ((int) cy)][(int) ((int) cx + r.getSpeed() * 2)] = 3;
                 }
             }
         }

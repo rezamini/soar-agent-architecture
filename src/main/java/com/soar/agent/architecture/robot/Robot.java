@@ -6,6 +6,7 @@ import com.soar.agent.architecture.world.World;
 
 import java.awt.geom.*;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 public class Robot {
     public final double widthMultiplier = 4.0;
@@ -98,14 +99,14 @@ public class Robot {
         if (!world.willCollide(this, newX, newY, dimensions)) {
             move(newX, newY);
             // updateMapMatrix(newX, newY);
-            updateCompleteMapMatrix(newX, newY, dx, dy);
+            updateCompleteMapMatrix(newX, newY, dx, dy, dimensions);
         }
     }
 
     public void updateMapMatrix(double newX, double newY) {
         int agentMatrixX = (int) Math.round((newX - 1) / 2);
         int agentMatrixY = (int) Math.round((newY - 1) / 2);
-        
+
         // set the agent matrix location on a separate field that could be used in other
         // places without looping the entire map if required
         world.setAgentMapMatrixX(agentMatrixX);
@@ -131,10 +132,16 @@ public class Robot {
         world.setMapMatrix(currentMapMatrix);
     }
 
-    public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy) {
+    public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy, double[] dimensions) {
+        // clone an instance of shape and position the agent based on direction
+        Rectangle2D tempShape = (Rectangle2D) shape.clone();
+        double agentWidth = dimensions[0];
+        double agentHeight = dimensions[1];
+        tempShape.setFrameFromCenter(newX, newY, newX + agentWidth, newY + agentHeight);
+
         int agentMatrixX = (int) Math.round(newX + dx);
         int agentMatrixY = (int) Math.round(newY + dy);
-        
+
         // set the agent matrix location on a separate field that could be used in other
         // places without looping the entire map if required
         world.setAgentMapMatrixX(agentMatrixX);
@@ -142,21 +149,103 @@ public class Robot {
 
         // update the agent location on the map matrix
         int[][] currentMapMatrix = world.getCompleteMapMatrix();
-        
 
         for (int i = 0; i < currentMapMatrix.length; i++) {
             for (int j = 0; j < currentMapMatrix[i].length; j++) {
 
-                
                 // check if the cell is 3 which represents an agent
                 if (currentMapMatrix[i][j] == 3) {
                     // update the current position to empty space
                     currentMapMatrix[i][j] = 0;
-                    
-                    // set the new agent position
-                    currentMapMatrix[agentMatrixY][agentMatrixX] = 3;
-                    break;
                 }
+            }
+        }
+
+        int toFillX = 0;
+        int fromFillX = (int) Math.round(newX);
+
+        int toFillY = 0;
+        int fromFillY = (int) Math.round(newY);
+
+        // left or right
+        if ((dx > 0 || dx < 0) && dy == 0) {
+            toFillY = (int) Math.round(newY);
+            
+            if(dx > 0){
+                fromFillX = (int) Math.round(newX);
+                toFillX = (int) Math.round(newX + 2);
+            }
+
+            if(dx < 0){
+                fromFillX = (int) Math.round(newX - 2);
+                toFillX = (int) Math.round(newX);
+            }
+
+            Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+            Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
+
+            // up or down
+        } else if ((dy > 0 || dy < 0) && dx == 0) {
+            toFillX = (int) Math.round(newX + 1);
+            fromFillY = (int) Math.round(newY);
+
+            if(dy > 0){
+                toFillY = (int) Math.round(newY + 1);
+            }
+
+            if(dy < 0){
+                toFillY = (int) Math.round(newY - 1);
+            }
+
+            Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+            Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
+
+            // top right || top left
+        } else if ((dx > 0 && dy > 0) || (dx < 0 && dy > 0)) {
+            if(dx > 0 && dy > 0){
+                fromFillY = (int) Math.round(newY);
+                toFillY = (int) Math.round(newY + 1);
+
+                fromFillX = (int) Math.round(newX);
+                toFillX = (int) Math.round(newX + 1);
+
+                Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+                Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3);  
+            }
+
+            if(dx < 0 && dy > 0){
+                fromFillY = (int) Math.round(newY);
+                toFillY = (int) Math.round(newY + 1);
+
+                fromFillX = (int) Math.round(newX - 1);
+                toFillX = (int) Math.round(newX);
+
+                Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+                Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3); 
+            }
+
+            // bottom right || bottom left
+        } else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
+            if(dx < 0 && dy < 0){
+                fromFillY = (int) Math.round(newY);
+                toFillY = (int) Math.round(newY - 1);
+
+                fromFillX = (int) Math.round(newX - 1);
+                toFillX = (int) Math.round(newX);
+
+                Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+                Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3);  
+            }
+
+            if(dx > 0 && dy < 0){
+                fromFillY = (int) Math.round(newY);
+                toFillY = (int) Math.round(newY - 1);
+
+                fromFillX = (int) Math.round(newX);
+                toFillX = (int) Math.round(newX + 1);
+
+                Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+                Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3); 
             }
         }
 
