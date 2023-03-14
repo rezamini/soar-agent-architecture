@@ -25,6 +25,24 @@ public class World {
     private int[][] completeMapMatrix;
     private Integer agentMapMatrixX = null;
     private Integer agentMapMatrixY = null;
+    private Integer secondAgentMapMatrixX = null;
+    private Integer secondAgentMapMatrixY = null;
+
+    public Integer getSecondAgentMapMatrixX() {
+        return secondAgentMapMatrixX;
+    }
+
+    public void setSecondAgentMapMatrixX(Integer secondAgentMapMatrixX) {
+        this.secondAgentMapMatrixX = secondAgentMapMatrixX;
+    }
+
+    public Integer getSecondAgentMapMatrixY() {
+        return secondAgentMapMatrixY;
+    }
+
+    public void setSecondAgentMapMatrixY(Integer secondAgentMapMatrixY) {
+        this.secondAgentMapMatrixY = secondAgentMapMatrixY;
+    }
 
     // the boolean value is to indicate if landmark is reached by the agent
     private final Map<Landmark, Boolean> landmarkMap = new LinkedHashMap<Landmark, Boolean>();
@@ -383,7 +401,7 @@ public class World {
     public void updateShortestPath(){
         if(shortestPathGraph != null){
             try {
-                shortestPathGraph.updateAgentNode(agentMapMatrixX, agentMapMatrixY);
+                shortestPathGraph.updateAgentNode(agentMapMatrixX, agentMapMatrixY, secondAgentMapMatrixX, secondAgentMapMatrixY);
                 shortestPathGraph.calculateShortPath();
             } catch (Exception e) {
                 e.printStackTrace();

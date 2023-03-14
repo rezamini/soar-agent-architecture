@@ -37,6 +37,7 @@ public class ShortestPathGraph extends SwingWorker {
     public SwingViewer viewer;
     public View view;
     private Node agentNode;
+    private Node secondAgentNode;
     private Map<Landmark, Node> landmarkNodes = new LinkedHashMap<Landmark, Node>();
     private World world;
     private Map<Landmark, List<Node>> computedPaths = new LinkedHashMap<Landmark, List<Node>>();
@@ -80,8 +81,6 @@ public class ShortestPathGraph extends SwingWorker {
 
                 convertToDirectionsManhathanDistance(k, v);
 
-
-                
             });
 
             // set the computed path/directions to the world
@@ -91,10 +90,10 @@ public class ShortestPathGraph extends SwingWorker {
 
     private void convertToDirectionsManhathanDistance(Landmark landmark, List<Node> paths) {
 
-        if(landmark == null || paths == null || paths.size() <= 0){
+        if (landmark == null || paths == null || paths.size() <= 0) {
             return;
         }
-        
+
         List<String> tempDirectionList = new ArrayList<String>();
 
         int agentY = (int) agentNode.getAttribute("y");
@@ -103,8 +102,10 @@ public class ShortestPathGraph extends SwingWorker {
         int landmarkY = (int) paths.get(paths.size() - 1).getAttribute("y");
         int landmarkX = (int) paths.get(paths.size() - 1).getAttribute("x");
 
-        //Manhattan distance calculation Manhattan Distance = | x 1 − x 2 | + | y 1 − y 2 |
-        //Manhattan distance is more appropriate for measuring distance on a grid-like structure, such as a chessboard or a computer screen.
+        // Manhattan distance calculation Manhattan Distance = | x 1 − x 2 | + | y 1 − y
+        // 2 |
+        // Manhattan distance is more appropriate for measuring distance on a grid-like
+        // structure, such as a chessboard or a computer screen.
         // math.abs to make number positive
         int manhattanDistance = Math.abs(agentX - landmarkX) + Math.abs(agentY - landmarkY);
         double totalMovements = manhattanDistance / world.getRobots().get(0).getSpeed();
@@ -135,11 +136,12 @@ public class ShortestPathGraph extends SwingWorker {
 
             tempDirectionList.addAll(Arrays.asList(tempArr));
 
-            //temp add extra element for small path sizes in order for landmark detection to completely happen
-            if(i == paths.size() - 1){
+            // temp add extra element for small path sizes in order for landmark detection
+            // to completely happen
+            if (i == paths.size() - 1) {
                 tempDirectionList.add(direction);
             }
-            
+
         }
 
         // System.out.println(tempDirectionList);
@@ -152,41 +154,41 @@ public class ShortestPathGraph extends SwingWorker {
      */
     // private void convertToDirections(Landmark landmark, List<Node> paths) {
 
-    //     List<String> tempDirectionList = new ArrayList<String>();
+    // List<String> tempDirectionList = new ArrayList<String>();
 
-    //     // last node is the landmark position
-    //     // Node landmarkNode = paths.get(paths.size() - 1);
+    // // last node is the landmark position
+    // // Node landmarkNode = paths.get(paths.size() - 1);
 
-    //     // start from second index as the first index is the agent current position.
-    //     // looping from 0 will result in epmty string for 0
-    //     for (int i = 1; i < paths.size(); i++) {
-    //         String direction = "";
-    //         Node path = paths.get(i);
+    // // start from second index as the first index is the agent current position.
+    // // looping from 0 will result in epmty string for 0
+    // for (int i = 1; i < paths.size(); i++) {
+    // String direction = "";
+    // Node path = paths.get(i);
 
-    //         int agentY = (int) agentNode.getAttribute("y");
-    //         int agentX = (int) agentNode.getAttribute("x");
+    // int agentY = (int) agentNode.getAttribute("y");
+    // int agentX = (int) agentNode.getAttribute("x");
 
-    //         int landmarkY = (int) path.getAttribute("y");
-    //         int landmarkX = (int) path.getAttribute("x");
+    // int landmarkY = (int) path.getAttribute("y");
+    // int landmarkX = (int) path.getAttribute("x");
 
-    //         direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
-    //                 : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
+    // direction += agentY < landmarkY ? DirectionEnum.NORTH.getName()
+    // : agentY > landmarkY ? DirectionEnum.SOUTH.getName() : "";
 
-    //         direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
-    //                 : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
+    // direction += agentX < landmarkX ? DirectionEnum.EAST.getName()
+    // : agentX > landmarkX ? DirectionEnum.WEST.getName() : "";
 
-    //         // copy the index 1 position to index 0 (agent current position)
-    //         if (i == 1) {
-    //             tempDirectionList.add(0, direction);
-    //         }
+    // // copy the index 1 position to index 0 (agent current position)
+    // if (i == 1) {
+    // tempDirectionList.add(0, direction);
+    // }
 
-    //         // add each direction twice in order to be similar to the actual environment
-    //         // movements.
-    //         tempDirectionList.add(i, direction);
-    //         tempDirectionList.add(i + 1, direction);
-    //     }
+    // // add each direction twice in order to be similar to the actual environment
+    // // movements.
+    // tempDirectionList.add(i, direction);
+    // tempDirectionList.add(i + 1, direction);
+    // }
 
-    //     computedPathDirections.put(landmark, tempDirectionList);
+    // computedPathDirections.put(landmark, tempDirectionList);
     // }
 
     private void sortPathByValue(Map<Landmark, List<Node>> computedPaths) {
@@ -257,7 +259,8 @@ public class ShortestPathGraph extends SwingWorker {
                 } else if (mapMatrix[i][j] == 3) {
                     node.setAttribute("ui.style", "fill-color: yellow; text-size: 12;"); // agent
                     node.setAttribute("nodeName", "Agent");
-                    agentNode = node;
+                    
+                    agentNode = node;  
                 }
 
                 // START: edges for cardinal directions
@@ -359,7 +362,9 @@ public class ShortestPathGraph extends SwingWorker {
     /*
      * Update agent node location based on new agent matrix x,y
      */
-    public Graph updateAgentNode(Integer newAgentMapMatrixX, Integer newAgentMapMatrixY) {
+    public Graph updateAgentNode(Integer newAgentMapMatrixX, Integer newAgentMapMatrixY,
+            Integer secondNewAgentMapMatrixX, Integer secondNewAgentMapMatrixY) {
+
         if (newAgentMapMatrixX == null || newAgentMapMatrixY == null)
             return graph;
 
@@ -375,6 +380,21 @@ public class ShortestPathGraph extends SwingWorker {
 
         // update and keep a copy of the new node
         agentNode = newAgentNode;
+
+        //update second node if exists
+        if(secondNewAgentMapMatrixY != null && secondNewAgentMapMatrixX != null){
+            // if(secondAgentNode != null){
+            //     Node secondPreviousAgentNode = graph.getNode(secondAgentNode.getId());
+            //     secondPreviousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC;");
+            //     secondPreviousAgentNode.setAttribute("nodeName", "");
+            // }
+            
+            Node secondNewAgentNode = graph.getNode(secondNewAgentMapMatrixY + "-" + secondNewAgentMapMatrixX);
+            secondNewAgentNode.setAttribute("ui.style", "fill-color: yellow; text-size: 12;"); // agent
+            secondNewAgentNode.setAttribute("nodeName", "Agent");
+
+            // secondAgentNode = secondNewAgentNode;
+        }
 
         displayNodeAndEdgeNames();
         return graph;

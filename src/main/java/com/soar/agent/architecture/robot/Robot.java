@@ -249,6 +249,9 @@ public class Robot {
             }
         }
 
+        world.setSecondAgentMapMatrixX((int) Math.round(agentMatrixX + dx + dx ));
+        world.setSecondAgentMapMatrixY((int) Math.round(agentMatrixY + dy + dy ));
+        
         world.setCompleteMapMatrix(currentMapMatrix);
     }
 

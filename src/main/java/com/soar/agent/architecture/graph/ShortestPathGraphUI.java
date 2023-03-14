@@ -49,7 +49,8 @@ public class ShortestPathGraphUI extends JPanel {
         initialise();
     }
 
-    public static ShortestPathGraphUI getInstance(ThreadedAgent agent, int[][] mapMatrix, World world) throws IOException {
+    public static ShortestPathGraphUI getInstance(ThreadedAgent agent, int[][] mapMatrix, World world)
+            throws IOException {
         if (nodeGraphInstance == null) {
             nodeGraphInstance = new ShortestPathGraphUI(agent, mapMatrix, world);
 
@@ -108,7 +109,9 @@ public class ShortestPathGraphUI extends JPanel {
             public void onEvent(SoarEvent event) {
 
                 try {
-                    nodeGraphInstance.shortestPathGraph.updateAgentNode(world.getAgentMapMatrixX(), world.getAgentMapMatrixY());
+                    nodeGraphInstance.shortestPathGraph.updateAgentNode(world.getAgentMapMatrixX(),
+                            world.getAgentMapMatrixY(), world.getSecondAgentMapMatrixX(),
+                            world.getSecondAgentMapMatrixY());
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -146,7 +149,7 @@ public class ShortestPathGraphUI extends JPanel {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-                
+
             }
         });
 
