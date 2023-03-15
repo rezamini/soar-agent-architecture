@@ -79,7 +79,8 @@ public class ShortestPathGraph extends SwingWorker {
                 // System.out.println("XXXXXXXXXXX K : "+k.getName());
                 // System.out.println(v);
 
-                convertToDirectionsManhathanDistance(k, v);
+                // convertToDirectionsManhathanDistance(k, v);
+                convertToActualDirections(k, v);
 
             });
 
@@ -88,7 +89,7 @@ public class ShortestPathGraph extends SwingWorker {
         }
     }
 
-    private void convertToDirectionsManhathanDistance(Landmark landmark, List<Node> paths) {
+    private void convertToActualDirections(Landmark landmark, List<Node> paths) {
 
         if (landmark == null || paths == null || paths.size() <= 0) {
             return;
@@ -96,57 +97,121 @@ public class ShortestPathGraph extends SwingWorker {
 
         List<String> tempDirectionList = new ArrayList<String>();
 
-        int agentY = (int) agentNode.getAttribute("y");
-        int agentX = (int) agentNode.getAttribute("x");
+    
 
-        int landmarkY = (int) paths.get(paths.size() - 1).getAttribute("y");
-        int landmarkX = (int) paths.get(paths.size() - 1).getAttribute("x");
+        // int tempY = (int) agentNode.getAttribute("y");
+        // int tempX = (int) agentNode.getAttribute("x");
 
-        // Manhattan distance calculation Manhattan Distance = | x 1 − x 2 | + | y 1 − y
-        // 2 |
-        // Manhattan distance is more appropriate for measuring distance on a grid-like
-        // structure, such as a chessboard or a computer screen.
-        // math.abs to make number positive
-        int manhattanDistance = Math.abs(agentX - landmarkX) + Math.abs(agentY - landmarkY);
-        double totalMovements = manhattanDistance / world.getRobots().get(0).getSpeed();
+        //get the first index which is the agent position
+        int tempY = (int) paths.get(0).getAttribute("y");
+        int tempX = (int) paths.get(0).getAttribute("x");
 
-        double newMovmentPerNode = Math.round(totalMovements / paths.size());
-        // System.out.println(tempArr.length);
+        //remove the first index from the computed path which is the agent current position
+        //we have a temp copy above for direction calculation
+        paths.remove(0);
 
-        for (int i = 1; i < paths.size(); i++) {
-            String[] tempArr = new String[(int) newMovmentPerNode];
+        int totalDirections = (int) (paths.size() / world.getRobots().get(0).getSpeed());
+        int pathMultiplier = totalDirections / paths.size();
+        
+        // System.out.println("XXXXXXXXXXXXXXXXXXXXX "+landmark.getName());
+        // System.out.println("Path size : "+paths.size() + " : totalDirections : "+totalDirections + " : pathMultiplier : "+pathMultiplier);
+
+        for (int i = 0; i < paths.size(); i++) {
+            
+            String[] tempArr = new String[(int) pathMultiplier];
 
             String direction = "";
             Node path = paths.get(i);
 
-            int currentY = (int) path.getAttribute("y");
-            int currentX = (int) path.getAttribute("x");
+            // set the previous node as temp node
+            // this is to compare every two nodes together.
+            if(i > 0){
+                tempY = (int) paths.get(i - 1).getAttribute("y");
+                tempX = (int) paths.get(i - 1).getAttribute("x");
+            }
 
-            direction += agentY < currentY ? DirectionEnum.NORTH.getName()
-                    : agentY > currentY ? DirectionEnum.SOUTH.getName() : "";
+            int targetY = (int) path.getAttribute("y");
+            int targetX = (int) path.getAttribute("x");
 
-            direction += agentX < currentX ? DirectionEnum.EAST.getName()
-                    : agentX > currentX ? DirectionEnum.WEST.getName() : "";
+            direction += tempY < targetY ? DirectionEnum.NORTH.getName()
+                    : tempY > targetY ? DirectionEnum.SOUTH.getName() : "";
+
+            direction += tempX < targetX ? DirectionEnum.EAST.getName()
+                    : tempX > targetX ? DirectionEnum.WEST.getName() : "";
 
             Arrays.fill(tempArr, 0, tempArr.length, direction);
 
-            if (i == 1) {
-                tempDirectionList.addAll(0, Arrays.asList(tempArr));
-            }
+            // if (i == 1) {
+            //     tempDirectionList.addAll(0, Arrays.asList(tempArr));
+            // }
 
             tempDirectionList.addAll(Arrays.asList(tempArr));
 
-            // temp add extra element for small path sizes in order for landmark detection
-            // to completely happen
-            if (i == paths.size() - 1) {
-                tempDirectionList.add(direction);
-            }
-
         }
 
-        // System.out.println(tempDirectionList);
+        System.out.println(tempDirectionList);
         computedPathDirections.put(landmark, tempDirectionList);
     }
+
+    // private void convertToDirectionsManhathanDistance(Landmark landmark, List<Node> paths) {
+
+    //     if (landmark == null || paths == null || paths.size() <= 0) {
+    //         return;
+    //     }
+
+    //     List<String> tempDirectionList = new ArrayList<String>();
+
+    //     int agentY = (int) agentNode.getAttribute("y");
+    //     int agentX = (int) agentNode.getAttribute("x");
+
+    //     int landmarkY = (int) paths.get(paths.size() - 1).getAttribute("y");
+    //     int landmarkX = (int) paths.get(paths.size() - 1).getAttribute("x");
+
+    //     // Manhattan distance calculation Manhattan Distance = | x 1 − x 2 | + | y 1 − y
+    //     // 2 |
+    //     // Manhattan distance is more appropriate for measuring distance on a grid-like
+    //     // structure, such as a chessboard or a computer screen.
+    //     // math.abs to make number positive
+    //     int manhattanDistance = Math.abs(agentX - landmarkX) + Math.abs(agentY - landmarkY);
+    //     double totalMovements = manhattanDistance / world.getRobots().get(0).getSpeed();
+
+    //     double newMovmentPerNode = Math.round(totalMovements / paths.size());
+    //     // System.out.println(tempArr.length);
+
+    //     for (int i = 1; i < paths.size(); i++) {
+    //         String[] tempArr = new String[(int) newMovmentPerNode];
+
+    //         String direction = "";
+    //         Node path = paths.get(i);
+
+    //         int currentY = (int) path.getAttribute("y");
+    //         int currentX = (int) path.getAttribute("x");
+
+    //         direction += agentY < currentY ? DirectionEnum.NORTH.getName()
+    //                 : agentY > currentY ? DirectionEnum.SOUTH.getName() : "";
+
+    //         direction += agentX < currentX ? DirectionEnum.EAST.getName()
+    //                 : agentX > currentX ? DirectionEnum.WEST.getName() : "";
+
+    //         Arrays.fill(tempArr, 0, tempArr.length, direction);
+
+    //         if (i == 1) {
+    //             tempDirectionList.addAll(0, Arrays.asList(tempArr));
+    //         }
+
+    //         tempDirectionList.addAll(Arrays.asList(tempArr));
+
+    //         // temp add extra element for small path sizes in order for landmark detection
+    //         // to completely happen
+    //         if (i == paths.size() - 1) {
+    //             tempDirectionList.add(direction);
+    //         }
+
+    //     }
+
+    //     // System.out.println(tempDirectionList);
+    //     computedPathDirections.put(landmark, tempDirectionList);
+    // }
 
     /*
      * Convert computed landmark node to actual directions.

@@ -141,11 +141,15 @@ public class Robot {
 
         int agentMatrixX = (int) Math.round(newX + dx);
         int agentMatrixY = (int) Math.round(newY + dy);
+        int agentMatrixX2 = (int) Math.round(agentMatrixX + dx + dx );
+        int agentMatrixY2 = (int) Math.round(agentMatrixY + dy + dy );
 
         // set the agent matrix location on a separate field that could be used in other
         // places without looping the entire map if required
         world.setAgentMapMatrixX(agentMatrixX);
         world.setAgentMapMatrixY(agentMatrixY);
+        world.setSecondAgentMapMatrixX(agentMatrixX2);
+        world.setSecondAgentMapMatrixY(agentMatrixY2);
 
         // update the agent location on the map matrix
         int[][] currentMapMatrix = world.getCompleteMapMatrix();
@@ -161,96 +165,99 @@ public class Robot {
             }
         }
 
-        int toFillX = 0;
-        int fromFillX = (int) Math.round(newX);
+        currentMapMatrix[agentMatrixY][agentMatrixX] = 3;
+        currentMapMatrix[agentMatrixY2][agentMatrixX2] = 3;
 
-        int toFillY = 0;
-        int fromFillY = (int) Math.round(newY);
+        // int toFillX = 0;
+        // int fromFillX = (int) Math.round(newX);
 
-        // left or right
-        if ((dx > 0 || dx < 0) && dy == 0) {
-            toFillY = (int) Math.round(newY);
+        // int toFillY = 0;
+        // int fromFillY = (int) Math.round(newY);
+
+        // // left or right
+        // if ((dx > 0 || dx < 0) && dy == 0) {
+        //     toFillY = (int) Math.round(newY);
             
-            if(dx > 0){
-                fromFillX = (int) Math.round(newX);
-                toFillX = (int) Math.round(newX + 2);
-            }
+        //     if(dx > 0){
+        //         fromFillX = (int) Math.round(newX);
+        //         toFillX = (int) Math.round(newX + 2);
+        //     }
 
-            if(dx < 0){
-                fromFillX = (int) Math.round(newX - 2);
-                toFillX = (int) Math.round(newX);
-            }
+        //     if(dx < 0){
+        //         fromFillX = (int) Math.round(newX - 2);
+        //         toFillX = (int) Math.round(newX);
+        //     }
 
-            Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-            Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
+        //     Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        //     Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
 
-            // up or down
-        } else if ((dy > 0 || dy < 0) && dx == 0) {
-            toFillX = (int) Math.round(newX + 1);
-            fromFillY = (int) Math.round(newY);
+        //     // up or down
+        // } else if ((dy > 0 || dy < 0) && dx == 0) {
+        //     toFillX = (int) Math.round(newX + 1);
+        //     fromFillY = (int) Math.round(newY);
 
-            if(dy > 0){
-                toFillY = (int) Math.round(newY + 1);
-            }
+        //     if(dy > 0){
+        //         toFillY = (int) Math.round(newY + 1);
+        //     }
 
-            if(dy < 0){
-                toFillY = (int) Math.round(newY - 1);
-            }
+        //     if(dy < 0){
+        //         toFillY = (int) Math.round(newY - 1);
+        //     }
 
-            Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-            Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
+        //     Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        //     Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
 
-            // top right || top left
-        } else if ((dx > 0 && dy > 0) || (dx < 0 && dy > 0)) {
-            if(dx > 0 && dy > 0){
-                fromFillY = (int) Math.round(newY);
-                toFillY = (int) Math.round(newY + 1);
+        //     // top right || top left
+        // } else if ((dx > 0 && dy > 0) || (dx < 0 && dy > 0)) {
+        //     if(dx > 0 && dy > 0){
+        //         fromFillY = (int) Math.round(newY);
+        //         toFillY = (int) Math.round(newY + 1);
 
-                fromFillX = (int) Math.round(newX);
-                toFillX = (int) Math.round(newX + 1);
+        //         fromFillX = (int) Math.round(newX);
+        //         toFillX = (int) Math.round(newX + 1);
 
-                Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-                Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3);  
-            }
+        //         Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        //         Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3);  
+        //     }
 
-            if(dx < 0 && dy > 0){
-                fromFillY = (int) Math.round(newY);
-                toFillY = (int) Math.round(newY + 1);
+        //     if(dx < 0 && dy > 0){
+        //         fromFillY = (int) Math.round(newY);
+        //         toFillY = (int) Math.round(newY + 1);
 
-                fromFillX = (int) Math.round(newX - 1);
-                toFillX = (int) Math.round(newX);
+        //         fromFillX = (int) Math.round(newX - 1);
+        //         toFillX = (int) Math.round(newX);
 
-                Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-                Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3); 
-            }
+        //         Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        //         Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3); 
+        //     }
 
-            // bottom right || bottom left
-        } else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
-            if(dx < 0 && dy < 0){
-                fromFillY = (int) Math.round(newY);
-                toFillY = (int) Math.round(newY - 1);
+        //     // bottom right || bottom left
+        // } else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
+        //     if(dx < 0 && dy < 0){
+        //         fromFillY = (int) Math.round(newY);
+        //         toFillY = (int) Math.round(newY - 1);
 
-                fromFillX = (int) Math.round(newX - 1);
-                toFillX = (int) Math.round(newX);
+        //         fromFillX = (int) Math.round(newX - 1);
+        //         toFillX = (int) Math.round(newX);
 
-                Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-                Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3);  
-            }
+        //         Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        //         Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3);  
+        //     }
 
-            if(dx > 0 && dy < 0){
-                fromFillY = (int) Math.round(newY);
-                toFillY = (int) Math.round(newY - 1);
+        //     if(dx > 0 && dy < 0){
+        //         fromFillY = (int) Math.round(newY);
+        //         toFillY = (int) Math.round(newY - 1);
 
-                fromFillX = (int) Math.round(newX);
-                toFillX = (int) Math.round(newX + 1);
+        //         fromFillX = (int) Math.round(newX);
+        //         toFillX = (int) Math.round(newX + 1);
 
-                Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-                Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3); 
-            }
-        }
+        //         Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        //         Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3); 
+        //     }
+        // }
 
-        world.setSecondAgentMapMatrixX((int) Math.round(agentMatrixX + dx + dx ));
-        world.setSecondAgentMapMatrixY((int) Math.round(agentMatrixY + dy + dy ));
+        // world.setSecondAgentMapMatrixX((int) Math.round(agentMatrixX + dx + dx ));
+        // world.setSecondAgentMapMatrixY((int) Math.round(agentMatrixY + dy + dy ));
         
         world.setCompleteMapMatrix(currentMapMatrix);
     }
