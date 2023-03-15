@@ -260,7 +260,10 @@ public class ShortestPathGraph extends SwingWorker {
                     node.setAttribute("ui.style", "fill-color: yellow; text-size: 12;"); // agent
                     node.setAttribute("nodeName", "Agent");
                     
-                    agentNode = node;  
+                    if(agentNode == null) agentNode = node;
+                    
+                    //add the node to second node so it could be used if it exists
+                    secondAgentNode = node;
                 }
 
                 // START: edges for cardinal directions
@@ -364,7 +367,7 @@ public class ShortestPathGraph extends SwingWorker {
      */
     public Graph updateAgentNode(Integer newAgentMapMatrixX, Integer newAgentMapMatrixY,
             Integer secondNewAgentMapMatrixX, Integer secondNewAgentMapMatrixY) {
-
+        
         if (newAgentMapMatrixX == null || newAgentMapMatrixY == null)
             return graph;
 
@@ -381,19 +384,24 @@ public class ShortestPathGraph extends SwingWorker {
         // update and keep a copy of the new node
         agentNode = newAgentNode;
 
-        //update second node if exists
+        //update second node(s) related data if exists
         if(secondNewAgentMapMatrixY != null && secondNewAgentMapMatrixX != null){
-            // if(secondAgentNode != null){
-            //     Node secondPreviousAgentNode = graph.getNode(secondAgentNode.getId());
-            //     secondPreviousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC;");
-            //     secondPreviousAgentNode.setAttribute("nodeName", "");
-            // }
+
+            //delete the second node previous position if it exists
+            // the second node id need to be check with other agent node in order not to delete
+            // disappear other agent node on UI
+            if(secondAgentNode != null && secondAgentNode.getId() != agentNode.getId()){
+                Node secondPreviousAgentNode = graph.getNode(secondAgentNode.getId());
+                secondPreviousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC;");
+                secondPreviousAgentNode.setAttribute("nodeName", "");
+            }
             
             Node secondNewAgentNode = graph.getNode(secondNewAgentMapMatrixY + "-" + secondNewAgentMapMatrixX);
-            secondNewAgentNode.setAttribute("ui.style", "fill-color: yellow; text-size: 12;"); // agent
+            secondNewAgentNode.setAttribute("ui.style", "fill-color: red; text-size: 12;"); // agent
             secondNewAgentNode.setAttribute("nodeName", "Agent");
 
-            // secondAgentNode = secondNewAgentNode;
+            // update and keep a copy of the new second node
+            secondAgentNode = secondNewAgentNode;
         }
 
         displayNodeAndEdgeNames();
