@@ -161,8 +161,10 @@ public class MapLoader {
         world.addObstacle(new Rectangle2D.Double(start * CELL_SIZE, y * CELL_SIZE, w, CELL_SIZE));
 
         //complete matrix
-        Arrays.fill(completeMapMatrix[(int)(y * CELL_SIZE + CELL_SIZE / 2.0)], (int)(start * CELL_SIZE + CELL_SIZE / 2.0), (int) (i * CELL_SIZE + CELL_SIZE / 2.0), 1);
-        Arrays.fill(completeMapMatrix[(int)((y + 1) * CELL_SIZE + CELL_SIZE / 4.0)], (int)(start * CELL_SIZE + CELL_SIZE / 2.0), (int) (i * CELL_SIZE + CELL_SIZE / 2.0), 1);
+        int tempStart = (int) (start == 0 ? 0 : (start * CELL_SIZE + CELL_SIZE / 2.0));
+
+        Arrays.fill(completeMapMatrix[(int)(y * CELL_SIZE + CELL_SIZE / 2.0)], tempStart, (int) (i * CELL_SIZE + CELL_SIZE / 2.0), 1);
+        Arrays.fill(completeMapMatrix[(int)((y + 1) * CELL_SIZE + CELL_SIZE / 4.0)], tempStart, (int) (i * CELL_SIZE + CELL_SIZE / 2.0), 1);
         
         return i;
     }

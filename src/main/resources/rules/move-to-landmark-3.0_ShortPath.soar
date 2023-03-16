@@ -101,7 +101,6 @@ sp {apply*move*remove*current-landmark-name
    (<o> ^name { <name> move-to-landmark }
         ^landmark.name <> <current-landmark-name>)
 -->
-(write (crlf) | MOVE-INDEX removing : | <name>)
    (<s> ^move-index <move-index> - 
                      (format (- (int  <move-index> ) (int  <move-index> ) ) ) )
                      # (format (+ (int  <move-index> ) 1 ) ))
