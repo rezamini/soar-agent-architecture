@@ -12,6 +12,8 @@ import com.soar.agent.architecture.enums.MemoryEnum;
 import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
 import com.soar.agent.architecture.events.UtilityResponder;
+import com.soar.agent.architecture.rhs.IdentifierSize;
+
 import org.jsoar.kernel.DebuggerProvider;
 import org.jsoar.kernel.RunType;
 import org.jsoar.kernel.SoarException;
@@ -26,6 +28,7 @@ import org.jsoar.kernel.io.commands.OutputCommandManager;
 import org.jsoar.kernel.io.quick.DefaultQMemory;
 import org.jsoar.kernel.io.quick.QMemory;
 import org.jsoar.kernel.io.quick.SoarQMemoryAdapter;
+import org.jsoar.kernel.rhs.functions.RhsFunctionManager;
 import org.jsoar.kernel.symbols.Identifier;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.commands.SoarCommands;
@@ -39,7 +42,6 @@ public class RobotAgent {
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
     private UtilityResponder utilityResponder;
     public final SoarEventManager events = new SoarEventManager();
-
     private Move move;
 
     public RobotAgent() {
@@ -48,6 +50,8 @@ public class RobotAgent {
                            // setting values from other classes
         SoarQMemoryAdapter.attach(threadedAgent.getAgent(), getQMemory());
         new CycleCountInput(threadedAgent.getInputOutput());
+
+        threadedAgent.getRhsFunctions().registerHandler(new IdentifierSize());
     }
 
     public void addListener(MoveListenerEvent toAdd) {

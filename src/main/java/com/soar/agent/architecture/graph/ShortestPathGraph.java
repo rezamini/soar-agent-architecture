@@ -149,7 +149,7 @@ public class ShortestPathGraph extends SwingWorker {
 
         }
 
-        System.out.println(tempDirectionList);
+        // System.out.println(tempDirectionList);
         computedPathDirections.put(landmark, tempDirectionList);
     }
 
