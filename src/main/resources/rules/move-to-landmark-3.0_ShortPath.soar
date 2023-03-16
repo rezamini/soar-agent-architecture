@@ -1,19 +1,5 @@
 # This is similar to move-to-landmark-3.0 but the main difference is the usage of computed shortest path of landmarks
 
-sp {initialize*state*directions
-   (state <ss> ^type state)
-   -->
-   (<ss> ^directions <n> <ne> <nw> <e> <s> <sw> <se> <w>)  
-   (<n> ^value north ^opposite south)
-   (<ne> ^value northeast ^opposite southwest)
-   (<nw> ^value northwest ^opposite southeast)
-   (<e> ^value east  ^opposite west)
-   (<s> ^value south ^opposite north)
-   (<sw> ^value southwest ^opposite northeast)
-   (<se> ^value southeast ^opposite northwest)
-   (<w> ^value west  ^opposite east)}
-
-
 sp {initialize*state*preferable*directions
    (state <ss> ^type state)
    -->
@@ -48,25 +34,23 @@ sp {initialize*state*move-index
 #
 
 sp {propose*move-to-landmark
-   (state <s> ^io.input-link.landmarks.<landmarks> <lnd>     
+   (state <s> ^io.input-link.landmarks.<landmarks> <landmark>     
               ^io.input-link.self.pose <e>
               ^io.input-link.area.<view> <area-view>
               ^move-index <move-index> )
    (<e> ^x <x> ^y <y>)
-   (<lnd> ^direction-command <direction-command> )
-   (<lnd> ^distance <distance-agent> )
-   (<lnd> ^path <shortest-path> )
-   (<lnd> ^name <landmark-name> )
+   (<landmark> ^path <shortest-path> )
+   (<landmark> ^name <landmark-name> )
    (<shortest-path> ^<move-index> <computed-path>)
 
-   (<area-view> ^<direction-command>.type <cell-type>)
+   (<area-view> ^<computed-path>.type <cell-type>)
 -->
-(write (crlf) |<move-index>-| <move-index> (crlf) <landmark-name>)
-   (<s> ^operator <o> + =)
+# (write (crlf) |<move-index>-| <move-index> (crlf) | : |  <landmarks>)
+   (<s> ^operator <o> + > )
    (<o> ^name move-to-landmark
-        ^lnd <lnd>
-        ^distance-agent <distance-agent>
-        ^direction-command <direction-command>
+        ^landmark <landmark>
+        ^direction-command <computed-path>
+        ^path-size (size <shortest-path> ) 
         ^cell-type <cell-type>)}
 
 
@@ -84,15 +68,6 @@ sp {propose*move-random
    (<o> ^name move-random
         ^direction-command <n-dir> )}
 
-#
-#END: Proposal Rules
-#
-#
-
-#
-#START: Apply Rules
-#
-#
 
 sp {apply*move
    (state <s> ^io.output-link <ol>
@@ -100,7 +75,6 @@ sp {apply*move
    (<o> ^name { <name> << move-to-landmark move-random >> }
         ^direction-command <dir>)
 -->
-   # (write | applied operator is : | <name>)
    (<ol> ^move.direction <dir>)} 
 
 
@@ -112,28 +86,10 @@ sp {apply*move*remove-move
 -->
    (<ol> ^move <direction> -)}
 
-
-# sp {apply*move-to-landmark*create*current-landmark-direction
-#     (state <s> ^operator <o>
-#                 ^io.output-link <ol>)
-#      (<o> ^name move-to-landmark
-#             ^direction-command <direction-command>)
-# -->
-#    (<s> ^current-landmark-direction <direction-command> )}   
-
-
-# sp {apply*move-to-landmark*remove*current-landmark-direction
-#    (state <s> ^operator <o>
-#               ^current-landmark-direction <current-landmark-direction>)
-#    (<o> ^name move-to-landmark
-#         ^direction-command <> <current-landmark-direction> )
-# -->
-#    (<s> ^current-landmark-direction <current-landmark-direction> -)} 
-
 sp {apply*move*create*current-landmark-name
    (state <s> ^operator <o>)
    (<o> ^name { <name> move-to-landmark }
-        ^lnd.name <landmark-name>)
+        ^landmark.name <landmark-name>)
 -->
    (<s> ^current-landmark-name <landmark-name>)}
 
@@ -143,7 +99,19 @@ sp {apply*move*remove*current-landmark-name
               ^current-landmark-name <current-landmark-name>
               ^move-index <move-index> )
    (<o> ^name { <name> move-to-landmark }
-        ^lnd.name <> <current-landmark-name>)
+        ^landmark.name <> <current-landmark-name>)
+-->
+(write (crlf) | MOVE-INDEX removing : | <name>)
+   (<s> ^move-index <move-index> - 
+                     (format (- (int  <move-index> ) (int  <move-index> ) ) ) )
+                     # (format (+ (int  <move-index> ) 1 ) ))
+   (<s> ^current-landmark-name <current-landmark-name> -)}  
+
+   sp {apply*move*remove*current-landmark-name2
+   (state <s> ^operator <o>
+            #   ^current-landmark-name <current-landmark-name>
+              ^move-index <move-index> )
+   (<o> ^name move-random )
 -->
    (<s> ^move-index <move-index> - 
                      (format (- (int  <move-index> ) (int  <move-index> ) ) ) )
@@ -155,7 +123,7 @@ sp {apply*move*update*move-index
               ^current-landmark-name <current-landmark-name>
               ^move-index <move-index>)
    (<o> ^name { <name> << move-to-landmark move-random >> }
-        ^lnd.name { <landmark-name> <current-landmark-name>} )
+        ^landmark.name { <landmark-name> <current-landmark-name>} )
    
 -->
    (<s> ^move-index <move-index> - 
@@ -202,9 +170,9 @@ sp {select*move-to-landmark*pick-landmark-with-shortest-distance
     (state <s> ^operator <o1> + 
                 ^operator <o2> + )
     (<o1> ^name move-to-landmark
-            ^lnd.distance <distance1> )
+            ^path-size <path-size1> )
     (<o2> ^name move-to-landmark
-            ^lnd.distance <distance2> > <distance1> )
+            ^path-size  <path-size2> > <path-size1> )
 -->
 (<s> ^operator <o1> > <o2>)}
 
@@ -241,29 +209,6 @@ sp {select*move-to-landmark*pick-prefer-directions-over-others-if-landmark-block
 -->
 (<s> ^operator <o1> > )}
 
-# sp {select*move-to-landmark*prefer-move-landmark-if-normal
-#     (state <s> ^operator <o1> + 
-#                 ^operator <o2> + )
-#     (<o1> ^name move-to-landmark
-#             ^cell-type << normal >> )
-#     (<o2> ^name move-random )
-    
-# -->
-# (<s> ^operator <o2> > )}
-
-# sp {select*move*reject*backward
-#    (state <s> ^operator <o> +
-#               ^directions <d>
-#               ^last-direction <dir>)
-#    (<d> ^value <dir>
-#         ^opposite <o-dir>)
-#    (<o> ^name { <name> << move-to-landmark move-random >> }
-#         ^direction-command <o-dir>)
-# -->
-#    (write |: Reject | <o-dir> | - |<dir>)
-#    (<s> ^operator <o> -)} 
-
-
 sp {select*move-forward*prefer-forward-than-others
     (state <s> ^operator <o1> +
                 ^operator <o2> +
@@ -274,88 +219,3 @@ sp {select*move-forward*prefer-forward-than-others
             ^direction-command <direction> )
 -->
 (<s> ^operator <o1> > <o2>)}
-
-#
-#END: Select Rules
-#
-#
-
-# 
-#Monitor info
-#
-#
-# sp {monitor*move-to-landmark 
-#    (state <s> ^operator <o>) 
-#    (<o> ^name move-to-landmark ^distance-agent <distance-agent> ^lnd.name <name> ^direction-command <direction-command>) 
-# --> 
-#    (write | direction-command is : | <direction-command>)
-   # (write | - Direction-command variable is : | <name>)}
-
-
-
-
-
-
-
-
-
-# sp {propose*move
-#    (state <s> ^io.input-link.area.view.<direction> <odr>)
-#    (<odr> ^type { <type> <> block } )
-# -->
-#    (<s> ^operator <o> + =)
-#    (<o> ^name move
-#         ^actions.move.direction <direction> )}
-
-#  sp {propose*turn
-#    (state <s> ^io.input-link.area.view.<direction> <odr>)
-#    (<odr> ^type block
-#         ^ { << north east west south >> <dir> } <> block )
-# -->
-#    (<s> ^operator <o> + =)
-#    (<o> ^name move 
-#         ^actions <a>)
-#    (<a> ^direction <dir>)}
-
-# sp {propose*turn*backward
-#    (state <s> ^io.input-link.area.view.<direction> <odr>)
-#    (<odr> ^forward yes ^left yes ^right yes)
-# -->
-#    (<s> ^operator <o> +)
-#    (<o> ^name turn 
-#         ^actions.rotate.direction left)}
-
-# sp {propose*radar-off
-#    (state <s> ^io.input-link <il>)
-#    (<il> ^radar-status on
-#          ^radar-setting <> 0
-#          ^radar <r>)
-#   -(<r> ^ << energy health missiles tank >> <x>)
-# -->
-#    (<s> ^operator <o> + >)
-#    (<o> ^name radar-off
-#         ^actions.radar.switch off)}
-
-# sp {select*radar-off*move
-#    (state <s> ^operator <o1> +
-#               ^operator <o2> +)
-#    (<o1> ^name radar-off)
-#    (<o2> ^name move)
-# -->
-#    (<s> ^operator <o1> > <o2>)}
-
-# sp {apply*operator*create-action-command
-#    (state <s> ^operator <o>
-#               ^io.output-link <ol>)
-#    (<o> ^actions <act>)
-#    (<act> ^<att> <value>)
-# -->
-#    (<ol> ^<att> <value>)}
-
-# sp {apply*operator*remove-command
-#    (state <s> ^operator.actions
-#               ^io.output-link <ol>)
-#    (<ol> ^<att> <value>)
-#    (<value> ^status complete)
-# -->
-#    (<ol> ^<att> <value> -)}
