@@ -28,6 +28,43 @@ public class World {
     private Integer secondAgentMapMatrixX = null;
     private Integer secondAgentMapMatrixY = null;
 
+    private Integer agentMapMatrixX2 = null;
+    private Integer agentMapMatrixY2 = null;
+    private Integer secondAgentMapMatrixX2 = null;
+    private Integer secondAgentMapMatrixY2 = null;
+
+    public Integer getAgentMapMatrixX2() {
+        return agentMapMatrixX2;
+    }
+
+    public void setAgentMapMatrixX2(Integer agentMapMatrixX2) {
+        this.agentMapMatrixX2 = agentMapMatrixX2;
+    }
+
+    public Integer getAgentMapMatrixY2() {
+        return agentMapMatrixY2;
+    }
+
+    public void setAgentMapMatrixY2(Integer agentMapMatrixY2) {
+        this.agentMapMatrixY2 = agentMapMatrixY2;
+    }
+
+    public Integer getSecondAgentMapMatrixX2() {
+        return secondAgentMapMatrixX2;
+    }
+
+    public void setSecondAgentMapMatrixX2(Integer secondAgentMapMatrixX2) {
+        this.secondAgentMapMatrixX2 = secondAgentMapMatrixX2;
+    }
+
+    public Integer getSecondAgentMapMatrixY2() {
+        return secondAgentMapMatrixY2;
+    }
+
+    public void setSecondAgentMapMatrixY2(Integer secondAgentMapMatrixY2) {
+        this.secondAgentMapMatrixY2 = secondAgentMapMatrixY2;
+    }
+
     public Integer getSecondAgentMapMatrixX() {
         return secondAgentMapMatrixX;
     }
@@ -51,6 +88,7 @@ public class World {
     private Map<Landmark, Boolean> detectedRadarLandmarks = new HashMap<Landmark, Boolean>();
 
     private ShortestPathGraph shortestPathGraph;
+    private ShortestPathGraph shortestPathGraphComplete;
     private Map<Landmark, List<String>> shortestLandmarkDirections = new LinkedHashMap<Landmark, List<String>>();
 
     public World() {
@@ -155,6 +193,14 @@ public class World {
 
     public void setShortestPathGraph(ShortestPathGraph shortestPathGraph) {
         this.shortestPathGraph = shortestPathGraph;
+    }
+
+    public ShortestPathGraph getShortestPathGraphComplete() {
+        return shortestPathGraphComplete;
+    }
+
+    public void setShortestPathGraphComplete(ShortestPathGraph shortestPathGraphComplete) {
+        this.shortestPathGraphComplete = shortestPathGraphComplete;
     }
 
     public void updateAndMoveAgents(double dt) {
@@ -403,6 +449,20 @@ public class World {
             try {
                 shortestPathGraph.updateAgentNode(agentMapMatrixX, agentMapMatrixY, secondAgentMapMatrixX, secondAgentMapMatrixY);
                 shortestPathGraph.calculateShortPath();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(shortestPathGraphComplete != null){
+            try {
+                shortestPathGraphComplete.updateAgentNode(agentMapMatrixX2, agentMapMatrixY2, secondAgentMapMatrixX2, secondAgentMapMatrixY2);
+                shortestPathGraphComplete.calculateShortPath();
+                
+                if(shortestPathGraphComplete.getComputedPathDirections() != null){
+                    shortestLandmarkDirections = shortestPathGraphComplete.getComputedPathDirections();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

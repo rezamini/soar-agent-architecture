@@ -43,6 +43,10 @@ public class ShortestPathGraph extends SwingWorker {
     private Map<Landmark, List<Node>> computedPaths = new LinkedHashMap<Landmark, List<Node>>();
     private Map<Landmark, List<String>> computedPathDirections = new LinkedHashMap<Landmark, List<String>>();
 
+    public Map<Landmark, List<String>> getComputedPathDirections() {
+        return computedPathDirections;
+    }
+
     public ShortestPathGraph(int[][] mapMatrix, World world) throws IOException {
         this.graph = new SingleGraph("Map Nodes/Matrix");
         this.world = world;
@@ -85,7 +89,7 @@ public class ShortestPathGraph extends SwingWorker {
             });
 
             // set the computed path/directions to the world
-            world.setShortestLandmarkDirections(computedPathDirections);
+            // world.setShortestLandmarkDirections(computedPathDirections);
         }
     }
 

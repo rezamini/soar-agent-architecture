@@ -98,7 +98,7 @@ public class Robot {
 
         if (!world.willCollide(this, newX, newY, dimensions)) {
             move(newX, newY);
-            // updateMapMatrix(newX, newY);
+            updateMapMatrix(newX, newY);
             updateCompleteMapMatrix(newX, newY, dx, dy, dimensions);
         }
     }
@@ -146,10 +146,10 @@ public class Robot {
 
         // set the agent matrix location on a separate field that could be used in other
         // places without looping the entire map if required
-        world.setAgentMapMatrixX(agentMatrixX);
-        world.setAgentMapMatrixY(agentMatrixY);
-        world.setSecondAgentMapMatrixX(agentMatrixX2);
-        world.setSecondAgentMapMatrixY(agentMatrixY2);
+        world.setAgentMapMatrixX2(agentMatrixX);
+        world.setAgentMapMatrixY2(agentMatrixY);
+        world.setSecondAgentMapMatrixX2(agentMatrixX2);
+        world.setSecondAgentMapMatrixY2(agentMatrixY2);
 
         // update the agent location on the map matrix
         int[][] currentMapMatrix = world.getCompleteMapMatrix();

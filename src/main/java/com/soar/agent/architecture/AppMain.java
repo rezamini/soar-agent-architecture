@@ -49,7 +49,9 @@ public class AppMain {
                 //set an instance of shortest path here otherwise it will not be initialised at first load.
                 //this is before memory updates etc
                 try {
-                    robot.getWorld().setShortestPathGraph(new ShortestPathGraph(PanelUI.getWorld().getCompleteMapMatrix(), PanelUI.getWorld()));
+                    robot.getWorld().setShortestPathGraph(new ShortestPathGraph(PanelUI.getWorld().getMapMatrix(), PanelUI.getWorld()));
+                    robot.getWorld().setShortestPathGraphComplete(new ShortestPathGraph(PanelUI.getWorld().getCompleteMapMatrix(), PanelUI.getWorld()));
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -144,7 +146,7 @@ public class AppMain {
             // only get one instance from matrixGraph. Singleton pattern using getInstance
             // method.
             matrixGraph = ShortestPathGraphUI.getInstance(agent.getThreadedAgent(),
-                    PanelUI.getWorld().getCompleteMapMatrix(), PanelUI.getWorld());
+                    PanelUI.getWorld().getMapMatrix(), PanelUI.getWorld());
         }
     }
 
