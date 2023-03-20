@@ -22,12 +22,6 @@ sp {initialize*state*preferable*directions
    (<se> ^value southeast ^prefer east)
 }
 
-
-sp {initialize*state*move-index
-   (state <ss> ^superstate nil)
--->
-   (<ss> ^move-index (format 0 ))}
-
 #
 #START: Proposal Rules
 #
@@ -37,11 +31,11 @@ sp {propose*move-to-landmark
    (state <s> ^io.input-link.landmarks.<landmarks> <landmark>     
               ^io.input-link.self.pose <e>
               ^io.input-link.area.<view> <area-view>
-              ^move-index <move-index> )
+              ^io.input-link.landmark-cycle-count <landmark-cycle-count> )
    (<e> ^x <x> ^y <y>)
    (<landmark> ^path <shortest-path> )
    (<landmark> ^name <landmark-name> )
-   (<shortest-path> ^<move-index> <computed-path>)
+   (<shortest-path> ^<landmark-cycle-count> <computed-path>)
 
    (<area-view> ^<computed-path>.type <cell-type>)
 -->
@@ -92,50 +86,6 @@ sp {apply*move*create*current-landmark-name
         ^landmark.name <landmark-name>)
 -->
    (<s> ^current-landmark-name <landmark-name>)}
-
-
-sp {apply*move*remove*current-landmark-name
-   (state <s> ^operator <o>
-              ^current-landmark-name <current-landmark-name>
-              ^move-index <move-index> )
-   (<o> ^name { <name> move-to-landmark }
-        ^landmark.name <> <current-landmark-name>)
--->
-   (<s> ^move-index <move-index> - 
-                     (format (- (int  <move-index> ) (int  <move-index> ) ) ) )
-                     # (format (+ (int  <move-index> ) 1 ) ))
-   (<s> ^current-landmark-name <current-landmark-name> -)}  
-
-   sp {apply*move*remove*current-landmark-name2
-   (state <s> ^operator <o>
-            #   ^current-landmark-name <current-landmark-name>
-              ^move-index <move-index> )
-   (<o> ^name move-random )
--->
-   (<s> ^move-index <move-index> - 
-                     (format (- (int  <move-index> ) (int  <move-index> ) ) ) )
-                     # (format (+ (int  <move-index> ) 1 ) ))
-   (<s> ^current-landmark-name <current-landmark-name> -)}  
-
-sp {apply*move*update*move-index
-   (state <s> ^operator <o>
-              ^current-landmark-name <current-landmark-name>
-              ^move-index <move-index>)
-   (<o> ^name { <name> << move-to-landmark move-random >> }
-        ^landmark.name { <landmark-name> <current-landmark-name>} )
-   
--->
-   (<s> ^move-index <move-index> - 
-                    (format (+ (int  <move-index> ) 1 ) ) )}
-
-# sp {apply*move*update*move-index*landmark-reached
-#    (state <s> ^operator <o>
-#               ^move-index <move-index>)
-#    (<o> ^name { <name> << move-to-landmark move-random >> })
-# -->
-#    (<s> ^move-index <move-index> - 
-#                     (format (+ (int  <move-index> ) 1 ) ) )}
-
 
 sp {apply*move*create*last-direction
    (state <s> ^operator <o>)
