@@ -444,22 +444,24 @@ public class World {
         }
     }
 
-    public void updateShortestPath(){
-        if(shortestPathGraph != null){
+    public void updateShortestPath() {
+        if (shortestPathGraph != null) {
             try {
-                shortestPathGraph.updateAgentNode(agentMapMatrixX, agentMapMatrixY, secondAgentMapMatrixX, secondAgentMapMatrixY);
+                shortestPathGraph.updateAgentNode(agentMapMatrixX, agentMapMatrixY, secondAgentMapMatrixX,
+                        secondAgentMapMatrixY);
                 shortestPathGraph.calculateShortPath();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        if(shortestPathGraphComplete != null){
+        if (shortestPathGraphComplete != null) {
             try {
-                shortestPathGraphComplete.updateAgentNode(agentMapMatrixX2, agentMapMatrixY2, secondAgentMapMatrixX2, secondAgentMapMatrixY2);
+                shortestPathGraphComplete.updateAgentNode(agentMapMatrixX2, agentMapMatrixY2, secondAgentMapMatrixX2,
+                        secondAgentMapMatrixY2);
                 shortestPathGraphComplete.calculateShortPath();
-                
-                if(shortestPathGraphComplete.getComputedPathDirections() != null){
+
+                if (shortestPathGraphComplete.getComputedPathDirections() != null) {
                     shortestLandmarkDirections = shortestPathGraphComplete.getComputedPathDirections();
                 }
 
@@ -467,7 +469,34 @@ public class World {
                 e.printStackTrace();
             }
         }
-        
+
+    }
+
+    /*
+     * validate the computed shortest path with the new move direction
+     * if they are not the same recalculate the path. it means the agent is out of
+     * correct path/direction sequence.
+     */
+    public boolean validShortestPathMove(Landmark landmark, int index, String currentDirection) {
+        boolean result = true;
+
+        if (currentDirection != null) {
+            List<String> currentPath = shortestLandmarkDirections.get(landmark);
+            if (currentPath != null && currentPath.size() > 0) {
+
+                //make sure the index(landmark-cycle-count) exist in the current computed paths
+                if(index >= 0 && index < currentPath.size()){
+                    String computedDirection = currentPath.get(index);
+
+                    if(!computedDirection.equalsIgnoreCase(currentDirection)){
+                        result = false;
+                    }
+                }
+                
+            }
+        }
+
+        return result;
     }
 
     // public void radarDetectLandmark(Robot robot, Radar radar) {
