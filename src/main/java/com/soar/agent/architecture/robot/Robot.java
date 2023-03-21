@@ -1,5 +1,6 @@
 package com.soar.agent.architecture.robot;
 
+import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.world.World;
@@ -7,6 +8,7 @@ import com.soar.agent.architecture.world.World;
 import java.awt.geom.*;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Map;
 
 public class Robot {
     public final double widthMultiplier = 4.0;
@@ -129,7 +131,27 @@ public class Robot {
             }
         }
 
+        //update landmark locations again
+        updateMatrixLandmarkInfo(currentMapMatrix);
+
         world.setMapMatrix(currentMapMatrix);
+    }
+
+    private void updateMatrixLandmarkInfo(int[][] currentMapMatrix) {
+        if (world.getLandmarkMap() != null) {
+            for (Map.Entry<Landmark, Boolean> entry : world.getLandmarkMap().entrySet()) {
+                double cx = entry.getKey().getLocation().getX();
+                double cy = entry.getKey().getLocation().getY();
+
+                int x = (int) ((cx - 2.0 / 2.0) / 2.0); //simplified matrix convert
+                int y = (int) ((cy - 2.0 / 2.0) / 2.0); //simplified matrix convert
+
+                //if the agent is currently not there update it back to landmark
+                if(currentMapMatrix[y][x] != 3){
+                    currentMapMatrix[y][x] = 2;
+                }
+            }
+        }
     }
 
     public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy, double[] dimensions) {
