@@ -339,8 +339,13 @@ public class ShortestPathGraph extends SwingWorker {
 
                 } else if (mapMatrix[i][j] == 2) {
                     node.setAttribute("ui.color", getRandomNodeColor()); // landmarks
-                    Landmark landmark = (Landmark) world.getLandmarkMap().keySet().toArray()[landmarkCounter++];
-                    node.setAttribute("nodeName", landmark.getName());
+                    Landmark landmark = (Landmark) world.getLandmarkMap().keySet().toArray()[landmarkCounter];
+                    Boolean landmarkValue = (Boolean) world.getLandmarkMap().values().toArray()[landmarkCounter];
+                    landmarkCounter++;
+
+                    String name = landmarkValue ? "✓" + landmark.getName() : landmark.getName();
+
+                    node.setAttribute("nodeName", name);
                     // landmarkNodes.add(node);
                     landmarkNodes.put(landmark, node);
 
@@ -464,6 +469,18 @@ public class ShortestPathGraph extends SwingWorker {
         Node previousAgentNode = graph.getNode(agentNode.getId());
         previousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC;");
         previousAgentNode.setAttribute("nodeName", "");
+
+        // if the previous node is similar to one of the landmark node
+        // update the node name with original landmark name and ✓ to indicate it has
+        // reached.
+        for (Map.Entry<Landmark, Node> landmarkNode : landmarkNodes.entrySet()) {
+            if (landmarkNode.getValue().getId() == previousAgentNode.getId()) {
+                // text-size: 20
+                previousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC; text-size: 20;");
+                previousAgentNode.setAttribute("nodeName", "✓" +landmarkNode.getKey().getName());
+                break;
+            }
+        }
 
         // update the new agent node location
         Node newAgentNode = graph.getNode(newAgentMapMatrixY + "-" + newAgentMapMatrixX);
