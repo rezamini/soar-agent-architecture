@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 import javax.swing.SwingWorker;
 
 import org.graphstream.algorithm.AStar;
-import org.graphstream.algorithm.AStar.DistanceCosts;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -25,7 +24,6 @@ import org.graphstream.ui.view.View;
 
 import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.enums.DirectionEnum;
-import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.world.World;
 
 import org.graphstream.graph.Node;
@@ -92,11 +90,6 @@ public class ShortestPathGraph extends SwingWorker {
 
             // convert computed nodes to actual directions
             computedPaths.forEach((k, v) -> {
-                // convertToDirections(k, v);
-                // System.out.println("XXXXXXXXXXX K : "+k.getName());
-                // System.out.println(v);
-
-                // convertToDirectionsManhathanDistance(k, v);
                 convertToActualDirections(k, v);
 
             });
@@ -128,10 +121,6 @@ public class ShortestPathGraph extends SwingWorker {
 
         int totalDirections = (int) (paths.size() / world.getRobots().get(0).getSpeed());
         int pathMultiplier = totalDirections / paths.size();
-
-        // System.out.println("XXXXXXXXXXXXXXXXXXXXX "+landmark.getName());
-        // System.out.println("Path size : "+paths.size() + " : totalDirections :
-        // "+totalDirections + " : pathMultiplier : "+pathMultiplier);
 
         for (int i = 0; i < paths.size(); i++) {
 
