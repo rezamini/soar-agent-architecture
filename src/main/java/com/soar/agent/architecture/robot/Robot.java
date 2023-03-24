@@ -7,7 +7,6 @@ import com.soar.agent.architecture.world.World;
 
 import java.awt.geom.*;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Map;
 
 public class Robot {

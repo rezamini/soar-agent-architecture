@@ -73,7 +73,7 @@ public class ShortestPathGraphUI extends JPanel {
 
         initMemoryInputListener();
         initGraphUI();
-        initZoomSlider();
+        initButtonControlUI();
     }
 
     private void initGraphUI() {
@@ -121,7 +121,7 @@ public class ShortestPathGraphUI extends JPanel {
         });
     }
 
-    private void initZoomSlider() {
+    private void initButtonControlUI() {
         JPanel containerPanel = new JPanel();
         containerPanel.setOpaque(true);
         containerPanel.setBackground(Color.WHITE);
