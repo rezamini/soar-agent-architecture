@@ -12,6 +12,7 @@ public enum MemoryEnum {
   DISTANCE("distance"),
   DIRECTION_COMMAND("direction-command"),
   RELATIVE_DIRECTION_COMMAND("relative-direction-command"),
+  LANDMARK_CYCLE_COUNT("landmark-cycle-count"),
   
   //Landmark Memory Enums  
   LANDMARK_MAIN("landmarks"),

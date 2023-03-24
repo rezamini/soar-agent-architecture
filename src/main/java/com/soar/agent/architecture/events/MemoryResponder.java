@@ -70,7 +70,7 @@ public class MemoryResponder extends MemoryListener {
 
                         // add and increment landmark-cycle-count here. it will reset to 0 later if
                         // landmark is reached.
-                        qMemory.setString("landmark-cycle-count", String.valueOf(landmarkCycleCount++));
+                        qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(), String.valueOf(landmarkCycleCount++));
 
                         // areaResponder.updateAreaMemory();
                         robotAgent.getEvents().fireEvent(areaResponder);
@@ -497,7 +497,7 @@ public class MemoryResponder extends MemoryListener {
 
         private void updateLandmarkCycleCount() {
                 synchronized (qMemory) {
-                        qMemory.setString("landmark-cycle-count", String.valueOf(landmarkCycleCount));
+                        qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(), String.valueOf(landmarkCycleCount));
                 }
         }
 
