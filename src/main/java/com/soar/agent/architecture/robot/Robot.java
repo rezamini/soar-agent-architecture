@@ -473,4 +473,8 @@ public class Robot {
     public void setShapeRadar(Path2D shapeRadar) {
         this.shapeRadar = shapeRadar;
     }
+
+    public double getTempYaw() {
+        return tempYaw;
+    }
 }
