@@ -366,13 +366,13 @@ public class Robot {
 
             // top right || top left
         } else if ((dx > 0 && dy > 0) || (dx < 0 && dy > 0)) {
-            agentWidth = shapeWidth;
-            agentHeight = shapeWidth;
+            agentWidth = shapeHeight + 0.1;
+            agentHeight = shapeWidth + 0.1;
 
             // bottom right || bottom left
-        } else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
-            agentWidth = shapeWidth;
-            agentHeight = shapeWidth;
+        }else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
+            agentWidth = shapeHeight + 0.1;
+            agentHeight = shapeWidth + 0.1;
         }
 
         result[0] = agentWidth - 0.1;
