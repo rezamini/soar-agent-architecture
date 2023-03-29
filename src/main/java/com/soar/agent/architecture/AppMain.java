@@ -26,6 +26,10 @@ public class AppMain {
     private ShortestPathGraphUI matrixGraph;
 
     public static void main(String[] args) throws IOException {
+        // depending on system the scale might be different,
+        //if this is not set on some sytems the UI icons or images might be blury and upscaled.
+        System.setProperty("sun.java2d.uiScale", "1.0");
+        
         // try {
         // panelUI = new PanelUI(new AppMain());
         panelUI = new PanelUI();
