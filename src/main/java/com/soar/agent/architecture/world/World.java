@@ -480,19 +480,32 @@ public class World {
     public boolean validShortestPathMove(Landmark landmark, int index, String currentDirection) {
         boolean result = true;
 
+        // we need to deduct the index in case to compare the current direction with
+        // previous calculated
+        // direction. if we do not deduct, then it means that the index is ahead of the
+        // comparison and we are
+        // comparing the next path value with the current value. A.k.a the decuction
+        // compare the current with previous direction
+        // to make sure we are in correct path and correct computed direction is
+        // executed.
+        index = index - 1;
+        
+        //in case the substraction goes under 0 set it to first index otherwise it will skip it
+        if(index < 0) index = 0;
+
         if (currentDirection != null) {
             List<String> currentPath = shortestLandmarkDirections.get(landmark);
             if (currentPath != null && currentPath.size() > 0) {
 
-                //make sure the index(landmark-cycle-count) exist in the current computed paths
-                if(index >= 0 && index < currentPath.size()){
+                // make sure the index(landmark-cycle-count) exist in the current computed paths
+                if (index >= 0 && index < currentPath.size()) {
                     String computedDirection = currentPath.get(index);
 
-                    if(!computedDirection.equalsIgnoreCase(currentDirection)){
+                    if (!computedDirection.equalsIgnoreCase(currentDirection)) {
                         result = false;
                     }
                 }
-                
+
             }
         }
 

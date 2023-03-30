@@ -18,7 +18,7 @@ import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 
 public class MemoryResponder extends MemoryListener {
-        private int landmarkCycleCount = -1;
+        private int landmarkCycleCount = 0;
 
         QMemory qMemory = robotAgent.getQMemory();
         private AreaResponder areaResponder;
@@ -70,7 +70,7 @@ public class MemoryResponder extends MemoryListener {
 
                         // add and increment landmark-cycle-count here. it will reset to 0 later if
                         // landmark is reached.
-                        qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(), String.valueOf(landmarkCycleCount++));
+                        // qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(), String.valueOf(landmarkCycleCount++));
 
                         // areaResponder.updateAreaMemory();
                         robotAgent.getEvents().fireEvent(areaResponder);
@@ -497,7 +497,7 @@ public class MemoryResponder extends MemoryListener {
 
         private void updateLandmarkCycleCount() {
                 synchronized (qMemory) {
-                        qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(), String.valueOf(landmarkCycleCount));
+                        qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(), String.valueOf(landmarkCycleCount++));
                 }
         }
 
