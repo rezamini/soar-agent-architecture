@@ -219,28 +219,14 @@ public class World {
         return result;
     }
 
-    public boolean willCollide(Robot r, double newX, double newY, double[] dimensions) {
-        Rectangle2D tempShape = (Rectangle2D) r.getShape().clone();
+    public boolean willCollide(Robot r, double newX, double newY, Path2D tempAgentShape) {
 
-        double area = r.getShapeArea() + r.getShapeStartingPoint();
-        double agentWidth = dimensions[0];
-        double agentHeight = dimensions[1];
-
-        tempShape.setFrameFromCenter(newX, newY, newX + agentWidth, newY + agentHeight);
-
-        // if (!extents.contains(newX + area, newY + area) ||
-        // !extents.contains(newX + area, newY - area) ||
-        // !extents.contains(newX - area, newY - area) ||
-        // !extents.contains(newX - area, newY + area)) {
-        // return true;
-        // }
-
-        if (!extents.contains(tempShape)) {
+        if (!extents.contains(tempAgentShape.getBounds2D())) {
             return true;
         }
-
+        
         for (Shape s : obstacles) {
-            if (tempShape.intersects(s.getBounds2D()) && s.intersects(tempShape)) {
+            if (tempAgentShape.intersects(s.getBounds2D())) {
                 return true;
             }
         }
