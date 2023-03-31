@@ -96,8 +96,9 @@ public class Robot {
         final double newY = shape.getCenterY() + dy;
 
         double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
+        Path2D tempAgentShape = createTempAgentShape(newX, newY, yaw);
 
-        if (!world.willCollide(this, newX, newY, dimensions)) {
+        if (!world.willCollide(this, newX, newY, tempAgentShape)) {
             move(newX, newY);
             updateMapMatrix(newX, newY);
             updateCompleteMapMatrix(newX, newY, dx, dy, dimensions);
@@ -299,10 +300,11 @@ public class Robot {
         final double newY = shape.getCenterY() + dy;
 
         double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
+        Path2D tempAgentShape = createTempAgentShape(newX, newY, tempYaw);
 
         // check to see if it will collide in every enum direction that is passed
         // throught this method
-        boolean isObstacle = world.willCollide(this, newX, newY, dimensions);
+        boolean isObstacle = world.willCollide(this, newX, newY, tempAgentShape);
 
         return isObstacle;
     }
@@ -341,6 +343,20 @@ public class Robot {
             }
             // world.getDetectedRadarLandmarks().replaceAll((k, v) -> v = false);
         }
+    }
+
+    private Path2D createTempAgentShape(double newX, double newY, double angle){
+        Rectangle2D rect = new Rectangle2D.Double();
+        // subtracting 0.1 is to make it slightly smaller so the tight edges and situations will be passed
+        // and if used for collision it will not be so strict
+        rect.setFrameFromCenter(newX, newY, newX + shapeWidth - 0.1, newY + shapeHeight - 0.1);
+
+        AffineTransform transform = new AffineTransform();
+        transform.rotate(angle, rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
+
+        Path2D tempAgentShape = new Path2D.Double(rect, transform);
+
+        return tempAgentShape;
     }
 
     /*
