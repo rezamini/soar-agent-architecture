@@ -125,6 +125,19 @@ sp {select*move-to-landmark*pick-landmark-with-shortest-distance
 -->
 (<s> ^operator <o1> > <o2>)}
 
+sp {select*move-to-landmark*pick-current-landmark-if-shortest-distance-is-same
+    (state <s> ^operator <o1> + 
+                ^operator <o2> +
+                ^current-landmark-name <current-landmark-name> )
+    (<o1> ^name move-to-landmark
+            ^path-size <path-size1>
+            ^landmark.name <current-landmark-name> )
+    (<o2> ^name move-to-landmark
+            ^path-size  <path-size2> <path-size1>
+            ^landmark.name <other-landmark-name> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
 sp {select*move-to-landmark*pick-other-direction-if-block
     (state <s> ^operator <o1> +
                 ^operator <o2> + )
