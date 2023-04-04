@@ -95,13 +95,13 @@ public class Robot {
         final double newX = shape.getCenterX() + dx;
         final double newY = shape.getCenterY() + dy;
 
-        double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
+        // double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
         Path2D tempAgentShape = createTempAgentShape(newX, newY, yaw);
 
         if (!world.willCollide(this, newX, newY, tempAgentShape)) {
             move(newX, newY);
             updateMapMatrix(newX, newY);
-            updateCompleteMapMatrix(newX, newY, dx, dy, dimensions);
+            updateCompleteMapMatrix(newX, newY, dx, dy, tempAgentShape);
         }
     }
 
@@ -154,15 +154,10 @@ public class Robot {
         }
     }
 
-    public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy, double[] dimensions) {
-        // clone an instance of shape and position the agent based on direction
-        Rectangle2D tempShape = (Rectangle2D) shape.clone();
-        double agentWidth = dimensions[0];
-        double agentHeight = dimensions[1];
-        tempShape.setFrameFromCenter(newX, newY, newX + agentWidth, newY + agentHeight);
+    public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy, Path2D tempAgentShape) {
 
-        int agentMatrixX = (int) Math.round(newX + dx);
-        int agentMatrixY = (int) Math.round(newY + dy);
+        int agentMatrixX = (int) Math.round(tempAgentShape.getBounds2D().getCenterX());
+        int agentMatrixY = (int) Math.round(tempAgentShape.getBounds2D().getCenterY());
         int agentMatrixX2 = (int) Math.round(agentMatrixX + dx + dx );
         int agentMatrixY2 = (int) Math.round(agentMatrixY + dy + dy );
 

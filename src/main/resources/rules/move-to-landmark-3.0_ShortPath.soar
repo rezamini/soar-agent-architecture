@@ -87,12 +87,20 @@ sp {apply*move*create*current-landmark-name
 -->
    (<s> ^current-landmark-name <landmark-name>)}
 
-sp {apply*move*create*last-direction
+sp {apply*move*create*current-landmark-name
    (state <s> ^operator <o>)
-   (<o> ^name { <name> << move-to-landmark move-random >> }
-        ^direction-command <direction>)
+   (<o> ^name { <name> move-to-landmark }
+        ^landmark.name <landmark-name>)
 -->
-   (<s> ^last-direction <direction>)}
+   (<s> ^current-landmark-name <landmark-name>)}
+
+sp {apply*move*remove*current-landmark-name
+   (state <s> ^operator <o>
+              ^current-landmark-name <current-landmark-name> )
+   (<o> ^name move-to-landmark
+        ^landmark.name <> <current-landmark-name>)
+-->
+   (<s> ^current-landmark-name <current-landmark-name> - )}
 
 
 sp {apply*move*remove*last-direction
@@ -133,7 +141,7 @@ sp {select*move-to-landmark*pick-current-landmark-if-shortest-distance-is-same
             ^path-size <path-size1>
             ^landmark.name <current-landmark-name> )
     (<o2> ^name move-to-landmark
-            ^path-size  <path-size2> <path-size1>
+            ^path-size <path-size2> <path-size1>
             ^landmark.name <other-landmark-name> )
 -->
 (<s> ^operator <o1> > <o2>)}
