@@ -41,6 +41,7 @@ public class ShortestPathGraph extends SwingWorker {
     private World world;
     private Map<Landmark, List<Node>> computedPaths = new LinkedHashMap<Landmark, List<Node>>();
     private Map<Landmark, List<String>> computedPathDirections = new LinkedHashMap<Landmark, List<String>>();
+    private int[][] mapMatrixInstance;
 
     public Map<Landmark, List<String>> getComputedPathDirections() {
         return computedPathDirections;
@@ -49,6 +50,7 @@ public class ShortestPathGraph extends SwingWorker {
     public ShortestPathGraph(int[][] mapMatrix, World world) throws IOException {
         this.graph = new SingleGraph("Map Nodes/Matrix");
         this.world = world;
+        this.mapMatrixInstance = mapMatrix;
 
         startGraph();
         addMapNodes(mapMatrix);
@@ -81,8 +83,6 @@ public class ShortestPathGraph extends SwingWorker {
 
                     return;
                 }
-
-                System.out.println(middleAgentNode.getId());
 
                 astar.compute(middleAgentNode.getId(), value.getId());
                 Path path = astar.getShortestPath();
@@ -419,7 +419,7 @@ public class ShortestPathGraph extends SwingWorker {
         return graph;
     }
 
-    private void createMiddleAgentNodeAndEdge(){
+    private void createMiddleAgentNodeAndEdge() {
 
         // && agentNode != secondAgentNode
         if (agentNode != null && secondAgentNode != null && agentNode != secondAgentNode) {
@@ -434,15 +434,98 @@ public class ShortestPathGraph extends SwingWorker {
             middleAgentNode.setAttribute("y", centerY);
             middleAgentNode.setAttribute("x", centerX);
 
-            //remove and add the edge between center node and agent node
+            // remove and add the edge between center node and agent node
             graph.removeEdge("agentNode_center");
             Edge firstCenterEdge = graph.addEdge("agentNode_center", middleAgentNode, agentNode, false);
-            firstCenterEdge.setAttribute("weight", 100);
+            if(firstCenterEdge != null){
+                firstCenterEdge.setAttribute("weight", 100);
+            }
 
-            //remove and add the edge between center node and second agent node
+            // remove and add the edge between center node and second agent node
             graph.removeEdge("secondAgentNode_center");
             Edge secondCenterEdge = graph.addEdge("secondAgentNode_center", middleAgentNode, secondAgentNode, false);
-            secondCenterEdge.setAttribute("weight", 100);
+            if(firstCenterEdge != null){
+                secondCenterEdge.setAttribute("weight", 100);
+
+            }
+
+            int i = (int) agentNode.getAttribute("y");
+            int j = (int) agentNode.getAttribute("x");
+
+            String edgeId = "connectingNode_1";
+            graph.removeEdge(edgeId);
+            Node connectingNode = graph.getNode((i + 1) + "-" + (j));
+
+            if (connectingNode != null) {
+                // connectingNode.setAttribute("ui.style", "fill-color: pink; text-size: 12;");
+                Edge edge = graph.addEdge(edgeId, connectingNode, middleAgentNode, false);
+
+                if(edge != null){
+                    if (mapMatrixInstance[i + 1][j] == 1 || mapMatrixInstance[i][j] == 1) {
+                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("weight", 100);
+                    } else {
+                        // edge.setAttribute("ui.style", "fill-color: green;");
+                        edge.setAttribute("weight", 0.5);
+                    }
+                }
+            }
+
+            edgeId = "connectingNode_2";
+            graph.removeEdge(edgeId);
+            connectingNode = graph.getNode((i - 1) + "-" + (j + 1));
+            if (connectingNode != null) {
+                // connectingNode.setAttribute("ui.style", "fill-color: pink; text-size: 12;");
+                Edge edge = graph.addEdge(edgeId, connectingNode, middleAgentNode, false);
+
+                if(edge != null){
+                    if (mapMatrixInstance[i - 1][j + 1] == 1 || mapMatrixInstance[i][j] == 1) {
+                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("weight", 100);
+                    } else {
+                        // edge.setAttribute("ui.style", "fill-color: green;");
+                        edge.setAttribute("weight", 0.5);
+                    }
+                }
+            }
+
+            edgeId = "connectingNode_3";
+            graph.removeEdge(edgeId);
+            connectingNode = graph.getNode((i - 1) + "-" + (j));
+            if (connectingNode != null) {
+                // connectingNode.setAttribute("ui.style", "fill-color: pink; text-size: 12;");
+                Edge edge = graph.addEdge(edgeId, connectingNode, middleAgentNode, false);
+
+                if(edge != null){
+                    if (mapMatrixInstance[i - 1][j] == 1 || mapMatrixInstance[i][j] == 1) {
+                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("weight", 100);
+                    } else {
+                        // edge.setAttribute("ui.style", "fill-color: green;");
+                        edge.setAttribute("weight", 0.5);
+                    }
+                }
+
+            }
+
+            edgeId = "connectingNode_4";
+            graph.removeEdge(edgeId);
+            connectingNode = graph.getNode((i + 1) + "-" + (j + 1));
+            if (connectingNode != null) {
+                // connectingNode.setAttribute("ui.style", "fill-color: pink; text-size: 12;");
+                Edge edge = graph.addEdge(edgeId, connectingNode, middleAgentNode, false);
+
+                if(edge != null){
+                    if (mapMatrixInstance[i + 1][j + 1] == 1 || mapMatrixInstance[i][j] == 1) {
+                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("weight", 100);
+                    } else {
+                        // edge.setAttribute("ui.style", "fill-color: green;");
+                        edge.setAttribute("weight", 0.5);
+                    }
+                }
+
+            }
 
             // System.out.println("XXXXXXXXXXXXXXXXXXXXXX");
             // System.out.println(firstCenterEdge);
@@ -450,7 +533,6 @@ public class ShortestPathGraph extends SwingWorker {
             // System.out.println(secondAgentNode);
             // System.out.println(middleAgentNode);
         }
-        System.out.println(middleAgentNode);
     }
 
     /*
@@ -492,8 +574,10 @@ public class ShortestPathGraph extends SwingWorker {
         if (newAgentMapMatrixX == null || newAgentMapMatrixY == null)
             return graph;
 
-        //update middle node first otherwise it might ovveride the properties of other nodes
-        if (middleAgentNode != null && middleAgentNode.getId() != agentNode.getId() && middleAgentNode.getId() != secondAgentNode.getId()) {
+        // update middle node first otherwise it might ovveride the properties of other
+        // nodes
+        if (middleAgentNode != null && middleAgentNode.getId() != agentNode.getId()
+                && middleAgentNode.getId() != secondAgentNode.getId()) {
             Node secondPreviousAgentNode = graph.getNode(middleAgentNode.getId());
             secondPreviousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC;");
             secondPreviousAgentNode.setAttribute("nodeName", "");
