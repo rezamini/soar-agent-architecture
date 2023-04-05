@@ -36,6 +36,7 @@ public class ShortestPathGraph extends SwingWorker {
     public View view;
     private Node agentNode;
     private Node secondAgentNode;
+    private Node middleAgentNode;
     private Map<Landmark, Node> landmarkNodes = new LinkedHashMap<Landmark, Node>();
     private World world;
     private Map<Landmark, List<Node>> computedPaths = new LinkedHashMap<Landmark, List<Node>>();
@@ -51,14 +52,14 @@ public class ShortestPathGraph extends SwingWorker {
 
         startGraph();
         addMapNodes(mapMatrix);
+        createMiddleAgentNodeAndEdge();
         calculateShortPath();
         displayNodeAndEdgeNames();
     }
 
     public void calculateShortPath() {
-        if (landmarkNodes != null && landmarkNodes.size() > 0) {
+        if (landmarkNodes != null && landmarkNodes.size() > 0 && middleAgentNode != null) {
             AStar astar = new AStar(graph);
-
             // set to compute the cost based on euclidean distance. The computed path is
             // much more straight forward
             // (Euclidean distance between two points in the Euclidean space is defined as
@@ -81,7 +82,9 @@ public class ShortestPathGraph extends SwingWorker {
                     return;
                 }
 
-                astar.compute(agentNode.getId(), value.getId());
+                System.out.println(middleAgentNode.getId());
+
+                astar.compute(middleAgentNode.getId(), value.getId());
                 Path path = astar.getShortestPath();
                 computedPaths.put(key, path.getNodePath());
             });
@@ -111,8 +114,8 @@ public class ShortestPathGraph extends SwingWorker {
         // int tempX = (int) agentNode.getAttribute("x");
 
         // get the first index which is the agent position
-        int tempY = (int) paths.get(0).getAttribute("y");
-        int tempX = (int) paths.get(0).getAttribute("x");
+        double tempY = (double) paths.get(0).getAttribute("y");
+        double tempX = (double) paths.get(0).getAttribute("x");
 
         // remove the first index from the computed path which is the agent current
         // position
@@ -347,6 +350,7 @@ public class ShortestPathGraph extends SwingWorker {
 
                     // add the node to second node so it could be used if it exists
                     secondAgentNode = node;
+
                 }
 
                 // START: edges for cardinal directions
@@ -415,6 +419,40 @@ public class ShortestPathGraph extends SwingWorker {
         return graph;
     }
 
+    private void createMiddleAgentNodeAndEdge(){
+
+        // && agentNode != secondAgentNode
+        if (agentNode != null && secondAgentNode != null && agentNode != secondAgentNode) {
+            double centerX = (double) ((int) agentNode.getAttribute("x")
+                    + (int) secondAgentNode.getAttribute("x")) / 2;
+            double centerY = (double) ((int) agentNode.getAttribute("y")
+                    + (int) secondAgentNode.getAttribute("y")) / 2;
+
+            middleAgentNode = graph.addNode(centerY + "-" + centerX);
+            middleAgentNode.setAttribute("ui.style", "fill-color: purple; text-size: 12;"); // agent
+            // middleAgentNode.setAttribute("nodeName", "Agent");
+            middleAgentNode.setAttribute("y", centerY);
+            middleAgentNode.setAttribute("x", centerX);
+
+            //remove and add the edge between center node and agent node
+            graph.removeEdge("agentNode_center");
+            Edge firstCenterEdge = graph.addEdge("agentNode_center", middleAgentNode, agentNode, false);
+            firstCenterEdge.setAttribute("weight", 100);
+
+            //remove and add the edge between center node and second agent node
+            graph.removeEdge("secondAgentNode_center");
+            Edge secondCenterEdge = graph.addEdge("secondAgentNode_center", middleAgentNode, secondAgentNode, false);
+            secondCenterEdge.setAttribute("weight", 100);
+
+            // System.out.println("XXXXXXXXXXXXXXXXXXXXXX");
+            // System.out.println(firstCenterEdge);
+            // System.out.println(agentNode);
+            // System.out.println(secondAgentNode);
+            // System.out.println(middleAgentNode);
+        }
+        System.out.println(middleAgentNode);
+    }
+
     /*
      * Update agent node location based on looping, finding and updating the
      * mapMatrix 2d array
@@ -454,6 +492,13 @@ public class ShortestPathGraph extends SwingWorker {
         if (newAgentMapMatrixX == null || newAgentMapMatrixY == null)
             return graph;
 
+        //update middle node first otherwise it might ovveride the properties of other nodes
+        if (middleAgentNode != null && middleAgentNode.getId() != agentNode.getId() && middleAgentNode.getId() != secondAgentNode.getId()) {
+            Node secondPreviousAgentNode = graph.getNode(middleAgentNode.getId());
+            secondPreviousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC;");
+            secondPreviousAgentNode.setAttribute("nodeName", "");
+        }
+
         // update the previous node to an empty space
         Node previousAgentNode = graph.getNode(agentNode.getId());
         previousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC;");
@@ -466,7 +511,7 @@ public class ShortestPathGraph extends SwingWorker {
             if (landmarkNode.getValue().getId() == previousAgentNode.getId()) {
                 // text-size: 20
                 previousAgentNode.setAttribute("ui.style", "fill-color: #DCDCDC; text-size: 20;");
-                previousAgentNode.setAttribute("nodeName", "✓" +landmarkNode.getKey().getName());
+                previousAgentNode.setAttribute("nodeName", "✓" + landmarkNode.getKey().getName());
                 break;
             }
         }
@@ -494,12 +539,13 @@ public class ShortestPathGraph extends SwingWorker {
 
             Node secondNewAgentNode = graph.getNode(secondNewAgentMapMatrixY + "-" + secondNewAgentMapMatrixX);
             secondNewAgentNode.setAttribute("ui.style", "fill-color: red; text-size: 12;"); // agent
-            secondNewAgentNode.setAttribute("nodeName", "Agent");
+            secondNewAgentNode.setAttribute("nodeName", "2");
 
             // update and keep a copy of the new second node
             secondAgentNode = secondNewAgentNode;
         }
 
+        createMiddleAgentNodeAndEdge();
         displayNodeAndEdgeNames();
         return graph;
     }
