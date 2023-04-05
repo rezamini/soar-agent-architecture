@@ -118,6 +118,23 @@ public class MemoryResponder extends MemoryListener {
                                         }   
                                 }
 
+                                //check validity of the next shortest path
+                                if (minLandmarkEntry.isPresent()) {
+                                        boolean validShortestMove = robot.getWorld().validNextShortestPathMove(
+                                                        robot,
+                                                        minLandmarkEntry.get().getKey(),
+                                                        landmarkCycleCount);
+
+                                        // System.out.println("XXXXXXXXXXXXXXXXXXXX VALID NEXT : " + validShortestMove);
+
+                                        // reset the landmark-cycle-count to 0 and update the shortest path if it was
+                                        // not a valid next upcoming move
+                                        if(!validShortestMove){
+                                                landmarkCycleCount = 0;
+                                                robot.getWorld().updateShortestPath();
+                                        }   
+                                }
+
                                 // create a sub landmark with the landmark name - [name of landmark]
                                 String subName = MemoryEnum.LANDMARK_SUB.getName()
                                                 + UtilitiesEnum.DASHSEPERATOR.getName()

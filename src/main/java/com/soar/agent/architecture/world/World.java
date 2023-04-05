@@ -12,6 +12,7 @@ import java.awt.geom.*;
 import org.jsoar.util.events.SoarEventManager;
 
 import com.soar.agent.architecture.beans.Landmark;
+import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.graph.ShortestPathGraph;
 import com.soar.agent.architecture.robot.Robot;
 
@@ -224,7 +225,7 @@ public class World {
         if (!extents.contains(tempAgentShape.getBounds2D())) {
             return true;
         }
-        
+
         for (Shape s : obstacles) {
             if (tempAgentShape.intersects(s.getBounds2D())) {
                 return true;
@@ -459,7 +460,38 @@ public class World {
     }
 
     /*
-     * validate the computed shortest path with the new move direction
+     * validate the computed shortest path with the next upcoming move direction
+     * this checks for collision and object avoidance and if there is a block the
+     * therecalculate take place.
+     */
+    public boolean validNextShortestPathMove(Robot robot, Landmark landmark, int index) {
+        boolean result = true;
+
+        if (shortestLandmarkDirections != null && shortestLandmarkDirections.size() > 0) {
+            List<String> currentPath = shortestLandmarkDirections.get(landmark);
+            if (currentPath != null && currentPath.size() > 0) {
+
+                // make sure the index(landmark-cycle-count) exist in the current computed paths
+                if (index >= 0 && index < currentPath.size()) {
+                    String computedDirection = currentPath.get(index);
+
+                    DirectionEnum directionEnum = DirectionEnum.findByName(computedDirection);
+
+                    boolean isBlocked = robot.tempUpdate(0, directionEnum);
+                    if (isBlocked) {
+                        result = false;
+                    }
+                }
+
+            }
+        }
+
+        return result;
+    }
+
+    /*
+     * validate the computed shortest path with the new move direction(already
+     * performed)
      * if they are not the same recalculate the path. it means the agent is out of
      * correct path/direction sequence.
      */
@@ -475,9 +507,11 @@ public class World {
         // to make sure we are in correct path and correct computed direction is
         // executed.
         index = index - 1;
-        
-        //in case the substraction goes under 0 set it to first index otherwise it will skip it
-        if(index < 0) index = 0;
+
+        // in case the substraction goes under 0 set it to first index otherwise it will
+        // skip it
+        if (index < 0)
+            index = 0;
 
         if (currentDirection != null) {
             List<String> currentPath = shortestLandmarkDirections.get(landmark);
