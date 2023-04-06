@@ -7,6 +7,7 @@ import com.soar.agent.architecture.world.World;
 
 import java.awt.geom.*;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Robot {
@@ -31,6 +32,7 @@ public class Robot {
     private boolean toggleRadar;
     private double batteryDeduction = 0.1;
     private DecimalFormat batteryDecimalFormat = new DecimalFormat("0.#");
+    private Path2D tempShape = new Path2D.Double();
 
     public Robot(World game, String name) {
         this.world = game;
@@ -131,7 +133,7 @@ public class Robot {
             }
         }
 
-        //update landmark locations again
+        // update landmark locations again
         updateMatrixLandmarkInfo(currentMapMatrix);
 
         world.setMapMatrix(currentMapMatrix);
@@ -143,11 +145,11 @@ public class Robot {
                 double cx = entry.getKey().getLocation().getX();
                 double cy = entry.getKey().getLocation().getY();
 
-                int x = (int) ((cx - 2.0 / 2.0) / 2.0); //simplified matrix convert
-                int y = (int) ((cy - 2.0 / 2.0) / 2.0); //simplified matrix convert
+                int x = (int) ((cx - 2.0 / 2.0) / 2.0); // simplified matrix convert
+                int y = (int) ((cy - 2.0 / 2.0) / 2.0); // simplified matrix convert
 
-                //if the agent is currently not there update it back to landmark
-                if(currentMapMatrix[y][x] != 3){
+                // if the agent is currently not there update it back to landmark
+                if (currentMapMatrix[y][x] != 3) {
                     currentMapMatrix[y][x] = 2;
                 }
             }
@@ -158,8 +160,8 @@ public class Robot {
 
         int agentMatrixX = (int) Math.round(tempAgentShape.getBounds2D().getCenterX());
         int agentMatrixY = (int) Math.round(tempAgentShape.getBounds2D().getCenterY());
-        int agentMatrixX2 = (int) Math.round(agentMatrixX + dx + dx );
-        int agentMatrixY2 = (int) Math.round(agentMatrixY + dy + dy );
+        int agentMatrixX2 = (int) Math.round(agentMatrixX + dx + dx);
+        int agentMatrixY2 = (int) Math.round(agentMatrixY + dy + dy);
 
         // set the agent matrix location on a separate field that could be used in other
         // places without looping the entire map if required
@@ -193,90 +195,125 @@ public class Robot {
 
         // // left or right
         // if ((dx > 0 || dx < 0) && dy == 0) {
-        //     toFillY = (int) Math.round(newY);
-            
-        //     if(dx > 0){
-        //         fromFillX = (int) Math.round(newX);
-        //         toFillX = (int) Math.round(newX + 2);
-        //     }
+        // toFillY = (int) Math.round(newY);
 
-        //     if(dx < 0){
-        //         fromFillX = (int) Math.round(newX - 2);
-        //         toFillX = (int) Math.round(newX);
-        //     }
+        // if(dx > 0){
+        // fromFillX = (int) Math.round(newX);
+        // toFillX = (int) Math.round(newX + 2);
+        // }
 
-        //     Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-        //     Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
+        // if(dx < 0){
+        // fromFillX = (int) Math.round(newX - 2);
+        // toFillX = (int) Math.round(newX);
+        // }
 
-        //     // up or down
+        // Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        // Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
+
+        // // up or down
         // } else if ((dy > 0 || dy < 0) && dx == 0) {
-        //     toFillX = (int) Math.round(newX + 1);
-        //     fromFillY = (int) Math.round(newY);
+        // toFillX = (int) Math.round(newX + 1);
+        // fromFillY = (int) Math.round(newY);
 
-        //     if(dy > 0){
-        //         toFillY = (int) Math.round(newY + 1);
-        //     }
+        // if(dy > 0){
+        // toFillY = (int) Math.round(newY + 1);
+        // }
 
-        //     if(dy < 0){
-        //         toFillY = (int) Math.round(newY - 1);
-        //     }
+        // if(dy < 0){
+        // toFillY = (int) Math.round(newY - 1);
+        // }
 
-        //     Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-        //     Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
+        // Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        // Arrays.fill(currentMapMatrix[toFillY], fromFillX, toFillX, 3);
 
-        //     // top right || top left
+        // // top right || top left
         // } else if ((dx > 0 && dy > 0) || (dx < 0 && dy > 0)) {
-        //     if(dx > 0 && dy > 0){
-        //         fromFillY = (int) Math.round(newY);
-        //         toFillY = (int) Math.round(newY + 1);
+        // if(dx > 0 && dy > 0){
+        // fromFillY = (int) Math.round(newY);
+        // toFillY = (int) Math.round(newY + 1);
 
-        //         fromFillX = (int) Math.round(newX);
-        //         toFillX = (int) Math.round(newX + 1);
+        // fromFillX = (int) Math.round(newX);
+        // toFillX = (int) Math.round(newX + 1);
 
-        //         Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-        //         Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3);  
-        //     }
+        // Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        // Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3);
+        // }
 
-        //     if(dx < 0 && dy > 0){
-        //         fromFillY = (int) Math.round(newY);
-        //         toFillY = (int) Math.round(newY + 1);
+        // if(dx < 0 && dy > 0){
+        // fromFillY = (int) Math.round(newY);
+        // toFillY = (int) Math.round(newY + 1);
 
-        //         fromFillX = (int) Math.round(newX - 1);
-        //         toFillX = (int) Math.round(newX);
+        // fromFillX = (int) Math.round(newX - 1);
+        // toFillX = (int) Math.round(newX);
 
-        //         Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-        //         Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3); 
-        //     }
+        // Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        // Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3);
+        // }
 
-        //     // bottom right || bottom left
+        // // bottom right || bottom left
         // } else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
-        //     if(dx < 0 && dy < 0){
-        //         fromFillY = (int) Math.round(newY);
-        //         toFillY = (int) Math.round(newY - 1);
+        // if(dx < 0 && dy < 0){
+        // fromFillY = (int) Math.round(newY);
+        // toFillY = (int) Math.round(newY - 1);
 
-        //         fromFillX = (int) Math.round(newX - 1);
-        //         toFillX = (int) Math.round(newX);
+        // fromFillX = (int) Math.round(newX - 1);
+        // toFillX = (int) Math.round(newX);
 
-        //         Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-        //         Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3);  
-        //     }
+        // Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        // Arrays.fill(currentMapMatrix[toFillY], fromFillX - 1, toFillX - 1, 3);
+        // }
 
-        //     if(dx > 0 && dy < 0){
-        //         fromFillY = (int) Math.round(newY);
-        //         toFillY = (int) Math.round(newY - 1);
+        // if(dx > 0 && dy < 0){
+        // fromFillY = (int) Math.round(newY);
+        // toFillY = (int) Math.round(newY - 1);
 
-        //         fromFillX = (int) Math.round(newX);
-        //         toFillX = (int) Math.round(newX + 1);
+        // fromFillX = (int) Math.round(newX);
+        // toFillX = (int) Math.round(newX + 1);
 
-        //         Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
-        //         Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3); 
-        //     }
+        // Arrays.fill(currentMapMatrix[fromFillY], fromFillX, toFillX, 3);
+        // Arrays.fill(currentMapMatrix[toFillY], fromFillX + 1, toFillX + 1, 3);
+        // }
         // }
 
         // world.setSecondAgentMapMatrixX((int) Math.round(agentMatrixX + dx + dx ));
         // world.setSecondAgentMapMatrixY((int) Math.round(agentMatrixY + dy + dy ));
-        
+
         world.setCompleteMapMatrix(currentMapMatrix);
+    }
+
+    // * This is temporary making a new agent at a new location and checks if it
+    // hits an obstacle at that location */
+    public Map<Path2D, Boolean> tempNewLocationUpdate(DirectionEnum currentDirection, Path2D currentShape) {
+        Map<Path2D, Boolean> result = new HashMap<Path2D, Boolean>(); 
+
+        double tempNewLocationYaw = Math.toRadians(currentDirection.getAngle());
+
+        while (tempNewLocationYaw < 0.0)
+            tempNewLocationYaw += 2.0 * Math.PI;
+        while (tempNewLocationYaw > 2.0 * Math.PI)
+            tempNewLocationYaw -= 2.0 * Math.PI;
+
+        double dx = Math.round(Math.cos(tempNewLocationYaw)) * speed;
+        double dy = Math.round(Math.sin(tempNewLocationYaw)) * speed;
+
+        double centerX = currentShape != null ? currentShape.getBounds2D().getCenterX() : shape.getCenterX();
+        double centerY = currentShape != null ? currentShape.getBounds2D().getCenterY() : shape.getCenterY();
+
+        double newX = centerX + dx;
+        double newY = centerY + dy;
+
+        Path2D tempAgentShape = createTempAgentShape(newX, newY, tempNewLocationYaw);
+
+        // if(currentDirection.getName().equalsIgnoreCase("northeast")){
+        //     tempShape = tempAgentShape;
+        // }
+        
+        // check to see if it will collide in every enum direction that is passed
+        // throught this method
+        boolean isObstacle = world.willCollide(this, newX, newY, tempAgentShape);
+
+        result.put(tempAgentShape, isObstacle);
+        return result;
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
@@ -340,9 +377,10 @@ public class Robot {
         }
     }
 
-    private Path2D createTempAgentShape(double newX, double newY, double angle){
+    private Path2D createTempAgentShape(double newX, double newY, double angle) {
         Rectangle2D rect = new Rectangle2D.Double();
-        // subtracting 0.1 is to make it slightly smaller so the tight edges and situations will be passed
+        // subtracting 0.1 is to make it slightly smaller so the tight edges and
+        // situations will be passed
         // and if used for collision it will not be so strict
         rect.setFrameFromCenter(newX, newY, newX + shapeWidth - 0.1, newY + shapeHeight - 0.1);
 
@@ -381,7 +419,7 @@ public class Robot {
             agentHeight = shapeWidth + 0.1;
 
             // bottom right || bottom left
-        }else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
+        } else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
             agentWidth = shapeHeight + 0.1;
             agentHeight = shapeWidth + 0.1;
         }
@@ -487,5 +525,13 @@ public class Robot {
 
     public double getTempYaw() {
         return tempYaw;
+    }
+
+    public Path2D getTempShape() {
+        return tempShape;
+    }
+
+    public void setTempShape(Path2D tempShape) {
+        this.tempShape = tempShape;
     }
 }

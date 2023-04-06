@@ -24,11 +24,13 @@ import org.graphstream.ui.view.View;
 
 import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.enums.DirectionEnum;
+import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.world.World;
 
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
 import java.awt.Color;
+import java.awt.geom.Path2D;
 
 public class ShortestPathGraph extends SwingWorker {
     public Graph graph;
@@ -84,7 +86,7 @@ public class ShortestPathGraph extends SwingWorker {
                     return;
                 }
 
-                astar.compute(middleAgentNode.getId(), value.getId());
+                astar.compute(secondAgentNode.getId(), value.getId());
                 Path path = astar.getShortestPath();
                 computedPaths.put(key, path.getNodePath());
             });
@@ -110,20 +112,22 @@ public class ShortestPathGraph extends SwingWorker {
 
         List<String> tempDirectionList = new ArrayList<String>();
 
+        Robot robot = world.getRobots().get(0);
         // int tempY = (int) agentNode.getAttribute("y");
         // int tempX = (int) agentNode.getAttribute("x");
 
         // get the first index which is the agent position
-        double tempY = (double) paths.get(0).getAttribute("y");
-        double tempX = (double) paths.get(0).getAttribute("x");
+        double tempY = ((Number) paths.get(0).getAttribute("y")).doubleValue();
+        double tempX = ((Number) paths.get(0).getAttribute("x")).doubleValue();
 
         // remove the first index from the computed path which is the agent current
         // position
         // we have a temp copy above for direction calculation
         paths.remove(0);
 
-        int totalDirections = (int) (paths.size() / world.getRobots().get(0).getSpeed());
+        int totalDirections = (int) (paths.size() / robot.getSpeed());
         int pathMultiplier = totalDirections / paths.size();
+        Path2D tempAgentShape = null;
 
         for (int i = 0; i < paths.size(); i++) {
 
@@ -135,12 +139,12 @@ public class ShortestPathGraph extends SwingWorker {
             // set the previous node as temp node
             // this is to compare every two nodes together.
             if (i > 0) {
-                tempY = (int) paths.get(i - 1).getAttribute("y");
-                tempX = (int) paths.get(i - 1).getAttribute("x");
+                tempY = ((Number) paths.get(i - 1).getAttribute("y")).doubleValue();
+                tempX = ((Number) paths.get(i - 1).getAttribute("x")).doubleValue();
             }
 
-            int targetY = (int) path.getAttribute("y");
-            int targetX = (int) path.getAttribute("x");
+            int targetY = ((Number) path.getAttribute("y")).intValue();
+            int targetX = ((Number) path.getAttribute("x")).intValue();
 
             direction += tempY < targetY ? DirectionEnum.NORTH.getName()
                     : tempY > targetY ? DirectionEnum.SOUTH.getName() : "";
@@ -148,13 +152,24 @@ public class ShortestPathGraph extends SwingWorker {
             direction += tempX < targetX ? DirectionEnum.EAST.getName()
                     : tempX > targetX ? DirectionEnum.WEST.getName() : "";
 
-            Arrays.fill(tempArr, 0, tempArr.length, direction);
 
-            // if (i == 1) {
-            // tempDirectionList.addAll(0, Arrays.asList(tempArr));
+            //check for obstacle/collision if agent goes this direction
+            Map<Path2D, Boolean> tempResult = robot.tempNewLocationUpdate(DirectionEnum.findByName(direction), tempAgentShape);
+            boolean isObstacle = tempResult.entrySet().iterator().next().getValue();
+
+            // System.out.println("XXXXXXXXXXXXXXXXX DIRECTION : "+ direction + " -> is blocked : "+ isObstacle);
+            // System.out.println("XXXX TEMP : "+tempX + " : agentNode X : "+agentNode.getAttribute("x") + " : agent  : "+robot.getShape().getCenterX());
+
+            if(!isObstacle){
+                tempAgentShape = tempResult.entrySet().iterator().next().getKey();
+                // Arrays.fill(tempArr, 0, tempArr.length, direction);
+                // tempDirectionList.addAll(Arrays.asList(tempArr));
+            }
+            // if(!isObstacle){
+                Arrays.fill(tempArr, 0, tempArr.length, direction);
+                tempDirectionList.addAll(Arrays.asList(tempArr));
             // }
 
-            tempDirectionList.addAll(Arrays.asList(tempArr));
 
         }
 
@@ -389,7 +404,7 @@ public class ShortestPathGraph extends SwingWorker {
                     Edge edge = graph.addEdge(edgeId, i + "-" + j, (i - 1) + "-" + (j - 1), false);
 
                     if (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i][j] == 1) {
-                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
                     } else {
                         // edge.setAttribute("ui.style", "fill-color: green;");
@@ -430,7 +445,7 @@ public class ShortestPathGraph extends SwingWorker {
 
             middleAgentNode = graph.addNode(centerY + "-" + centerX);
             middleAgentNode.setAttribute("ui.style", "fill-color: purple; text-size: 12;"); // agent
-            // middleAgentNode.setAttribute("nodeName", "Agent");
+            middleAgentNode.setAttribute("nodeName", "Agent");
             middleAgentNode.setAttribute("y", centerY);
             middleAgentNode.setAttribute("x", centerX);
 
@@ -438,14 +453,14 @@ public class ShortestPathGraph extends SwingWorker {
             graph.removeEdge("agentNode_center");
             Edge firstCenterEdge = graph.addEdge("agentNode_center", middleAgentNode, agentNode, false);
             if(firstCenterEdge != null){
-                firstCenterEdge.setAttribute("weight", 100);
+                firstCenterEdge.setAttribute("weight", 0.5);
             }
 
             // remove and add the edge between center node and second agent node
             graph.removeEdge("secondAgentNode_center");
             Edge secondCenterEdge = graph.addEdge("secondAgentNode_center", middleAgentNode, secondAgentNode, false);
             if(firstCenterEdge != null){
-                secondCenterEdge.setAttribute("weight", 100);
+                secondCenterEdge.setAttribute("weight", 0.5);
 
             }
 
