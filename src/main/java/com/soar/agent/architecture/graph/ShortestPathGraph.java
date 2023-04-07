@@ -86,7 +86,7 @@ public class ShortestPathGraph extends SwingWorker {
                     return;
                 }
 
-                astar.compute(secondAgentNode.getId(), value.getId());
+                astar.compute(middleAgentNode.getId(), value.getId());
                 Path path = astar.getShortestPath();
                 computedPaths.put(key, path.getNodePath());
             });
@@ -154,17 +154,19 @@ public class ShortestPathGraph extends SwingWorker {
 
             // check for obstacle/collision if agent goes this direction
             // System.out.println("XXXXXXXXXXXXXXXXXX : " + direction);
-            // Map<Path2D, Boolean> tempResult = robot.tempNewLocationUpdate(DirectionEnum.findByName(direction),
-            //         tempAgentShape);
+            // Map<Path2D, Boolean> tempResult =
+            // robot.tempNewLocationUpdate(DirectionEnum.findByName(direction),
+            // tempAgentShape);
             // boolean isObstacle = tempResult.entrySet().iterator().next().getValue();
 
             // // System.out.println("XXXXXXXXXXXXXXXXX DIRECTION : "+ direction + " -> is
             // // blocked : "+ isObstacle);
             // // System.out.println("XXXX TEMP : "+tempX + " : agentNode X :
-            // // "+agentNode.getAttribute("x") + " : agent : "+robot.getShape().getCenterX());
+            // // "+agentNode.getAttribute("x") + " : agent :
+            // "+robot.getShape().getCenterX());
 
             // if (!isObstacle) {
-            //     tempAgentShape = tempResult.entrySet().iterator().next().getKey();
+            // tempAgentShape = tempResult.entrySet().iterator().next().getKey();
             // }
 
             Arrays.fill(tempArr, 0, tempArr.length, direction);
@@ -371,10 +373,27 @@ public class ShortestPathGraph extends SwingWorker {
                 if (i > 0) {
                     String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + j;
                     Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + j, i + "-" + j, false);
-
+                
                     if (mapMatrix[i - 1][j] == 1 || mapMatrix[i][j] == 1) {
-                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                        edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
+                
+                        // Check edges at the top and bottom of the obstacle as well
+                        if (j > 0) {
+                            String topEdgeId = (i - 1) + "-" + j + "<-" + (i - 1) + "-" + (j - 1);
+                            Edge topEdge = graph.getEdge(topEdgeId);
+                            if (topEdge != null) {
+                                topEdge.setAttribute("ui.style", "fill-color: red;");
+                                topEdge.setAttribute("weight", 100);
+                            }
+                
+                            String bottomEdgeId = (i - 1) + "-" + j + "<-" + (i - 1) + "-" + (j + 1);
+                            Edge bottomEdge = graph.getEdge(bottomEdgeId);
+                            if (bottomEdge != null) {
+                                bottomEdge.setAttribute("ui.style", "fill-color: red;");
+                                bottomEdge.setAttribute("weight", 100);
+                            }
+                        }
                     } else {
                         // edge.setAttribute("ui.style", "fill-color: green;");
                         edge.setAttribute("weight", 0.5);
@@ -384,13 +403,44 @@ public class ShortestPathGraph extends SwingWorker {
                 if (j > 0) {
                     String edgeId = i + "-" + j + "<-" + i + "-" + (j - 1);
                     Edge edge = graph.addEdge(edgeId, i + "-" + (j - 1), i + "-" + j, false);
-
-                    if (mapMatrix[i][j - 1] == 1 || mapMatrix[i][j] == 1) {
-                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                
+                    boolean isObstacle = (mapMatrix[i][j - 1] == 1 || mapMatrix[i][j] == 1);
+                    boolean isEdgeObstacle = (i > 0 && (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i - 1][j] == 1)) ||
+                            (i < mapMatrix.length - 1 && (mapMatrix[i + 1][j - 1] == 1 || mapMatrix[i + 1][j] == 1));
+                
+                    if (isObstacle || isEdgeObstacle) {
+                        edge.setAttribute("ui.style", "fill-color: red;");
                         edge.setAttribute("weight", 100);
                     } else {
-                        // edge.setAttribute("ui.style", "fill-color: green;");
                         edge.setAttribute("weight", 0.5);
+                    }
+                
+                    if (i > 0) {
+                        String edgeIdTop = (i - 1) + "-" + j + "<-" + (i - 1) + "-" + (j - 1);
+                        Edge edgeTop = graph.getEdge(edgeIdTop);
+                        if (edgeTop != null && !edgeTop.hasAttribute("weight")) {
+                            boolean isTopObstacle = (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i - 1][j] == 1);
+                            if (isObstacle || isTopObstacle) {
+                                edgeTop.setAttribute("ui.style", "fill-color: red;");
+                                edgeTop.setAttribute("weight", 100);
+                            } else {
+                                edgeTop.setAttribute("weight", 0.5);
+                            }
+                        }
+                    }
+                
+                    if (i < mapMatrix.length - 1) {
+                        String edgeIdBottom = (i + 1) + "-" + j + "<-" + (i + 1) + "-" + (j - 1);
+                        Edge edgeBottom = graph.getEdge(edgeIdBottom);
+                        if (edgeBottom != null && !edgeBottom.hasAttribute("weight")) {
+                            boolean isBottomObstacle = (mapMatrix[i + 1][j - 1] == 1 || mapMatrix[i + 1][j] == 1);
+                            if (isObstacle || isBottomObstacle) {
+                                edgeBottom.setAttribute("ui.style", "fill-color: red;");
+                                edgeBottom.setAttribute("weight", 100);
+                            } else {
+                                edgeBottom.setAttribute("weight", 0.5);
+                            }
+                        }
                     }
                 }
 
@@ -399,45 +449,34 @@ public class ShortestPathGraph extends SwingWorker {
                 // START: edges for intercardinal/ordinal directions
                 if (i > 0 && j > 0) {
                     // create edge to the northwest
-                    String edgeId = i + "-" + j + "-" + (i - 1) + "-" + (j - 1);
-                    Edge edge = graph.addEdge(edgeId, i + "-" + j, (i - 1) + "-" + (j - 1), false);
-
-                    if (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i][j] == 1) {
-                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                    String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + (j - 1);
+                    Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + (j - 1), i + "-" + j, false);
+                
+                    if (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i][j] == 1 || mapMatrix[i][j - 1] == 1 || mapMatrix[i - 1][j] == 1) {
+                        edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
                     } else {
                         // edge.setAttribute("ui.style", "fill-color: green;");
                         edge.setAttribute("weight", 0.5);
-
-                        // Node testNode = graph.getNode((i) + "-" + (j-1));
-                        // testNode.setAttribute("ui.style", "fill-color: red;"); // obstacles
-                        if (mapMatrix[i][j - 1] == 1 || mapMatrix[i - 1][j] == 1) {
-                            edge.setAttribute("ui.style", "fill-color: red;");
-                            edge.setAttribute("weight", 100);
-                        }
                     }
                 }
-
+                
                 if (i > 0 && j < mapMatrix[0].length - 1) {
                     // create edge to the northeast
-                    String edgeId = i + "-" + j + "-" + (i - 1) + "-" + (j + 1);
-                    Edge edge = graph.addEdge(edgeId, i + "-" + j, (i - 1) + "-" + (j + 1), false);
-
-                    if (mapMatrix[i - 1][j + 1] == 1 || mapMatrix[i][j] == 1) {
-                        // edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                    String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + (j + 1);
+                    Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + (j + 1), i + "-" + j, false);
+                
+                    if (mapMatrix[i - 1][j + 1] == 1 || mapMatrix[i][j] == 1 || mapMatrix[i][j + 1] == 1 || mapMatrix[i - 1][j] == 1) {
+                        edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
-
+                
                     } else {
                         // edge.setAttribute("ui.style", "fill-color: green;");
                         edge.setAttribute("weight", 0.5);
-
-                        if (mapMatrix[i][j + 1] == 1 || mapMatrix[i - 1][j] == 1) {
-                            edge.setAttribute("ui.style", "fill-color: red;");
-                            edge.setAttribute("weight", 100);
-
-                        }
                     }
                 }
+
+                
 
                 // END
 

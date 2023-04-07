@@ -158,8 +158,8 @@ public class Robot {
 
     public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy, Path2D tempAgentShape) {
 
-        int agentMatrixX = (int) Math.round(tempAgentShape.getBounds2D().getCenterX());
-        int agentMatrixY = (int) Math.round(tempAgentShape.getBounds2D().getCenterY());
+        int agentMatrixX = (int) Math.round(tempAgentShape.getBounds().getCenterX());
+        int agentMatrixY = (int) Math.round(tempAgentShape.getBounds().getCenterY());
         int agentMatrixX2 = (int) Math.round(agentMatrixX + dx + dx);
         int agentMatrixY2 = (int) Math.round(agentMatrixY + dy + dy);
 
@@ -296,8 +296,8 @@ public class Robot {
         double dx = Math.round(Math.cos(tempNewLocationYaw)) * speed;
         double dy = Math.round(Math.sin(tempNewLocationYaw)) * speed;
 
-        double centerX = currentShape != null ? currentShape.getBounds2D().getCenterX() : shape.getCenterX();
-        double centerY = currentShape != null ? currentShape.getBounds2D().getCenterY() : shape.getCenterY();
+        double centerX = currentShape != null ? currentShape.getBounds().getCenterX() : shape.getCenterX();
+        double centerY = currentShape != null ? currentShape.getBounds().getCenterY() : shape.getCenterY();
 
         double newX = centerX + dx;
         double newY = centerY + dy;
