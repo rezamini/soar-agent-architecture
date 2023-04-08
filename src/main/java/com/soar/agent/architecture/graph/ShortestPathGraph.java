@@ -369,78 +369,101 @@ public class ShortestPathGraph extends SwingWorker {
 
                 }
 
+                // add base edges to be modified later for their weight/color/name
+                // START: edges for cardinal directions
+                if (i > 0) {
+                    String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + j;
+                    graph.addEdge(edgeId, (i - 1) + "-" + j, i + "-" + j, false);
+                }
+
+                if (j > 0) {
+                    String edgeId = i + "-" + j + "<-" + i + "-" + (j - 1);
+                    graph.addEdge(edgeId, i + "-" + (j - 1), i + "-" + j, false);
+                }
+
+                // END
+
+                // START: edges for intercardinal/ordinal directions
+                if (i > 0 && j > 0) {
+                    // create edge to the northwest
+                    String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + (j - 1);
+                    graph.addEdge(edgeId, (i - 1) + "-" + (j - 1), i + "-" + j, false);
+                }
+
+                if (i > 0 && j < mapMatrix[0].length - 1) {
+                    // create edge to the northeast
+                    String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + (j + 1);
+                    graph.addEdge(edgeId, (i - 1) + "-" + (j + 1), i + "-" + j, false);
+                }
+
+            }
+        }
+
+        // loop to add weights for edges.
+        // a separate loop is required otherwise some of the edges wont be available
+        // upon modifying.
+        for (int i = 0; i < mapMatrix.length; i++) {
+            for (int j = 0; j < mapMatrix[0].length; j++) {
                 // START: edges for cardinal directions
                 if (i > 0) {
                     String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + j;
                     Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + j, i + "-" + j, false);
-                
+
                     if (mapMatrix[i - 1][j] == 1 || mapMatrix[i][j] == 1) {
                         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
-                
-                        // Check edges at the top and bottom of the obstacle as well
-                        if (j > 0) {
-                            String topEdgeId = (i - 1) + "-" + j + "<-" + (i - 1) + "-" + (j - 1);
-                            Edge topEdge = graph.getEdge(topEdgeId);
-                            if (topEdge != null) {
-                                topEdge.setAttribute("ui.style", "fill-color: red;");
-                                topEdge.setAttribute("weight", 100);
-                            }
-                
-                            String bottomEdgeId = (i - 1) + "-" + j + "<-" + (i - 1) + "-" + (j + 1);
-                            Edge bottomEdge = graph.getEdge(bottomEdgeId);
-                            if (bottomEdge != null) {
-                                bottomEdge.setAttribute("ui.style", "fill-color: red;");
-                                bottomEdge.setAttribute("weight", 100);
-                            }
+
+                        // add the vertical bounding weights for the top-to-bottom left and
+                        // top-to-bottom right edges of the obstacle
+                        // this only consider the vertical edges next to/surrounding the obstacle
+                        String rightEdgeId = (i) + "-" + (j + 1) + "<-" + (i - 1) + "-" + (j + 1);
+                        Edge rightEdge = graph.getEdge(rightEdgeId);
+                        if (rightEdge != null && mapMatrix[i][j + 1] != 1 && mapMatrix[i - 1][j + 1] != 1) {
+                            rightEdge.setAttribute("ui.style", "fill-color: DodgerBlue;");
+                            rightEdge.setAttribute("weight", 50);
                         }
+
+                        String LefEdgeId = (i) + "-" + (j - 1) + "<-" + (i - 1) + "-" + (j - 1);
+                        Edge leftEdge = graph.getEdge(LefEdgeId);
+                        if (leftEdge != null && mapMatrix[i][j - 1] != 1 && mapMatrix[i - 1][j - 1] != 1) {
+                            leftEdge.setAttribute("ui.style", "fill-color: DodgerBlue;");
+                            leftEdge.setAttribute("weight", 50);
+                        }
+
                     } else {
                         // edge.setAttribute("ui.style", "fill-color: green;");
                         edge.setAttribute("weight", 0.5);
                     }
+
                 }
 
                 if (j > 0) {
                     String edgeId = i + "-" + j + "<-" + i + "-" + (j - 1);
                     Edge edge = graph.addEdge(edgeId, i + "-" + (j - 1), i + "-" + j, false);
-                
-                    boolean isObstacle = (mapMatrix[i][j - 1] == 1 || mapMatrix[i][j] == 1);
-                    boolean isEdgeObstacle = (i > 0 && (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i - 1][j] == 1)) ||
-                            (i < mapMatrix.length - 1 && (mapMatrix[i + 1][j - 1] == 1 || mapMatrix[i + 1][j] == 1));
-                
-                    if (isObstacle || isEdgeObstacle) {
+
+                    if (mapMatrix[i][j - 1] == 1 || mapMatrix[i][j] == 1) {
                         edge.setAttribute("ui.style", "fill-color: red;");
                         edge.setAttribute("weight", 100);
+
+                        // add the horizontal bounding weights for the lef-to-right top and
+                        // lef-to-right bottom edges of the obstacle
+                        // this only consider the horizontal edges next to/surrounding the obstacle
+                        String topEdgeId = (i + 1) + "-" + (j) + "<-" + (i + 1) + "-" + (j - 1);
+                        Edge topEdge = graph.getEdge(topEdgeId);
+                        if (topEdge != null && mapMatrix[i + 1][j] != 1 && mapMatrix[i + 1][j - 1] != 1) {
+                            topEdge.setAttribute("ui.style", "fill-color: DodgerBlue;");
+                            topEdge.setAttribute("weight", 50);
+                        }
+
+                        String bottomEdgeId = (i - 1) + "-" + (j) + "<-" + (i - 1) + "-" + (j - 1);
+                        Edge bottomEdge = graph.getEdge(bottomEdgeId);
+                        if (bottomEdge != null && mapMatrix[i - 1][j] != 1 && mapMatrix[i - 1][j - 1] != 1) {
+                            bottomEdge.setAttribute("ui.style", "fill-color: DodgerBlue;");
+                            bottomEdge.setAttribute("weight", 50);
+                        }
+
                     } else {
                         edge.setAttribute("weight", 0.5);
-                    }
-                
-                    if (i > 0) {
-                        String edgeIdTop = (i - 1) + "-" + j + "<-" + (i - 1) + "-" + (j - 1);
-                        Edge edgeTop = graph.getEdge(edgeIdTop);
-                        if (edgeTop != null && !edgeTop.hasAttribute("weight")) {
-                            boolean isTopObstacle = (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i - 1][j] == 1);
-                            if (isObstacle || isTopObstacle) {
-                                edgeTop.setAttribute("ui.style", "fill-color: red;");
-                                edgeTop.setAttribute("weight", 100);
-                            } else {
-                                edgeTop.setAttribute("weight", 0.5);
-                            }
-                        }
-                    }
-                
-                    if (i < mapMatrix.length - 1) {
-                        String edgeIdBottom = (i + 1) + "-" + j + "<-" + (i + 1) + "-" + (j - 1);
-                        Edge edgeBottom = graph.getEdge(edgeIdBottom);
-                        if (edgeBottom != null && !edgeBottom.hasAttribute("weight")) {
-                            boolean isBottomObstacle = (mapMatrix[i + 1][j - 1] == 1 || mapMatrix[i + 1][j] == 1);
-                            if (isObstacle || isBottomObstacle) {
-                                edgeBottom.setAttribute("ui.style", "fill-color: red;");
-                                edgeBottom.setAttribute("weight", 100);
-                            } else {
-                                edgeBottom.setAttribute("weight", 0.5);
-                            }
-                        }
                     }
                 }
 
@@ -451,32 +474,53 @@ public class ShortestPathGraph extends SwingWorker {
                     // create edge to the northwest
                     String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + (j - 1);
                     Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + (j - 1), i + "-" + j, false);
-                
-                    if (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i][j] == 1 || mapMatrix[i][j - 1] == 1 || mapMatrix[i - 1][j] == 1) {
+
+                    if (mapMatrix[i - 1][j - 1] == 1 || mapMatrix[i][j] == 1) {
                         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
+
+                        if (mapMatrix[i][j - 1] == 1 || mapMatrix[i - 1][j] == 1) {
+                            edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
+                            edge.setAttribute("weight", 100);
+                        }
+
                     } else {
                         // edge.setAttribute("ui.style", "fill-color: green;");
                         edge.setAttribute("weight", 0.5);
+
+                        // add the bounding weights for the "northwest" type of edge that are near an obstacle
+                        // this only consider the edges next to/surrounding the obstacle
+                        if (mapMatrix[i][j - 1] == 1 || mapMatrix[i - 1][j] == 1) {
+                            edge.setAttribute("ui.style", "fill-color: DodgerBlue;");
+                            edge.setAttribute("weight", 50);
+                        }
                     }
                 }
-                
+
                 if (i > 0 && j < mapMatrix[0].length - 1) {
                     // create edge to the northeast
                     String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + (j + 1);
                     Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + (j + 1), i + "-" + j, false);
-                
-                    if (mapMatrix[i - 1][j + 1] == 1 || mapMatrix[i][j] == 1 || mapMatrix[i][j + 1] == 1 || mapMatrix[i - 1][j] == 1) {
+
+                    if (mapMatrix[i - 1][j + 1] == 1 || mapMatrix[i][j] == 1) {
                         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
-                
+
+                        // || mapMatrix[i][j + 1] == 1 || mapMatrix[i - 1][j] == 1
+
                     } else {
                         // edge.setAttribute("ui.style", "fill-color: green;");
                         edge.setAttribute("weight", 0.5);
+
+                        // add the bounding weights for the "northeast" type of edge that are near an obstacle
+                        // this only consider the edges next to/surrounding the obstacle
+                        if (mapMatrix[i][j + 1] == 1 || mapMatrix[i - 1][j] == 1) {
+                            edge.setAttribute("ui.style", "fill-color: DodgerBlue;");
+                            edge.setAttribute("weight", 50);
+
+                        }
                     }
                 }
-
-                
 
                 // END
 
