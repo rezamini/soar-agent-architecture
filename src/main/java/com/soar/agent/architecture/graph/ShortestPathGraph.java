@@ -314,7 +314,7 @@ public class ShortestPathGraph extends SwingWorker {
                 continue; // its agent node, dont color it
 
             node.setAttribute("ui.color", color);
-            sleep();
+            // sleep();
 
         }
     }
@@ -402,13 +402,19 @@ public class ShortestPathGraph extends SwingWorker {
         // loop to add weights for edges.
         // a separate loop is required otherwise some of the edges wont be available
         // upon modifying.
+
+        String rightEdgeId = null;
+        List<String> topEdgeIds = new ArrayList<String>();
         for (int i = 0; i < mapMatrix.length; i++) {
+            
+
             for (int j = 0; j < mapMatrix[0].length; j++) {
                 // START: edges for cardinal directions
                 if (i > 0) {
                     String edgeId = i + "-" + j + "<-" + (i - 1) + "-" + j;
                     Edge edge = graph.addEdge(edgeId, (i - 1) + "-" + j, i + "-" + j, false);
 
+                    
                     if (mapMatrix[i - 1][j] == 1 || mapMatrix[i][j] == 1) {
                         edge.setAttribute("ui.style", "fill-color: red;"); // obstacles
                         edge.setAttribute("weight", 100);
@@ -416,7 +422,7 @@ public class ShortestPathGraph extends SwingWorker {
                         // add the vertical bounding weights for the top-to-bottom left and
                         // top-to-bottom right edges of the obstacle
                         // this only consider the vertical edges next to/surrounding the obstacle
-                        String rightEdgeId = (i) + "-" + (j + 1) + "<-" + (i - 1) + "-" + (j + 1);
+                        rightEdgeId = (i) + "-" + (j + 1) + "<-" + (i - 1) + "-" + (j + 1);
                         Edge rightEdge = graph.getEdge(rightEdgeId);
                         if (rightEdge != null && mapMatrix[i][j + 1] != 1 && mapMatrix[i - 1][j + 1] != 1) {
                             rightEdge.setAttribute("ui.style", "fill-color: DodgerBlue;");
@@ -432,7 +438,11 @@ public class ShortestPathGraph extends SwingWorker {
 
                     } else {
                         // edge.setAttribute("ui.style", "fill-color: green;");
-                        edge.setAttribute("weight", 0.5);
+
+                        //right edge checked is neccessary otherwise the previously right edge weight is overwritten
+                        if(rightEdgeId == null || !edge.getId().equalsIgnoreCase(rightEdgeId)){
+                            edge.setAttribute("weight", 0.5);
+                        }
                     }
 
                 }
@@ -453,6 +463,8 @@ public class ShortestPathGraph extends SwingWorker {
                         if (topEdge != null && mapMatrix[i + 1][j] != 1 && mapMatrix[i + 1][j - 1] != 1) {
                             topEdge.setAttribute("ui.style", "fill-color: DodgerBlue;");
                             topEdge.setAttribute("weight", 50);
+
+                            topEdgeIds.add(topEdgeId);
                         }
 
                         String bottomEdgeId = (i - 1) + "-" + (j) + "<-" + (i - 1) + "-" + (j - 1);
@@ -463,7 +475,14 @@ public class ShortestPathGraph extends SwingWorker {
                         }
 
                     } else {
-                        edge.setAttribute("weight", 0.5);
+                        // edge.setAttribute("ui.style", "fill-color: green;");
+
+                        //top edge checked is neccessary otherwise the previously top edge weight is overwritten
+
+                        if(topEdgeIds.size() == 0 || !topEdgeIds.contains(edge.getId())){
+                            
+                            edge.setAttribute("weight", 1);
+                        }  
                     }
                 }
 
@@ -516,7 +535,7 @@ public class ShortestPathGraph extends SwingWorker {
                         // this only consider the edges next to/surrounding the obstacle
                         if (mapMatrix[i][j + 1] == 1 || mapMatrix[i - 1][j] == 1) {
                             edge.setAttribute("ui.style", "fill-color: DodgerBlue;");
-                            edge.setAttribute("weight", 50);
+                            edge.setAttribute("weight", 100);
 
                         }
                     }
@@ -750,8 +769,8 @@ public class ShortestPathGraph extends SwingWorker {
 
             n.setAttribute("label", n.hasAttribute("nodeName") ? n.getAttribute("nodeName") : "");
         });
-        // graph.edges().forEach(e -> e.setAttribute("label", "" + (int)
-        // e.getNumber("weight")));
+        graph.edges().forEach(e -> e.setAttribute("label", "" + (int)
+        e.getNumber("weight")));
     }
 
     public Color getRandomNodeColor() {
