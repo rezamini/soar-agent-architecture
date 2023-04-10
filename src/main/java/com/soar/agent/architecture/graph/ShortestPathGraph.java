@@ -62,7 +62,7 @@ public class ShortestPathGraph extends SwingWorker {
     }
 
     public void calculateShortPath() {
-        if (landmarkNodes != null && landmarkNodes.size() > 0 && middleAgentNode != null) {
+        if (landmarkNodes != null && landmarkNodes.size() > 0) {
             AStar astar = new AStar(graph);
             // set to compute the cost based on euclidean distance. The computed path is
             // much more straight forward
@@ -86,7 +86,14 @@ public class ShortestPathGraph extends SwingWorker {
                     return;
                 }
 
-                astar.compute(middleAgentNode.getId(), value.getId());
+                if(middleAgentNode != null){
+                    //for complete graph
+                    astar.compute(middleAgentNode.getId(), value.getId());
+                }else{
+                    //for simplified graph
+                    astar.compute(agentNode.getId(), value.getId());
+                }
+                
                 Path path = astar.getShortestPath();
                 computedPaths.put(key, path.getNodePath());
             });
