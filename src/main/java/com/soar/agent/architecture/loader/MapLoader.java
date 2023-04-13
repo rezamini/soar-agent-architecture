@@ -175,13 +175,14 @@ public class MapLoader {
         world.addObstacle(new Rectangle2D.Double(start * CELL_SIZE, y * CELL_SIZE, w, CELL_SIZE));
 
         //complete matrix
-        int tempStart = (int) (start == 0 ? 0 : (start * CELL_SIZE + CELL_SIZE / 2.0));
-        int tempEnd = (int) (i * CELL_SIZE + CELL_SIZE / 2.0);
+        int tempStart = (int) (start == 0 ? 0 : (start * CELL_SIZE));
+        int tempEnd = (int) (i * CELL_SIZE);
+
         double firsCY = y * CELL_SIZE + CELL_SIZE / 2.0;
         double secondCY = (y + 1) * CELL_SIZE ;
         double thirdCY = (y) * CELL_SIZE;
 
-        Arrays.fill(completeMapMatrix[(int) firsCY ], tempStart, (int) tempEnd , 1);
+        Arrays.fill(completeMapMatrix[(int) firsCY ], tempStart, (int) tempEnd, 1);
         Arrays.fill(completeMapMatrix[(int) secondCY ], tempStart, (int) tempEnd , 1);
         Arrays.fill(completeMapMatrix[(int) thirdCY], tempStart, (int) tempEnd , 1);
         
