@@ -163,25 +163,20 @@ public class ShortestPathGraph extends SwingWorker {
             direction += tempX < targetX ? DirectionEnum.EAST.getName()
                     : tempX > targetX ? DirectionEnum.WEST.getName() : "";
 
-            // check for obstacle/collision if agent goes this direction
-            // System.out.println("XXXXXXXXXXXXXXXXXX : " + direction);
-            // Map<Path2D, Boolean> tempResult =
-            // robot.tempNewLocationUpdate(DirectionEnum.findByName(direction),
-            // tempAgentShape);
-            // boolean isObstacle = tempResult.entrySet().iterator().next().getValue();
+            for (int j = 0; j < pathMultiplier; j++) {
 
-            // // System.out.println("XXXXXXXXXXXXXXXXX DIRECTION : "+ direction + " -> is
-            // // blocked : "+ isObstacle);
-            // // System.out.println("XXXX TEMP : "+tempX + " : agentNode X :
-            // // "+agentNode.getAttribute("x") + " : agent :
-            // "+robot.getShape().getCenterX());
+                Map<Path2D, Boolean> tempResult = robot.tempNewLocationUpdate(DirectionEnum.findByName(direction),
+                        tempAgentShape);
+                boolean isObstacle = tempResult.entrySet().iterator().next().getValue();
 
-            // if (!isObstacle) {
-            // tempAgentShape = tempResult.entrySet().iterator().next().getKey();
-            // }
+                if (!isObstacle) {
+                    tempAgentShape = (Path2D) tempResult.entrySet().iterator().next().getKey().clone();
+                    tempDirectionList.add(direction);
+                } 
+            }
 
-            Arrays.fill(tempArr, 0, tempArr.length, direction);
-            tempDirectionList.addAll(Arrays.asList(tempArr));
+            // Arrays.fill(tempArr, 0, tempArr.length, direction);
+            // tempDirectionList.addAll(Arrays.asList(tempArr));
 
         }
 

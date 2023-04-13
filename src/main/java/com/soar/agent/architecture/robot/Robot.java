@@ -281,10 +281,41 @@ public class Robot {
         world.setCompleteMapMatrix(currentMapMatrix);
     }
 
+    // public Map<Path2D, Boolean> tempNewLocationUpdate2(DirectionEnum
+    // currentDirection, double x, double y) {
+    // Map<Path2D, Boolean> result = new HashMap<Path2D, Boolean>();
+
+    // double tempNewLocationYaw = Math.toRadians(currentDirection.getAngle());
+
+    // while (tempNewLocationYaw < 0.0)
+    // tempNewLocationYaw += 2.0 * Math.PI;
+    // while (tempNewLocationYaw > 2.0 * Math.PI)
+    // tempNewLocationYaw -= 2.0 * Math.PI;
+
+    // double dx = Math.round(Math.cos(tempNewLocationYaw)) * speed;
+    // double dy = Math.round(Math.sin(tempNewLocationYaw)) * speed;
+
+    // double newX = x + dx;
+    // double newY = y + dy;
+
+    // Path2D tempAgentShape = createTempAgentShape(newX, newY, tempNewLocationYaw);
+
+    // // check to see if it will collide in every enum direction that is passed
+    // // throught this method
+    // boolean isObstacle = world.willCollide(this, newX, newY, tempAgentShape);
+
+    // result.put(tempAgentShape, isObstacle);
+    // return result;
+    // }
+
     // * This is temporary making a new agent at a new location and checks if it
-    // hits an obstacle at that location */
+    // hits an obstacle at that location. it could be used to get back the temporary
+    // agent shape and send it back in order to calculate the new position with
+    // previous temporary position. in other words it could be used to
+    // simulate/virutalised a path such as the shortest path or convertion of
+    // shortest path direction*/
     public Map<Path2D, Boolean> tempNewLocationUpdate(DirectionEnum currentDirection, Path2D currentShape) {
-        Map<Path2D, Boolean> result = new HashMap<Path2D, Boolean>(); 
+        Map<Path2D, Boolean> result = new HashMap<Path2D, Boolean>();
 
         double tempNewLocationYaw = Math.toRadians(currentDirection.getAngle());
 
@@ -305,9 +336,9 @@ public class Robot {
         Path2D tempAgentShape = createTempAgentShape(newX, newY, tempNewLocationYaw);
 
         // if(currentDirection.getName().equalsIgnoreCase("northeast")){
-        //     tempShape = tempAgentShape;
+        // tempShape = tempAgentShape;
         // }
-        
+
         // check to see if it will collide in every enum direction that is passed
         // throught this method
         boolean isObstacle = world.willCollide(this, newX, newY, tempAgentShape);
