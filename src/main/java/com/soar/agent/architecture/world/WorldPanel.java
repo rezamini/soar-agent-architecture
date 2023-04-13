@@ -167,6 +167,9 @@ public class WorldPanel extends JPanel {
 
         drawCar(g2d, body, firstWheel, secondWheel, roof, Color.YELLOW, Color.BLACK);
 
+        //for testing purposes of shapes only
+        drawShape(g2dIn, robot.tempAgentShape, Color.YELLOW, Color.BLACK);
+
         final double dirR = r / 4.0;
         // final double dirR = r / 5.0;
         // final Ellipse2D dir = new Ellipse2D.Double(r - dirR, -dirR, dirR * 2.0, dirR
