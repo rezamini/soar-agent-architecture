@@ -213,7 +213,11 @@ public class World {
     public boolean isLandmarkReached(Landmark landmark, Robot robot) {
         boolean result = false;
 
-        if (robot.getShape().contains(landmark.getLocation())) {
+        Path2D tempAgentShape = robot.createTempAgentShape();
+        double distance = landmark.getLocation()
+        .distance(tempAgentShape.getBounds().getCenterX(), tempAgentShape.getBounds().getCenterY());
+
+        if (tempAgentShape.contains(landmark.getLocation()) || distance <= 1.59) {
             result = true;
         }
 

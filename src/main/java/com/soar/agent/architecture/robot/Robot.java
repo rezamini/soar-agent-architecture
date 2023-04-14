@@ -33,7 +33,6 @@ public class Robot {
     private double batteryDeduction = 0.1;
     private DecimalFormat batteryDecimalFormat = new DecimalFormat("0.#");
     private Path2D tempShape = new Path2D.Double();
-    public Path2D tempAgentShape = new Path2D.Double();
 
     public Robot(World game, String name) {
         this.world = game;
@@ -66,8 +65,6 @@ public class Robot {
         // shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
         shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
 
-        tempAgentShape = createTempAgentShape(shape);
-        
         // calc radar range and data in order to have radar data such as "live" at the
         // beginning of agent phase
         // this have to be called here to calc the radar from the agent new position and
@@ -430,13 +427,13 @@ public class Robot {
      * Create temp agent shape with actual yaw/direction of the agent from the
      * original shape
      */
-    private Path2D createTempAgentShape(Rectangle2D originalShape) {
+    public Path2D createTempAgentShape() {
         Rectangle2D rect = new Rectangle2D.Double();
         // subtracting 0.1 is to make it slightly smaller so the tight edges and
         // situations will be passed
         // and if used for collision it will not be so strict
-        rect.setFrameFromCenter(originalShape.getCenterX(), originalShape.getCenterY(),
-                originalShape.getCenterX() + shapeWidth - 0.1, originalShape.getCenterY() + shapeHeight - 0.1);
+        rect.setFrameFromCenter(shape.getCenterX(), shape.getCenterY(),
+                shape.getCenterX() + shapeWidth - 0.1, shape.getCenterY() + shapeHeight - 0.1);
 
         AffineTransform transform = new AffineTransform();
         transform.rotate(yaw, rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
