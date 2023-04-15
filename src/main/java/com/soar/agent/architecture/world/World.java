@@ -215,7 +215,7 @@ public class World {
 
         Path2D tempAgentShape = robot.createTempAgentShape();
         double distance = landmark.getLocation()
-        .distance(tempAgentShape.getBounds().getCenterX(), tempAgentShape.getBounds().getCenterY());
+                .distance(tempAgentShape.getBounds().getCenterX(), tempAgentShape.getBounds().getCenterY());
 
         if (tempAgentShape.contains(landmark.getLocation()) || distance <= 1.59) {
             result = true;
@@ -485,6 +485,8 @@ public class World {
                     if (isBlocked) {
                         result = false;
                     }
+                } else {
+                    result = false;
                 }
 
             }
@@ -528,6 +530,8 @@ public class World {
                     if (!computedDirection.equalsIgnoreCase(currentDirection)) {
                         result = false;
                     }
+                } else {
+                    result = false;
                 }
 
             }
