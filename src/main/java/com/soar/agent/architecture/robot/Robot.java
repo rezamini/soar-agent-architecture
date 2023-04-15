@@ -158,10 +158,16 @@ public class Robot {
 
     public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy, Path2D tempAgentShape) {
 
-        int agentMatrixX = (int) Math.floor(tempAgentShape.getBounds().getCenterX());
-        int agentMatrixY = (int) Math.floor(tempAgentShape.getBounds().getCenterY());
-        int agentMatrixX2 = (int) Math.floor(agentMatrixX + dx + dx);
-        int agentMatrixY2 = (int) Math.floor(agentMatrixY + dy + dy);
+        int agentMatrixX = (int) Math.round(tempAgentShape.getBounds().getCenterX() - 1);
+        int agentMatrixY = (int) Math.round(tempAgentShape.getBounds().getCenterY() - 1);
+        int agentMatrixX2 = (int) Math.round(agentMatrixX + dx + dx);
+        int agentMatrixY2 = (int) Math.round(agentMatrixY + dy + dy);
+
+        
+        // int agentMatrixX = (int) tempAgentShape.getBounds().getCenterX() ;
+        // int agentMatrixY = (int) tempAgentShape.getBounds().getCenterY();
+        // int agentMatrixX2 = (int) (agentMatrixX + dx + dx);
+        // int agentMatrixY2 = (int) (agentMatrixY + dy + dy);
 
         // set the agent matrix location on a separate field that could be used in other
         // places without looping the entire map if required
