@@ -22,7 +22,8 @@ import com.soar.agent.architecture.world.World;
 public class MapLoader {
     private final double CELL_SIZE = 2.0;
 
-    /*In this map matrix the values are as follows:
+    /*
+     * In this map matrix the values are as follows:
      * Empty spaces are represented as 0
      * Obstacles are represented as 1
      * Landmarks are represented as 2
@@ -63,13 +64,15 @@ public class MapLoader {
         }
         mapMatrix = new int[lines.length][maxX];
 
-        //complete matrix
-        // int completeMatrixY = (int) ( ((lines.length - 1) * CELL_SIZE + CELL_SIZE / 2.0) );
-        // int completeMatrixX = (int) ( ((lines[0].length() - 1) * CELL_SIZE + CELL_SIZE / 2.0) );
-        int completeMatrixY = (int) ( lines.length * CELL_SIZE );
-        int completeMatrixX = (int) ( lines[0].length() * 2 );
-        System.out.println("XXXXXXXXXXXX COMPLETE Y : "+lines.length  * CELL_SIZE + " : x : "+lines[0].length()  * CELL_SIZE);
-
+        // complete matrix
+        // int completeMatrixY = (int) ( ((lines.length - 1) * CELL_SIZE + CELL_SIZE /
+        // 2.0) );
+        // int completeMatrixX = (int) ( ((lines[0].length() - 1) * CELL_SIZE +
+        // CELL_SIZE / 2.0) );
+        int completeMatrixY = (int) (lines.length * CELL_SIZE);
+        int completeMatrixX = (int) (lines[0].length() * 2);
+        System.out.println("XXXXXXXXXXXX COMPLETE Y : " + lines[0].length() * CELL_SIZE + " : x : "
+                + lines[0].length() * CELL_SIZE);
 
         completeMapMatrix = new int[completeMatrixY][completeMatrixX];
 
@@ -79,10 +82,10 @@ public class MapLoader {
         readObstacles(world, lines);
         readLandmarks(world, lines);
         readRobots(world, lines);
-        
+
         world.setMapMatrix(mapMatrix);
         world.setCompleteMapMatrix(completeMapMatrix);
-        
+
         return new Result(world);
     }
 
@@ -119,8 +122,13 @@ public class MapLoader {
 
                     mapMatrix[y][x] = 2;
 
-                    //complete matrix
-                    completeMapMatrix[(int) cy][(int) cx ] = 2;
+                    double xMatrix = cx;
+                    double yMatrix = cy;
+                    if (x == 0) {
+                        xMatrix = cx - CELL_SIZE / 2.0;
+                    }
+
+                    completeMapMatrix[(int) yMatrix][(int) xMatrix] = 2;
                 }
             }
         }
@@ -139,9 +147,9 @@ public class MapLoader {
 
                     // int xIndex = (int) (cx / CELL_SIZE);
                     // int yIndex = (int) (cy / CELL_SIZE);
-                    System.out.println("XXXX IN ROBOTS : cx"+cx + " : cy : "+ cy);
+                    // System.out.println("XXXX IN ROBOTS : cx"+cx + " : cy : "+ cy);
                     // System.out.println(" xIndex : "+xIndex + " : yIndex : "+yIndex);
-                    System.out.println(" x : "+x + " : y :"+y);
+                    // System.out.println(" x : "+x + " : y :"+y);
 
                     r.move(cx, cy);
                     r.setSpeed(0.5);
@@ -151,9 +159,16 @@ public class MapLoader {
 
                     mapMatrix[y][x] = 3;
 
-                    //complete matrix
-                    completeMapMatrix[(int) cy ][(int) cx ] = 3;
-                    completeMapMatrix[(int) ((int) cy )][(int) ((int) cx  + r.getSpeed() * 2)] = 3;
+                    // // complete matrix
+                    // completeMapMatrix[(int) cy][(int) cx] = 3;
+                    // completeMapMatrix[(int) ((int) cy)][(int) ((int) cx + r.getSpeed() * 2)] = 3;
+
+                    double xMatrix = cx - CELL_SIZE / 2.0;
+                    double yMatrix = cy - CELL_SIZE / 2.0;
+
+                    // complete matrix
+                    completeMapMatrix[(int) yMatrix][(int) xMatrix] = 3;
+                    completeMapMatrix[(int) ((int) yMatrix)][(int) ((int) xMatrix + r.getSpeed() * 2)] = 3;
                 }
             }
         }
@@ -174,18 +189,33 @@ public class MapLoader {
         double w = (i - start) * CELL_SIZE;
         world.addObstacle(new Rectangle2D.Double(start * CELL_SIZE, y * CELL_SIZE, w, CELL_SIZE));
 
-        //complete matrix
+        // complete matrix
         int tempStart = (int) (start == 0 ? 0 : (start * CELL_SIZE));
-        int tempEnd = (int) (i * CELL_SIZE);
+
+        //&& tempStart > start
+        if (start == 1 ) {
+            tempStart = start;
+        }
+        System.out.println("XXXXXXX TEMP START : " + tempStart + " : " + start);
+
+        int tempEnd = (int) (i * CELL_SIZE + CELL_SIZE / 2.0);
+        // if temp end is bigger it means the next center node is not available(is at
+        // the end) so deduct the center
+        // otherwise it throws error
+        if (tempEnd > completeMapMatrix[0].length) {
+            tempEnd = (int) (tempEnd - CELL_SIZE / 2.0);
+        }
 
         double firsCY = y * CELL_SIZE + CELL_SIZE / 2.0;
-        double secondCY = (y + 1) * CELL_SIZE ;
+        double secondCY = (y + 1) * CELL_SIZE;
         double thirdCY = (y) * CELL_SIZE;
 
-        Arrays.fill(completeMapMatrix[(int) firsCY ], tempStart, (int) tempEnd, 1);
-        Arrays.fill(completeMapMatrix[(int) secondCY ], tempStart, (int) tempEnd , 1);
-        Arrays.fill(completeMapMatrix[(int) thirdCY], tempStart, (int) tempEnd , 1);
-        
+        // System.out.println("XXXXXXXXXXXXXXXXXX OBSTACLE "+tempEnd);
+
+        Arrays.fill(completeMapMatrix[(int) firsCY], tempStart, (int) tempEnd, 1);
+        Arrays.fill(completeMapMatrix[(int) secondCY], tempStart, (int) tempEnd, 1);
+        Arrays.fill(completeMapMatrix[(int) thirdCY], tempStart, (int) tempEnd, 1);
+
         return i;
     }
 
