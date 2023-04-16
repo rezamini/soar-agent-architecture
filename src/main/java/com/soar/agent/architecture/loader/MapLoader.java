@@ -64,15 +64,8 @@ public class MapLoader {
         }
         mapMatrix = new int[lines.length][maxX];
 
-        // complete matrix
-        // int completeMatrixY = (int) ( ((lines.length - 1) * CELL_SIZE + CELL_SIZE /
-        // 2.0) );
-        // int completeMatrixX = (int) ( ((lines[0].length() - 1) * CELL_SIZE +
-        // CELL_SIZE / 2.0) );
         int completeMatrixY = (int) (lines.length * CELL_SIZE);
         int completeMatrixX = (int) (lines[0].length() * 2);
-        System.out.println("XXXXXXXXXXXX COMPLETE Y : " + lines[0].length() * CELL_SIZE + " : x : "
-                + lines[0].length() * CELL_SIZE);
 
         completeMapMatrix = new int[completeMatrixY][completeMatrixX];
 
@@ -145,12 +138,6 @@ public class MapLoader {
                     final Robot r = new Robot(world, Character.toString(c));
                     // r.setYaw(Math.toRadians(180));
 
-                    // int xIndex = (int) (cx / CELL_SIZE);
-                    // int yIndex = (int) (cy / CELL_SIZE);
-                    // System.out.println("XXXX IN ROBOTS : cx"+cx + " : cy : "+ cy);
-                    // System.out.println(" xIndex : "+xIndex + " : yIndex : "+yIndex);
-                    // System.out.println(" x : "+x + " : y :"+y);
-
                     r.move(cx, cy);
                     r.setSpeed(0.5);
                     r.setTurnRate(Math.toRadians(25));
@@ -196,7 +183,6 @@ public class MapLoader {
         if (start == 1 ) {
             tempStart = start;
         }
-        System.out.println("XXXXXXX TEMP START : " + tempStart + " : " + start);
 
         int tempEnd = (int) (i * CELL_SIZE + CELL_SIZE / 2.0);
         // if temp end is bigger it means the next center node is not available(is at
@@ -209,8 +195,6 @@ public class MapLoader {
         double firsCY = y * CELL_SIZE + CELL_SIZE / 2.0;
         double secondCY = (y + 1) * CELL_SIZE;
         double thirdCY = (y) * CELL_SIZE;
-
-        // System.out.println("XXXXXXXXXXXXXXXXXX OBSTACLE "+tempEnd);
 
         Arrays.fill(completeMapMatrix[(int) firsCY], tempStart, (int) tempEnd, 1);
         Arrays.fill(completeMapMatrix[(int) secondCY], tempStart, (int) tempEnd, 1);
