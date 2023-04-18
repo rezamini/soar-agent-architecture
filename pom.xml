@@ -16,17 +16,23 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <jsoar.version>5.0.0</jsoar.version>
-    <slf4j.version>1.7.21</slf4j.version>
+    <slf4j.version>2.0.6</slf4j.version>
     <graphstream.version>2.0</graphstream.version>
   </properties>
 
   <dependencies>
-    <dependency>
+    <!-- <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
-    </dependency>
+    </dependency> -->
+    <!-- <dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-engine</artifactId>
+    <version>5.9.2</version>
+    <scope>test</scope>
+  </dependency> -->
     <dependency>
       <groupId>com.soartech</groupId>
       <artifactId>jsoar-core</artifactId>
@@ -37,11 +43,11 @@
       <artifactId>jsoar-debugger</artifactId>
       <version>${jsoar.version}</version>
    </dependency>
-    <dependency>
+    <!-- <dependency>
         <groupId>com.soartech</groupId>
         <artifactId>jsoar-tcl</artifactId>
         <version>${jsoar.version}</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
