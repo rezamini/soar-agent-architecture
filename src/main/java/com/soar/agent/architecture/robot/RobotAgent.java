@@ -11,6 +11,8 @@ import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.enums.MemoryEnum;
 import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
+import com.soar.agent.architecture.events.SemanticMemoryEvent;
+import com.soar.agent.architecture.events.SemanticMemoryResponder;
 import com.soar.agent.architecture.events.UtilityResponder;
 import com.soar.agent.architecture.rhs.IdentifierSize;
 
@@ -74,6 +76,11 @@ public class RobotAgent {
             utilityResponder.addAllListeners();
 
             threadedAgent.initialize(); // Do an init-soar
+
+            //call semantic memory programmatically 
+            SemanticMemoryResponder smemResponder = new SemanticMemoryResponder(threadedAgent);
+            smemResponder.addSemanticKnowledge();
+
             // source = new
             // File(getClass().getResource("/rules/move-north-2.soar").toURI());
             // source = new
