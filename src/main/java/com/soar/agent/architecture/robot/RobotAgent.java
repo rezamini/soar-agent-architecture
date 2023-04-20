@@ -42,6 +42,7 @@ public class RobotAgent {
     private File source = null;
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
     private UtilityResponder utilityResponder;
+    private SemanticMemoryResponder smemResponder;
     public final SoarEventManager events = new SoarEventManager();
     private Move move;
 
@@ -77,10 +78,6 @@ public class RobotAgent {
 
             threadedAgent.initialize(); // Do an init-soar
 
-            //call semantic memory programmatically 
-            SemanticMemoryResponder smemResponder = new SemanticMemoryResponder(threadedAgent);
-            smemResponder.addSemanticKnowledge();
-
             // source = new
             // File(getClass().getResource("/rules/move-north-2.soar").toURI());
             // source = new
@@ -105,7 +102,8 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
-            source = new File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
             // source = new
@@ -133,15 +131,19 @@ public class RobotAgent {
             // source = new
             // File(getClass().getResource("/rules/explore-map-radar_4.0_epmem.soar").toURI());
 
-            // source = new
-            // File(getClass().getResource("/rules/explore-map-radar_4.0_smem-epmem.soar").toURI());
+            source = new File(getClass().getResource("/rules/explore-map-radar_4.0_smem-epmem.soar").toURI());
 
             if (source != null) {
                 final Callable<Void> call = () -> {
                     SoarCommands.source(threadedAgent.getInterpreter(), source);
                     return null;
                 };
+
                 threadedAgent.execute(call, null);
+                
+                //calling adding semantic memory have to be called after reading the soar production rules file
+                smemResponder = new SemanticMemoryResponder(threadedAgent);
+                smemResponder.addSemanticKnowledge();
             }
         } catch (Exception e) {
             e.printStackTrace();
