@@ -11,7 +11,6 @@ import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.enums.MemoryEnum;
 import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.events.MoveListenerEvent;
-import com.soar.agent.architecture.events.SemanticMemoryEvent;
 import com.soar.agent.architecture.events.SemanticMemoryResponder;
 import com.soar.agent.architecture.events.UtilityResponder;
 import com.soar.agent.architecture.rhs.IdentifierSize;
@@ -42,7 +41,8 @@ public class RobotAgent {
     private File source = null;
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
     private UtilityResponder utilityResponder;
-    public SemanticMemoryResponder smemResponder;
+    private SemanticMemoryResponder smemResponder;
+
     public final SoarEventManager events = new SoarEventManager();
     private Move move;
 
@@ -318,6 +318,10 @@ public class RobotAgent {
 
     public void stop() {
         threadedAgent.stop();
+    }
+
+    public SemanticMemoryResponder getSmemResponder() {
+        return smemResponder;
     }
 
     public synchronized void reInitialize() {
