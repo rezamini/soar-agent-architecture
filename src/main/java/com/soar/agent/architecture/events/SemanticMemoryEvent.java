@@ -25,6 +25,8 @@ public abstract class SemanticMemoryEvent {
      * should
      * NOT be called, because the db name presented in the soar file is used
      * otherwise an error is thrown.
+     * This is all considering the soar file has smem enabled and has smem path.y
+     * If we are loading a soar file without smem info. this method has to be called regardless.
      */
     public abstract void manuallyEnableDB();
 

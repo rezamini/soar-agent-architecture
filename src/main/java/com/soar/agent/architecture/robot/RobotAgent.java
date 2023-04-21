@@ -54,8 +54,6 @@ public class RobotAgent {
         new CycleCountInput(threadedAgent.getInputOutput());
 
         threadedAgent.getRhsFunctions().registerHandler(new IdentifierSize());
-
-        smemResponder = new SemanticMemoryResponder(threadedAgent, "explore-smem-db");
     }
 
     public void addListener(MoveListenerEvent toAdd) {
@@ -79,10 +77,6 @@ public class RobotAgent {
             utilityResponder.addAllListeners();
 
             threadedAgent.initialize(); // Do an init-soar
-
-            //add smem data
-            smemResponder.manuallyEnableDB();
-            smemResponder.addSemanticKnowledge();
 
             // source = new
             // File(getClass().getResource("/rules/move-north-2.soar").toURI());
@@ -108,8 +102,8 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
-            // source = new
-            // File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
+            source = new
+            File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
             // source = new
@@ -137,7 +131,7 @@ public class RobotAgent {
             // source = new
             // File(getClass().getResource("/rules/explore-map-radar_4.0_epmem.soar").toURI());
 
-            source = new File(getClass().getResource("/rules/explore-map-radar_4.0_smem-epmem.soar").toURI());
+            // source = new File(getClass().getResource("/rules/explore-map-radar_4.0_smem-epmem.soar").toURI());
 
             if (source != null) {
                 final Callable<Void> call = () -> {
@@ -146,6 +140,12 @@ public class RobotAgent {
                 };
 
                 threadedAgent.execute(call, null);
+
+
+                //it is safer to initialised the smem db after loading the soar file and the agent
+                smemResponder = new SemanticMemoryResponder(threadedAgent, MemoryEnum.DEFAULT_SMEM_DB_NAME.getName());
+                // smemResponder.manuallyEnableDB();
+                // smemResponder.addSemanticKnowledge();
             }
         } catch (Exception e) {
             e.printStackTrace();

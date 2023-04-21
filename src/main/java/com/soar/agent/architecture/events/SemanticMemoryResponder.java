@@ -11,6 +11,8 @@ import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.JdbcTools;
 import org.jsoar.util.adaptables.Adaptables;
 
+import com.soar.agent.architecture.enums.MemoryEnum;
+
 public class SemanticMemoryResponder extends SemanticMemoryEvent {
     private final String DEFAULT_SMEM_DB_NAME = "smem-default-db";
     private Connection conn;
@@ -58,7 +60,7 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
 
     private void openConnection(){
         // get file path to be usef for connection if exists
-        String tempDbName = dbName != null ? dbName : DEFAULT_SMEM_DB_NAME;
+        String tempDbName = dbName != null ? dbName : MemoryEnum.DEFAULT_SMEM_DB_NAME.getName();
 
         URL resourceURL = getClass().getResource("/databases/smem/" + tempDbName + ".sqlite");
         String url = "jdbc:sqlite::memory:";
