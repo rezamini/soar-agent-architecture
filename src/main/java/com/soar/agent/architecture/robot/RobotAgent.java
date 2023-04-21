@@ -42,7 +42,7 @@ public class RobotAgent {
     private File source = null;
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
     private UtilityResponder utilityResponder;
-    private SemanticMemoryResponder smemResponder;
+    public SemanticMemoryResponder smemResponder;
     public final SoarEventManager events = new SoarEventManager();
     private Move move;
 
@@ -54,6 +54,8 @@ public class RobotAgent {
         new CycleCountInput(threadedAgent.getInputOutput());
 
         threadedAgent.getRhsFunctions().registerHandler(new IdentifierSize());
+
+        smemResponder = new SemanticMemoryResponder(threadedAgent, "explore-smem-db");
     }
 
     public void addListener(MoveListenerEvent toAdd) {
@@ -77,6 +79,10 @@ public class RobotAgent {
             utilityResponder.addAllListeners();
 
             threadedAgent.initialize(); // Do an init-soar
+
+            //add smem data
+            smemResponder.manuallyEnableDB();
+            smemResponder.addSemanticKnowledge();
 
             // source = new
             // File(getClass().getResource("/rules/move-north-2.soar").toURI());
@@ -140,10 +146,6 @@ public class RobotAgent {
                 };
 
                 threadedAgent.execute(call, null);
-                
-                //calling adding semantic memory have to be called after reading the soar production rules file
-                smemResponder = new SemanticMemoryResponder(threadedAgent);
-                smemResponder.addSemanticKnowledge();
             }
         } catch (Exception e) {
             e.printStackTrace();
