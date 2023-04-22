@@ -1,5 +1,6 @@
 package com.soar.agent.architecture.loader;
 
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -20,6 +21,7 @@ import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.world.World;
 
 public class MapLoader {
+    private final Color LANDMARK_BASE_COLOR = Color.ORANGE;
     private final double CELL_SIZE = 2.0;
 
     /*
@@ -109,7 +111,7 @@ public class MapLoader {
                 final double cy = y * CELL_SIZE + CELL_SIZE / 2.0;
 
                 if (Character.isLetter(c) && Character.isLowerCase(c)) {
-                    Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy));
+                    Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy), LANDMARK_BASE_COLOR);
                     world.addLandmark(landmark);
                     world.addLandmarkMap(landmark, false);
 

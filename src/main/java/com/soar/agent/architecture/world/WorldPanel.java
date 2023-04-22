@@ -244,10 +244,10 @@ public class WorldPanel extends JPanel {
 
         final double fontHeight = r * 1.5;
         prepareFont(g2d, fontHeight);
-        final Rectangle2D bounds = g2d.getFont().getStringBounds(landmark.name,
+        final Rectangle2D bounds = g2d.getFont().getStringBounds(landmark.getName(),
                 g2d.getFontRenderContext());
         g2d.setColor(Color.BLACK);
-        g2d.drawString(landmark.name, (float) (p.getX() - bounds.getWidth() / 2.0),
+        g2d.drawString(landmark.getName(), (float) (p.getX() - bounds.getWidth() / 2.0),
                 (float) (p.getY() - fontHeight / 3.0));
 
         g2d.dispose();
@@ -276,10 +276,10 @@ public class WorldPanel extends JPanel {
 
         final double fontHeight = r * 1.5;
         prepareFont(g2d, fontHeight);
-        final Rectangle2D bounds = g2d.getFont().getStringBounds(landmark.name,
+        final Rectangle2D bounds = g2d.getFont().getStringBounds(landmark.getName(),
                 g2d.getFontRenderContext());
         g2d.setColor(Color.BLACK);
-        g2d.drawString(landmark.name, (float) (p.getX() - bounds.getWidth() / 2.0),
+        g2d.drawString(landmark.getName(), (float) (p.getX() - bounds.getWidth() / 2.0),
                 (float) (p.getY() - fontHeight / 3.0));
 
         g2d.dispose();

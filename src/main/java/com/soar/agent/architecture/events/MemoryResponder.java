@@ -363,7 +363,7 @@ public class MemoryResponder extends MemoryListener {
                                 // create a sub landmark with the landmark name - [name of landmark]
                                 String subName = MemoryEnum.LANDMARK_SUB.getName()
                                                 + UtilitiesEnum.DASHSEPERATOR.getName()
-                                                + landmark.name;
+                                                + landmark.getName();
                                 QMemory subLandmark = landmarks.subMemory(subName);
 
                                 // get current agent and landmark positions
@@ -413,7 +413,7 @@ public class MemoryResponder extends MemoryListener {
                                 if (!isVisited) {
 
                                         // set basic landmark information
-                                        subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.name);
+                                        subLandmark.setString(MemoryEnum.BASIC_NAME.getName(), landmark.getName());
                                         subLandmark.setDouble(MemoryEnum.POSITION_X.getName(), landmarkX);
                                         subLandmark.setDouble(MemoryEnum.POSITION_Y.getName(), landmarkY);
                                         subLandmark.setDouble(MemoryEnum.DISTANCE.getName(),
