@@ -45,13 +45,13 @@ public class PanelUI extends JPanel {
             mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             try {
-                PanelUI content = new PanelUI();
-                mainFrame.setContentPane(content);
+                // PanelUI content = new PanelUI();
+                mainFrame.setContentPane(this);
                 mainFrame.setSize(800, 800);
                 mainFrame.setVisible(true);
                 PanelUI.worldPanel.fit();
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
