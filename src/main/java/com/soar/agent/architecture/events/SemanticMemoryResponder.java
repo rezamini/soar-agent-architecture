@@ -1,9 +1,16 @@
 package com.soar.agent.architecture.events;
 
+import java.io.StringWriter;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.jsoar.kernel.SoarException;
 import org.jsoar.kernel.smem.SemanticMemory;
@@ -17,6 +24,7 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     private final String DEFAULT_SMEM_DB_NAME = "smem-default-db";
     private Connection conn;
     private SemanticMemory smem;
+    
 
     public SemanticMemoryResponder(ThreadedAgent agent, String dbName) {
         super(agent, dbName);
@@ -45,20 +53,20 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     @Override
     public void manuallyEnableDB() {
 
-        if(dbName != null){
+        if (dbName != null) {
             try {
                 agent.getInterpreter().eval("smem --set learning on");
                 agent.getInterpreter().eval("smem --set path src/main/resources/databases/smem/" + dbName + ".sqlite");
                 agent.getInterpreter().eval("smem --set append-database on");
                 agent.getInterpreter().eval("smem --set lazy-commit off");
-    
+
             } catch (SoarException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void openConnection(){
+    private void openConnection() {
         // get file path to be usef for connection if exists
         String tempDbName = dbName != null ? dbName : MemoryEnum.DEFAULT_SMEM_DB_NAME.getName();
 
@@ -72,8 +80,10 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
 
         try {
             // it seems if we dont open the connection the addSemanticKnowledge wont take
-            // place. this might be a bug from the soar. This case happens specifically for when we call this class after loading the file
-            // and we pass null db name. A temp random connection need to open in such cases. This could be a bug from soar side.
+            // place. this might be a bug from the soar. This case happens specifically for
+            // when we call this class after loading the file
+            // and we pass null db name. A temp random connection need to open in such
+            // cases. This could be a bug from soar side.
             conn = JdbcTools.connect("org.sqlite.JDBC", url);
             // conn.close();
 
@@ -89,6 +99,58 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
                 .append("(<l1> ^color red ^type shape2D-" + new Random().nextInt(100) + " )");
 
         return sb.toString();
+    }
+
+    @Override
+    public Set<String> getAttributeValues(String attributeName) {
+        Set<String> result = new HashSet<String>();
+        attributeName = attributeName.toLowerCase();
+        Map<String, Set<String>> allAtributes = getAllAttributes();
+
+        if(allAtributes != null && allAtributes.containsKey(attributeName)){
+            result.addAll(getAllAttributes().get(attributeName));
+        }
+         
+        
+        if (agent != null) {
+            try {
+                
+                StringWriter sw = new StringWriter();
+                agent.getPrinter().pushWriter(sw);
+
+                // print the smem data
+                agent.getInterpreter().eval("print @");
+
+                //detach the writer
+                agent.getPrinter().popWriter();
+
+                //get string writer result
+                String writerResult = sw.toString();
+
+                //split by whitespaces
+                String[] split = writerResult.split("\\s+");
+
+
+                for (int i=split.length - 1; i>=0; i--) {
+                    String current = split[i];
+
+                    //for example contains ^color
+                    if (current.contains("^" + attributeName)) {
+                        if (i + 1 < split.length) {
+                            String value = split[i + 1].toLowerCase();
+                            result.add(value.replace("|", ""));
+                        }
+                    }
+                }
+            } catch (SoarException e) {
+                e.printStackTrace();
+            }
+        }
+
+        allAtributes.put(attributeName, result);
+        setAllAttributes(allAtributes);
+
+        return result;
     }
 
 }

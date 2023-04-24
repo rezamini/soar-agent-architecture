@@ -1,10 +1,15 @@
 package com.soar.agent.architecture.events;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.jsoar.runtime.ThreadedAgent;
 
 public abstract class SemanticMemoryEvent {
     public final ThreadedAgent agent;
     public String dbName;
+    private Map<String, Set<String>> allAttributes = new HashMap<String, Set<String>>();
 
     public SemanticMemoryEvent(ThreadedAgent agent, String dbName) {
         this.agent = agent;
@@ -31,4 +36,14 @@ public abstract class SemanticMemoryEvent {
     public abstract void manuallyEnableDB();
 
     public abstract void addSemanticKnowledge();
+
+    public abstract Set<String> getAttributeValues(String attributeName);
+
+    public Map<String, Set<String>> getAllAttributes() {
+        return allAttributes;
+    }
+
+    public void setAllAttributes(Map<String, Set<String>> allAttributes) {
+        this.allAttributes = allAttributes;
+    }
 }
