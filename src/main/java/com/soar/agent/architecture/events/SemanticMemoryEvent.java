@@ -9,7 +9,6 @@ import org.jsoar.runtime.ThreadedAgent;
 public abstract class SemanticMemoryEvent {
     public final ThreadedAgent agent;
     public String dbName;
-    private Map<String, Set<String>> allAttributes = new HashMap<String, Set<String>>();
 
     public SemanticMemoryEvent(ThreadedAgent agent, String dbName) {
         this.agent = agent;
@@ -39,11 +38,5 @@ public abstract class SemanticMemoryEvent {
 
     public abstract Set<String> getAttributeValues(String attributeName);
 
-    public Map<String, Set<String>> getAllAttributes() {
-        return allAttributes;
-    }
-
-    public void setAllAttributes(Map<String, Set<String>> allAttributes) {
-        this.allAttributes = allAttributes;
-    }
+    public abstract Map<String, Set<String>> retrieveAllAttributes();
 }

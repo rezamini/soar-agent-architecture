@@ -24,7 +24,6 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     private final String DEFAULT_SMEM_DB_NAME = "smem-default-db";
     private Connection conn;
     private SemanticMemory smem;
-    
 
     public SemanticMemoryResponder(ThreadedAgent agent, String dbName) {
         super(agent, dbName);
@@ -85,7 +84,7 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
             // and we pass null db name. A temp random connection need to open in such
             // cases. This could be a bug from soar side.
             conn = JdbcTools.connect("org.sqlite.JDBC", url);
-            // conn.close();
+            conn.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,36 +104,29 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     public Set<String> getAttributeValues(String attributeName) {
         Set<String> result = new HashSet<String>();
         attributeName = attributeName.toLowerCase();
-        Map<String, Set<String>> allAtributes = getAllAttributes();
 
-        if(allAtributes != null && allAtributes.containsKey(attributeName)){
-            result.addAll(getAllAttributes().get(attributeName));
-        }
-         
-        
         if (agent != null) {
             try {
-                
+
                 StringWriter sw = new StringWriter();
                 agent.getPrinter().pushWriter(sw);
 
                 // print the smem data
                 agent.getInterpreter().eval("print @");
 
-                //detach the writer
+                // detach the writer
                 agent.getPrinter().popWriter();
 
-                //get string writer result
+                // get string writer result
                 String writerResult = sw.toString();
 
-                //split by whitespaces
+                // split by whitespaces
                 String[] split = writerResult.split("\\s+");
 
-
-                for (int i=split.length - 1; i>=0; i--) {
+                for (int i = split.length - 1; i >= 0; i--) {
                     String current = split[i];
 
-                    //for example contains ^color
+                    // for example contains ^color
                     if (current.contains("^" + attributeName)) {
                         if (i + 1 < split.length) {
                             String value = split[i + 1].toLowerCase();
@@ -147,8 +139,60 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
             }
         }
 
-        allAtributes.put(attributeName, result);
-        setAllAttributes(allAtributes);
+        return result;
+    }
+
+    @Override
+    public Map<String, Set<String>> retrieveAllAttributes() {
+        Map<String, Set<String>> result = new HashMap<String, Set<String>>();
+        if (agent != null) {
+            try {
+
+                StringWriter sw = new StringWriter();
+                agent.getPrinter().pushWriter(sw);
+
+                // print the smem data
+                agent.getInterpreter().eval("print @");
+
+                // detach the writer
+                agent.getPrinter().popWriter();
+
+                // get string writer result
+                String writerResult = sw.toString();
+
+                // split by whitespaces
+                String[] split = writerResult.split("\\s+");
+
+                for (int i = split.length - 1; i >= 0; i--) {
+                    String attributeName = split[i];
+
+                    // for example contains ^color
+                    if (attributeName.startsWith("^")) {
+                        attributeName = attributeName.toLowerCase().replace("^", "");
+
+                        if (i + 1 < split.length) {
+                            String attributeValue = split[i + 1].toLowerCase();
+
+                            if (!attributeValue.startsWith("<") && !attributeValue.startsWith("@")) {
+                                attributeValue = attributeValue.toLowerCase().replace("|", "");
+
+                                Set<String> previousSet = new HashSet<String>();
+                                
+                                if(result.containsKey(attributeName) ){
+                                    previousSet.addAll(result.get(attributeName));
+
+                                }
+                                previousSet.add(attributeValue);
+
+                                result.put(attributeName, previousSet);
+                            }
+                        }
+                    }
+                }
+            } catch (SoarException e) {
+                e.printStackTrace();
+            }
+        }
 
         return result;
     }
