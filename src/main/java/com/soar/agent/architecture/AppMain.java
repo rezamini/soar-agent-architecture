@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.soar.agent.architecture.events.MoveResponder;
 import com.soar.agent.architecture.graph.NodeGraphUI;
 import com.soar.agent.architecture.graph.ShortestPathGraph;
@@ -17,6 +21,7 @@ import com.soar.agent.architecture.world.PanelUI;
  * The start of the application/simulator/agent
  *
  */
+@SpringBootApplication
 public class AppMain {
 
     private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
@@ -37,6 +42,8 @@ public class AppMain {
         // } catch (Exception e) {
         // e.printStackTrace();
         // }
+
+        SpringApplication.run(AppMain.class, args);
     }
 
     public void updateAgents() {
