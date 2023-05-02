@@ -8,6 +8,7 @@ import org.jsoar.runtime.ThreadedAgent;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.soar.agent.architecture.api.entity.SemanticMemoryEntity;
 import com.soar.agent.architecture.robot.RobotAgent;
 
 @Repository
@@ -39,7 +40,7 @@ public abstract class SemanticMemoryEvent {
      */
     public abstract void manuallyEnableDB();
 
-    public abstract void addSemanticKnowledge();
+    public abstract void addSemanticKnowledge(SemanticMemoryEntity semanticMemoryEntity);
 
     public abstract Set<String> getAttributeValues(String attributeName);
 
