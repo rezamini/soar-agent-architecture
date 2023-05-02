@@ -1,17 +1,19 @@
 package com.soar.agent.architecture.api.entity;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 public class SemanticMemoryEntity {
-    private List<String> colors = new ArrayList<String>();
+    private Map<String, List<String>> attributes = new HashMap<String, List<String>>();
 
-    public List<String> getColors() {
-        return colors;
+    public Map<String, List<String>> getAttributes() {
+        return attributes;
     }
 
-    public void setColors(List<String> colors) {
-        this.colors = colors;
+    public void setAttributes(Map<String, List<String>> attributes) {
+        this.attributes = attributes;
     }
 
 }

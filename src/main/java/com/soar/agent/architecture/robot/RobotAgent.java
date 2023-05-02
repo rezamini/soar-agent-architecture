@@ -33,7 +33,9 @@ import org.jsoar.kernel.symbols.Identifier;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.commands.SoarCommands;
 import org.jsoar.util.events.SoarEventManager;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RobotAgent {
     private Robot robot;
     private final ThreadedAgent threadedAgent;
@@ -141,10 +143,9 @@ public class RobotAgent {
 
                 threadedAgent.execute(call, null);
 
-
                 //it is safer to initialised the smem db after loading the soar file and the agent
-                smemResponder = new SemanticMemoryResponder(threadedAgent, MemoryEnum.DEFAULT_SMEM_DB_NAME.getName());
-                smemResponder.manuallyEnableDB();
+                smemResponder = new SemanticMemoryResponder(this, MemoryEnum.DEFAULT_SMEM_DB_NAME.getName());
+                // smemResponder.manuallyEnableDB();
                 // smemResponder.addSemanticKnowledge();
                 // smemResponder.getAttributeValues("color");
 

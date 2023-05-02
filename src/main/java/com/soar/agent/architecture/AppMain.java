@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import com.soar.agent.architecture.events.MoveResponder;
 import com.soar.agent.architecture.graph.NodeGraphUI;
@@ -16,12 +18,13 @@ import com.soar.agent.architecture.graph.ShortestPathGraphUI;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 import com.soar.agent.architecture.world.PanelUI;
+import java.awt.EventQueue;
 
 /**
  * The start of the application/simulator/agent
  *
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.soar.agent.architecture")
 public class AppMain {
 
     private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
@@ -44,6 +47,18 @@ public class AppMain {
         // }
 
         SpringApplication.run(AppMain.class, args);
+
+        /* Alternative way of starting spring boot */
+        
+        // ConfigurableApplicationContext ctx = new SpringApplicationBuilder(AppMain.class)
+        //         .headless(true).run(args);
+        // EventQueue.invokeLater(() -> {
+
+        //     AppMain app = ctx.getBean(AppMain.class);
+        //     app.panelUI.setVisible(true);
+        // });
+
+        
     }
 
     public void updateAgents() {

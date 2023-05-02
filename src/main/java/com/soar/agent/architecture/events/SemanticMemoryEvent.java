@@ -5,13 +5,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jsoar.runtime.ThreadedAgent;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import com.soar.agent.architecture.robot.RobotAgent;
+
+@Repository
 public abstract class SemanticMemoryEvent {
-    public final ThreadedAgent agent;
+    public final RobotAgent robotAgent;
     public String dbName;
 
-    public SemanticMemoryEvent(ThreadedAgent agent, String dbName) {
-        this.agent = agent;
+    public SemanticMemoryEvent(RobotAgent agent, String dbName) {
+        this.robotAgent = agent;
         this.dbName = dbName;
     }
 

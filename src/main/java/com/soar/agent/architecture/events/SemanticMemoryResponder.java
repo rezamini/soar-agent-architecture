@@ -17,22 +17,28 @@ import org.jsoar.kernel.smem.SemanticMemory;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.JdbcTools;
 import org.jsoar.util.adaptables.Adaptables;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.soar.agent.architecture.enums.MemoryEnum;
+import com.soar.agent.architecture.robot.RobotAgent;
 
+@Service
 public class SemanticMemoryResponder extends SemanticMemoryEvent {
     private final String DEFAULT_SMEM_DB_NAME = "smem-default-db";
     private Connection conn;
     private SemanticMemory smem;
 
-    public SemanticMemoryResponder(ThreadedAgent agent, String dbName) {
+    public SemanticMemoryResponder(@Autowired RobotAgent agent, @Value("${unknown.param:explore-smem-db}") String dbName) {
         super(agent, dbName);
         initSemanticDB();
     }
 
     @Override
     public void initSemanticDB() {
-        smem = Adaptables.adapt(agent, SemanticMemory.class);
+        smem = Adaptables.adapt(robotAgent.getThreadedAgent(), SemanticMemory.class);
         openConnection();
 
     }
@@ -40,7 +46,7 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     @Override
     public void addSemanticKnowledge() {
         try {
-            agent.getInterpreter().eval("smem --add { " + generateTestData() + "}");
+            robotAgent.getThreadedAgent().getInterpreter().eval("smem --add { " + generateTestData() + "}");
             smem.smem_go(true);
 
         } catch (SoarException e) {
@@ -54,10 +60,10 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
 
         if (dbName != null) {
             try {
-                agent.getInterpreter().eval("smem --set learning on");
-                agent.getInterpreter().eval("smem --set path src/main/resources/databases/smem/" + dbName + ".sqlite");
-                agent.getInterpreter().eval("smem --set append-database on");
-                agent.getInterpreter().eval("smem --set lazy-commit off");
+                robotAgent.getThreadedAgent().getInterpreter().eval("smem --set learning on");
+                robotAgent.getThreadedAgent().getInterpreter().eval("smem --set path src/main/resources/databases/smem/" + dbName + ".sqlite");
+                robotAgent.getThreadedAgent().getInterpreter().eval("smem --set append-database on");
+                robotAgent.getThreadedAgent().getInterpreter().eval("smem --set lazy-commit off");
 
             } catch (SoarException e) {
                 e.printStackTrace();
@@ -105,17 +111,17 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
         Set<String> result = new HashSet<String>();
         attributeName = attributeName.toLowerCase();
 
-        if (agent != null) {
+        if (robotAgent != null) {
             try {
 
                 StringWriter sw = new StringWriter();
-                agent.getPrinter().pushWriter(sw);
+                robotAgent.getThreadedAgent().getPrinter().pushWriter(sw);
 
                 // print the smem data
-                agent.getInterpreter().eval("print @");
+                robotAgent.getThreadedAgent().getInterpreter().eval("print @");
 
                 // detach the writer
-                agent.getPrinter().popWriter();
+                robotAgent.getThreadedAgent().getPrinter().popWriter();
 
                 // get string writer result
                 String writerResult = sw.toString();
@@ -145,17 +151,19 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     @Override
     public Map<String, Set<String>> retrieveAllAttributes() {
         Map<String, Set<String>> result = new HashMap<String, Set<String>>();
-        if (agent != null) {
+        System.out.println("XXXXXXXXXXXXXX DB RETRIVE STARTING");
+        if (robotAgent != null) {
+            System.out.println("XXXXXXXXXXXXXX DB RETRIVE STARTING 2");
             try {
 
                 StringWriter sw = new StringWriter();
-                agent.getPrinter().pushWriter(sw);
+                robotAgent.getThreadedAgent().getPrinter().pushWriter(sw);
 
                 // print the smem data
-                agent.getInterpreter().eval("print @");
+                robotAgent.getThreadedAgent().getInterpreter().eval("print @");
 
                 // detach the writer
-                agent.getPrinter().popWriter();
+                robotAgent.getThreadedAgent().getPrinter().popWriter();
 
                 // get string writer result
                 String writerResult = sw.toString();
