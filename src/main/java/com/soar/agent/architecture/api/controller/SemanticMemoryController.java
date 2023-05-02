@@ -1,7 +1,7 @@
 package com.soar.agent.architecture.api.controller;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +21,13 @@ public class SemanticMemoryController {
     SemanticMemoryService semanticMemoryService;
 
     @GetMapping(value = "/smemAttributes")
-    public ResponseEntity<Map<String, List<String>>> getSemanticMemoryAttributes(){
+    public ResponseEntity<Map<String, Set<String>>> getSemanticMemoryAttributes(){
         return ResponseEntity.ok(semanticMemoryService.getSemanticMemoryAttributes());
     }
 
     @PostMapping(value = "smemAttributes")
     public ResponseEntity<SemanticMemoryEntity> saveSemanticMemoryAttributes(@RequestBody SemanticMemoryEntity semanticMemoryEntity){
+        semanticMemoryService.saveSemanticMemoryAttributes(semanticMemoryEntity);
         return ResponseEntity.ok(semanticMemoryEntity);
     }
 

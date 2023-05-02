@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.soar.agent.architecture.api.entity.SemanticMemoryEntity;
 import com.soar.agent.architecture.enums.MemoryEnum;
 import com.soar.agent.architecture.robot.RobotAgent;
 
@@ -44,7 +45,7 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     }
 
     @Override
-    public void addSemanticKnowledge() {
+    public void addSemanticKnowledge(SemanticMemoryEntity semanticMemoryEntity) {
         try {
             robotAgent.getThreadedAgent().getInterpreter().eval("smem --add { " + generateTestData() + "}");
             smem.smem_go(true);
@@ -151,9 +152,8 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     @Override
     public Map<String, Set<String>> retrieveAllAttributes() {
         Map<String, Set<String>> result = new HashMap<String, Set<String>>();
-        System.out.println("XXXXXXXXXXXXXX DB RETRIVE STARTING");
+
         if (robotAgent != null) {
-            System.out.println("XXXXXXXXXXXXXX DB RETRIVE STARTING 2");
             try {
 
                 StringWriter sw = new StringWriter();
