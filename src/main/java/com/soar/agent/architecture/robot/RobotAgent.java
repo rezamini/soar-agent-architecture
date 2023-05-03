@@ -144,7 +144,7 @@ public class RobotAgent {
                 threadedAgent.execute(call, null);
 
                 //it is safer to initialised the smem db after loading the soar file and the agent
-                smemResponder = new SemanticMemoryResponder(this, MemoryEnum.DEFAULT_SMEM_DB_NAME.getName());
+                // smemResponder = new SemanticMemoryResponder(this, MemoryEnum.DEFAULT_SMEM_DB_NAME.getName());
                 // smemResponder.manuallyEnableDB();
                 // smemResponder.addSemanticKnowledge();
                 // smemResponder.getAttributeValues("color");

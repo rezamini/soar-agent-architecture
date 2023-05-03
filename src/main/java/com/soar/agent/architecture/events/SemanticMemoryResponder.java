@@ -15,12 +15,10 @@ import java.util.Set;
 
 import org.jsoar.kernel.SoarException;
 import org.jsoar.kernel.smem.SemanticMemory;
-import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.JdbcTools;
 import org.jsoar.util.adaptables.Adaptables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.soar.agent.architecture.api.entity.SemanticMemoryEntity;
@@ -33,9 +31,20 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     private Connection conn;
     private SemanticMemory smem;
 
-    public SemanticMemoryResponder(@Autowired RobotAgent agent,
-            @Value("${unknown.param:explore-smem-db2}") String dbName) {
-        super(agent, dbName);
+    // @Value("${unknown.param:explore-smem-db2}")
+    @Value("${smem.db.name}")
+    private String dbName;
+
+    public String getDbName2() {
+        return dbName;
+    }
+
+    public void setDbName2(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public SemanticMemoryResponder(@Autowired RobotAgent agent) {
+        super(agent);
         initSemanticDB();
     }
 

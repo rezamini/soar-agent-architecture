@@ -14,11 +14,9 @@ import com.soar.agent.architecture.robot.RobotAgent;
 @Repository
 public abstract class SemanticMemoryEvent {
     public final RobotAgent robotAgent;
-    public String dbName;
 
-    public SemanticMemoryEvent(RobotAgent agent, String dbName) {
+    public SemanticMemoryEvent(RobotAgent agent) {
         this.robotAgent = agent;
-        this.dbName = dbName;
     }
 
     public abstract void initSemanticDB();
