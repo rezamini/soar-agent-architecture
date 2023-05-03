@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,7 +33,8 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     private Connection conn;
     private SemanticMemory smem;
 
-    public SemanticMemoryResponder(@Autowired RobotAgent agent, @Value("${unknown.param:explore-smem-db}") String dbName) {
+    public SemanticMemoryResponder(@Autowired RobotAgent agent,
+            @Value("${unknown.param:explore-smem-db2}") String dbName) {
         super(agent, dbName);
         initSemanticDB();
     }
@@ -44,13 +46,54 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
 
     }
 
+    // @Override
+    // public void addSemanticKnowledge(SemanticMemoryEntity semanticMemoryEntity) {
+    // try {
+    // robotAgent.getThreadedAgent().getInterpreter().eval("smem --add { " +
+    // generateTestData() + "}");
+    // smem.smem_go(true);
+
+    // } catch (SoarException e) {
+    // e.printStackTrace();
+    // }
+
+    // }
+
     @Override
     public void addSemanticKnowledge(SemanticMemoryEntity semanticMemoryEntity) {
         try {
-            robotAgent.getThreadedAgent().getInterpreter().eval("smem --add { " + generateTestData() + "}");
-            smem.smem_go(true);
+            if (semanticMemoryEntity != null) {
+                StringBuilder sb = new StringBuilder();
+                String name = semanticMemoryEntity.getName() != null ? semanticMemoryEntity.getName() : "default-name";
+                
+                String identifierName = "<" + name.substring(0, 2) + ">";
+                // add the main name. top hierarchy/parent name
+                sb.append("(<ss> ^").append(name).append(" ").append(identifierName).append(" )");
 
-        } catch (SoarException e) {
+                if (semanticMemoryEntity.getAttributes() != null && semanticMemoryEntity.getAttributes().size() > 0) {
+                    for (Map.Entry<String, List<String>> pair : semanticMemoryEntity.getAttributes().entrySet()) {
+                        if (pair.getValue() != null && pair.getValue().size() > 0) {
+
+                            for(String keyValue: pair.getValue()){
+                                sb.append("( ")
+                                .append(identifierName)
+                                .append(" ^")
+                                .append(pair.getKey())
+                                .append(" ")
+                                .append(keyValue)
+                                .append(" )");
+                            }
+                        }
+                    }
+                }
+
+                if(sb.length() != 0){
+                    System.out.println("adding smem data : "+ sb.toString());
+                    robotAgent.getThreadedAgent().getInterpreter().eval("smem --add { " + sb.toString() + "}");
+                    smem.smem_go(true);
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -62,7 +105,8 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
         if (dbName != null) {
             try {
                 robotAgent.getThreadedAgent().getInterpreter().eval("smem --set learning on");
-                robotAgent.getThreadedAgent().getInterpreter().eval("smem --set path src/main/resources/databases/smem/" + dbName + ".sqlite");
+                robotAgent.getThreadedAgent().getInterpreter()
+                        .eval("smem --set path src/main/resources/databases/smem/" + dbName + ".sqlite");
                 robotAgent.getThreadedAgent().getInterpreter().eval("smem --set append-database on");
                 robotAgent.getThreadedAgent().getInterpreter().eval("smem --set lazy-commit off");
 
@@ -185,8 +229,8 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
                                 attributeValue = attributeValue.toLowerCase().replace("|", "");
 
                                 Set<String> previousSet = new HashSet<String>();
-                                
-                                if(result.containsKey(attributeName) ){
+
+                                if (result.containsKey(attributeName)) {
                                     previousSet.addAll(result.get(attributeName));
 
                                 }
