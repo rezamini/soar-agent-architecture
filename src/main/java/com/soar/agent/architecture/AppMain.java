@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.SwingUtilities;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -42,6 +44,8 @@ public class AppMain {
         // panelUI = new PanelUI(new AppMain());
         panelUI = new PanelUI();
         panelUI.initUI();
+
+
         // } catch (Exception e) {
         // e.printStackTrace();
         // }
@@ -108,6 +112,7 @@ public class AppMain {
     }
 
     public void stepAgent() {
+        System.out.println("XXXXXXXXXXXX STEPPING ");
         for (RobotAgent agent : agents.values()) {
             agent.addListener(moveResponder);
             agent.step();
@@ -116,7 +121,21 @@ public class AppMain {
     }
 
     public void reInitializeAgent() throws IOException {
+
+        panelUI.getMainFrame().setVisible(false);
+        panelUI.getMainFrame().dispose();
+
+        panelUI = new PanelUI();
         panelUI.initUI();
+
+        //jpanel
+        panelUI.revalidate();
+        panelUI.repaint();
+
+        //jframe
+        panelUI.getMainFrame().invalidate();
+        panelUI.getMainFrame().validate();
+        panelUI.getMainFrame().repaint();
 
         for (RobotAgent agent : agents.values()) {
             synchronized (agent) {

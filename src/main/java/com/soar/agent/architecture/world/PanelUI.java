@@ -21,20 +21,24 @@ import com.soar.agent.architecture.loader.MapLoader.Result;
 
 public class PanelUI extends JPanel {
 
-    final private JFrame mainFrame;
+    private final JFrame mainFrame;
     private static WorldPanel worldPanel;
     private static World world;
     private AppMain appMain = new AppMain();
+    private final JToolBar toolBar;
 
     public PanelUI() throws IOException {
         super(new BorderLayout());
+        mainFrame = new JFrame();
+        toolBar = new JToolBar("Draggable Toolbar");
+
         worldPanel = new WorldPanel();
         loadMap(new MapLoader().load(getClass().getResource("/map/map.txt")));
         setSimulationToolbar(worldPanel);
-        mainFrame = new JFrame();
 
+        
     }
-
+    
     public void reloadMap() throws IOException {
         loadMap(new MapLoader().load(getClass().getResource("/map/map.txt")));
     }
@@ -49,8 +53,10 @@ public class PanelUI extends JPanel {
                 mainFrame.setContentPane(this);
                 mainFrame.setSize(800, 800);
                 mainFrame.setVisible(true);
-                PanelUI.worldPanel.fit();
 
+                
+                PanelUI.worldPanel.fit();
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -79,10 +85,11 @@ public class PanelUI extends JPanel {
     }
 
     public void setSimulationToolbar(WorldPanel worldPanel) {
-        final JToolBar bar = new JToolBar("Draggable Toolbar");
-        bar.setFloatable(true);
-        add(worldPanel, BorderLayout.CENTER);
-        add(bar, BorderLayout.SOUTH);
+        
+        toolBar.setFloatable(true);
+        toolBar.setOpaque(true);
+        add(toolBar, BorderLayout.SOUTH);
+        add(worldPanel, BorderLayout.CENTER);     
         setBackground(Color.LIGHT_GRAY);
 
         // Run button
@@ -108,7 +115,7 @@ public class PanelUI extends JPanel {
             }
         });
         runButton.setToolTipText("Start Agent");
-        bar.add(runButton);
+        toolBar.add(runButton);
 
         // Stop Button
         JToggleButton stopButton = createButton("stop", "stop-clicked", false);
@@ -131,7 +138,7 @@ public class PanelUI extends JPanel {
             }
         });
         stopButton.setToolTipText("Stop Agent");
-        bar.add(stopButton);
+        toolBar.add(stopButton);
 
         // Step Button
         JToggleButton stepButton = createButton("step", "step-clicked", false);
@@ -142,7 +149,7 @@ public class PanelUI extends JPanel {
             }
         });
         stepButton.setToolTipText("Step Agent");
-        bar.add(stepButton);
+        toolBar.add(stepButton);
 
         // Debugger
         JToggleButton debuggerButton = createButton("debug", "debug-clicked", true);
@@ -150,7 +157,7 @@ public class PanelUI extends JPanel {
             appMain.openDebugger();
         });
         debuggerButton.setToolTipText("Open Agent Debugger");
-        bar.add(debuggerButton);
+        toolBar.add(debuggerButton);
 
         // Graph
         JToggleButton graphButton = createButton("graph", "graph-clicked", true);
@@ -163,7 +170,7 @@ public class PanelUI extends JPanel {
             }
         });
         graphButton.setToolTipText("Open Memory Visualisation");
-        bar.add(graphButton);
+        toolBar.add(graphButton);
 
         // TEST SHORT PATH
         JToggleButton graphButton2 = createButton("path", "path-clicked", true);
@@ -176,10 +183,10 @@ public class PanelUI extends JPanel {
             }
         });
         graphButton2.setToolTipText("Open Map Matrix Visualisation");
-        bar.add(graphButton2);
+        toolBar.add(graphButton2);
 
         // push the rest of the icons/button to the end of the toolbar; right of toolbar
-        bar.add(Box.createGlue());
+        toolBar.add(Box.createGlue());
 
         // Re-Initialize / Reset
         JToggleButton resetButton = createButton("reset", "reset-clicked", false);
@@ -191,7 +198,7 @@ public class PanelUI extends JPanel {
             }
         });
         graphButton2.setToolTipText("Re-Initialize Map & Agent State");
-        bar.add(resetButton);
+        toolBar.add(resetButton);
 
         // bar.add(new AbstractAction("Graph") {
         // @Override
@@ -242,6 +249,14 @@ public class PanelUI extends JPanel {
 
     public static World getWorld() {
         return world;
+    }
+
+    public JFrame getMainFrame() {
+        return mainFrame;
+    }
+
+    public JToolBar getToolBar() {
+        return toolBar;
     }
 
 }
