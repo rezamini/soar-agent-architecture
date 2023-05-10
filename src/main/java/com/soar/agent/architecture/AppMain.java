@@ -6,12 +6,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.swing.SwingUtilities;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Component;
 
 import com.soar.agent.architecture.events.MoveResponder;
 import com.soar.agent.architecture.graph.NodeGraphUI;
@@ -27,42 +30,59 @@ import java.awt.EventQueue;
  *
  */
 @SpringBootApplication(scanBasePackages = "com.soar.agent.architecture")
+@Component
 public class AppMain {
 
     private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
     private MoveResponder moveResponder = new MoveResponder();
+
+    
     private static PanelUI panelUI;
+
+    @Autowired
+    private PanelUI panelUIAuto;
+
     private NodeGraphUI graph;
     private ShortestPathGraphUI matrixGraph;
 
+    @PostConstruct
+    private void init(){
+        panelUI = panelUIAuto;
+    }
     public static void main(String[] args) throws IOException {
         // depending on system the scale might be different,
-        //if this is not set on some sytems the UI icons or images might be blury and upscaled.
+        // if this is not set on some sytems the UI icons or images might be blury and
+        // upscaled.
         System.setProperty("sun.java2d.uiScale", "1.0");
-        
+
         // try {
         // panelUI = new PanelUI(new AppMain());
-        panelUI = new PanelUI();
-        panelUI.initUI();
-
-
+        // panelUI = new PanelUI();
+            
         // } catch (Exception e) {
         // e.printStackTrace();
         // }
 
-        SpringApplication.run(AppMain.class, args);
+        // SpringApplication.run(AppMain.class, args);
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(AppMain.class);
+
+        builder.headless(false);
+
+        ConfigurableApplicationContext context = builder.run(args);
+
+        panelUI.initUI();
 
         /* Alternative way of starting spring boot */
-        
-        // ConfigurableApplicationContext ctx = new SpringApplicationBuilder(AppMain.class)
-        //         .headless(true).run(args);
+
+        // ConfigurableApplicationContext ctx = new
+        // SpringApplicationBuilder(AppMain.class)
+        // .headless(true).run(args);
         // EventQueue.invokeLater(() -> {
 
-        //     AppMain app = ctx.getBean(AppMain.class);
-        //     app.panelUI.setVisible(true);
+        // AppMain app = ctx.getBean(AppMain.class);
+        // app.panelUI.setVisible(true);
         // });
 
-        
     }
 
     public void updateAgents() {
@@ -76,11 +96,14 @@ public class AppMain {
             } else {
                 final RobotAgent newAgent = new RobotAgent();
 
-                //set an instance of shortest path here otherwise it will not be initialised at first load.
-                //this is before memory updates etc
+                // set an instance of shortest path here otherwise it will not be initialised at
+                // first load.
+                // this is before memory updates etc
                 try {
-                    robot.getWorld().setShortestPathGraph(new ShortestPathGraph(PanelUI.getWorld().getMapMatrix(), PanelUI.getWorld()));
-                    robot.getWorld().setShortestPathGraphComplete(new ShortestPathGraph(PanelUI.getWorld().getCompleteMapMatrix(), PanelUI.getWorld()));
+                    robot.getWorld().setShortestPathGraph(
+                            new ShortestPathGraph(PanelUI.getWorld().getMapMatrix(), PanelUI.getWorld()));
+                    robot.getWorld().setShortestPathGraphComplete(
+                            new ShortestPathGraph(PanelUI.getWorld().getCompleteMapMatrix(), PanelUI.getWorld()));
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -128,11 +151,11 @@ public class AppMain {
         panelUI = new PanelUI();
         panelUI.initUI();
 
-        //jpanel
+        // jpanel
         panelUI.revalidate();
         panelUI.repaint();
 
-        //jframe
+        // jframe
         panelUI.getMainFrame().invalidate();
         panelUI.getMainFrame().validate();
         panelUI.getMainFrame().repaint();
@@ -147,7 +170,7 @@ public class AppMain {
         // close graph if any instance is open
         closeGraph();
 
-        //close matrix graph if any instance is open
+        // close matrix graph if any instance is open
         closeMatrixGraph();
 
         // close debugger if any instance is open

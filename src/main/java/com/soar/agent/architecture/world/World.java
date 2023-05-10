@@ -10,12 +10,14 @@ import java.util.Map;
 import java.awt.geom.*;
 
 import org.jsoar.util.events.SoarEventManager;
+import org.springframework.stereotype.Component;
 
 import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.graph.ShortestPathGraph;
 import com.soar.agent.architecture.robot.Robot;
 
+@Component
 public class World {
     public final SoarEventManager events = new SoarEventManager();
     public final Rectangle2D extents = new Rectangle2D.Double(-5.0, -5.0, 10.0, 10.0);

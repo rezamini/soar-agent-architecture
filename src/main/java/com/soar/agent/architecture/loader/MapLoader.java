@@ -14,13 +14,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.jsoar.util.ByRef;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.soar.agent.architecture.beans.Landmark;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.world.World;
 
+@Component
 public class MapLoader {
+    @Autowired
+    private World world;
+
     private final Color LANDMARK_BASE_COLOR = Color.ORANGE;
     private final double CELL_SIZE = 2.0;
 
@@ -34,15 +42,15 @@ public class MapLoader {
     private int[][] mapMatrix;
     private int[][] completeMapMatrix;
 
-    public static class Result {
-        public final World world;
+    // public static class Result {
+    //     public final World world;
 
-        public Result(World world) {
-            this.world = world;
-        }
-    }
+    //     public Result(World world) {
+    //         this.world = world;
+    //     }
+    // }
 
-    public Result load(URL url) throws IOException {
+    public World load(URL url) throws IOException {
         final InputStream in = url.openStream();
         try {
             return load(in);
@@ -51,7 +59,7 @@ public class MapLoader {
         }
     }
 
-    public Result load(InputStream in) throws IOException {
+    private World load(InputStream in) throws IOException {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         final ByRef<Integer> maxLine = ByRef.create(0);
         final String[] lines = readLines(reader, maxLine);
@@ -71,7 +79,7 @@ public class MapLoader {
 
         completeMapMatrix = new int[completeMatrixY][completeMatrixX];
 
-        final World world = new World();
+        // final World world = new World();
         world.extents.setFrame(0.0, 0.0, maxLine.value * CELL_SIZE, lines.length * CELL_SIZE);
 
         readObstacles(world, lines);
@@ -81,7 +89,8 @@ public class MapLoader {
         world.setMapMatrix(mapMatrix);
         world.setCompleteMapMatrix(completeMapMatrix);
 
-        return new Result(world);
+        return world;
+        // return new Result(world);
     }
 
     private void readObstacles(World world, String[] lines) {

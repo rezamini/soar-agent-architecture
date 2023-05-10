@@ -1,6 +1,8 @@
 package com.soar.agent.architecture.world;
 
 import java.io.IOException;
+
+import javax.annotation.PostConstruct;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -15,11 +17,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.*;
 import org.jsoar.debugger.util.SwingTools;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.soar.agent.architecture.AppMain;
 import com.soar.agent.architecture.loader.MapLoader;
-import com.soar.agent.architecture.loader.MapLoader.Result;
 
+@Component
 public class PanelUI extends JPanel {
+
+    // @Autowired
+    // private World worldAuto;
+    
+    @Autowired
+    private MapLoader mapLoader;
 
     private final JFrame mainFrame;
     private static WorldPanel worldPanel;
@@ -33,14 +44,20 @@ public class PanelUI extends JPanel {
         toolBar = new JToolBar("Draggable Toolbar");
 
         worldPanel = new WorldPanel();
-        loadMap(new MapLoader().load(getClass().getResource("/map/map.txt")));
+        
         setSimulationToolbar(worldPanel);
 
         
     }
-    
-    public void reloadMap() throws IOException {
-        loadMap(new MapLoader().load(getClass().getResource("/map/map.txt")));
+
+    @PostConstruct
+    private void init(){
+
+        try {
+            loadMap(mapLoader.load(getClass().getResource("/map/map.txt")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void initUI() {
@@ -236,8 +253,8 @@ public class PanelUI extends JPanel {
 
     }
 
-    public void loadMap(Result loadResult) throws IOException {
-        world = loadResult.world;
+    public void loadMap(World worldResult) throws IOException {
+        world = worldResult;
         worldPanel.setWorld(world);
         worldPanel.fit();
         appMain.updateAgents();
