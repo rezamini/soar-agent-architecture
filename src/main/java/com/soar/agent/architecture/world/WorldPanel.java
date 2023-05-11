@@ -22,17 +22,22 @@ import java.awt.geom.Rectangle2D;
 import java.util.Map.Entry;
 
 import org.jsoar.debugger.util.SwingTools;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * WorldPanel
  */
+@Component
 public class WorldPanel extends JPanel {
 
     private double pixelsPerMeter = 55;
     private double panX = 0.0;
     private double panY = 0.0;
     private Robot follow = null;
-    private World world = new World();
+    
+    @Autowired
+    private World world;
     private Robot selection = null;
 
     public WorldPanel() {
@@ -56,10 +61,6 @@ public class WorldPanel extends JPanel {
                 }
             }
         });
-    }
-
-    public void setWorld(World world) {
-        this.world = world;
     }
 
     public void fit() {

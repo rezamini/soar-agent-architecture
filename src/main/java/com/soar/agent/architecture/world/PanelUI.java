@@ -1,6 +1,10 @@
 package com.soar.agent.architecture.world;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.swing.AbstractAction;
@@ -21,7 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.soar.agent.architecture.AppMain;
+import com.soar.agent.architecture.events.MoveResponder;
+import com.soar.agent.architecture.graph.NodeGraphUI;
+import com.soar.agent.architecture.graph.ShortestPathGraph;
+import com.soar.agent.architecture.graph.ShortestPathGraphUI;
 import com.soar.agent.architecture.loader.MapLoader;
+import com.soar.agent.architecture.robot.Robot;
+import com.soar.agent.architecture.robot.RobotAgent;
 
 @Component
 public class PanelUI extends JPanel {
@@ -31,30 +41,39 @@ public class PanelUI extends JPanel {
     
     @Autowired
     private MapLoader mapLoader;
+    
+    @Autowired
+    private WorldPanel worldPanel;
+
+    // @Autowired
+    // private AppMain appMain;
 
     private final JFrame mainFrame;
-    private static WorldPanel worldPanel;
-    private static World world;
-    private AppMain appMain = new AppMain();
+
+    @Autowired
+    private World world;
     private final JToolBar toolBar;
 
+    private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
+    private MoveResponder moveResponder = new MoveResponder();
+    private NodeGraphUI graph;
+    private ShortestPathGraphUI matrixGraph;
+    
     public PanelUI() throws IOException {
         super(new BorderLayout());
         mainFrame = new JFrame();
         toolBar = new JToolBar("Draggable Toolbar");
-
-        worldPanel = new WorldPanel();
-        
-        setSimulationToolbar(worldPanel);
-
-        
     }
 
     @PostConstruct
     private void init(){
 
         try {
-            loadMap(mapLoader.load(getClass().getResource("/map/map.txt")));
+            mapLoader.load(getClass().getResource("/map/map.txt"));
+            worldPanel.fit();
+            updateAgents();
+            setSimulationToolbar(worldPanel);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,7 +91,9 @@ public class PanelUI extends JPanel {
                 mainFrame.setVisible(true);
 
                 
-                PanelUI.worldPanel.fit();
+                worldPanel.fit();
+                worldPanel.repaint();
+                worldPanel.revalidate();
                 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -115,9 +136,9 @@ public class PanelUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (runButton.isSelected()) {
-                    appMain.startAgent();
+                    startAgent();
                 } else {
-                    appMain.stopAgent();
+                    stopAgent();
                 }
             }
         });
@@ -139,7 +160,7 @@ public class PanelUI extends JPanel {
         stopButton.addActionListener(new AbstractAction("Stop") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                appMain.stopAgent();
+                stopAgent();
             }
         });
 
@@ -162,7 +183,7 @@ public class PanelUI extends JPanel {
         stepButton.addActionListener(new AbstractAction("Step") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                appMain.stepAgent();
+                stepAgent();
             }
         });
         stepButton.setToolTipText("Step Agent");
@@ -171,7 +192,7 @@ public class PanelUI extends JPanel {
         // Debugger
         JToggleButton debuggerButton = createButton("debug", "debug-clicked", true);
         debuggerButton.addActionListener((event) -> {
-            appMain.openDebugger();
+            openDebugger();
         });
         debuggerButton.setToolTipText("Open Agent Debugger");
         toolBar.add(debuggerButton);
@@ -180,7 +201,7 @@ public class PanelUI extends JPanel {
         JToggleButton graphButton = createButton("graph", "graph-clicked", true);
         graphButton.addActionListener((event) -> {
             try {
-                appMain.startGraph();
+                startGraph();
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
@@ -193,7 +214,7 @@ public class PanelUI extends JPanel {
         JToggleButton graphButton2 = createButton("path", "path-clicked", true);
         graphButton2.addActionListener((event) -> {
             try {
-                appMain.startMatrixGraph();
+                startMatrixGraph();
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
@@ -209,7 +230,7 @@ public class PanelUI extends JPanel {
         JToggleButton resetButton = createButton("reset", "reset-clicked", false);
         resetButton.addActionListener((event) -> {
             try {
-                appMain.reInitializeAgent();
+               reInitializeAgent();
             } catch (Exception e) {
                 // TODO: handle exception
             }
@@ -253,20 +274,160 @@ public class PanelUI extends JPanel {
 
     }
 
-    public void loadMap(World worldResult) throws IOException {
-        world = worldResult;
-        worldPanel.setWorld(world);
-        worldPanel.fit();
-        appMain.updateAgents();
+    // public void loadMap(World worldResult) throws IOException {
+    //     // world = worldResult;
+    //     // worldPanel.setWorld(world);
+    //     worldPanel.fit();
+    //     updateAgents();
+    // }
+
+    // public static WorldPanel getWorldPanel() {
+    //     return worldPanel;
+    // }
+
+    public void updateAgents() {
+        final Set<RobotAgent> deadAgents = new HashSet<RobotAgent>(agents.values());
+
+        for (Robot robot : world.getRobots()) {
+            final RobotAgent existing = agents.get(robot.getName());
+            if (existing != null) {
+                deadAgents.remove(existing);
+                existing.setRobot(robot);
+            } else {
+                final RobotAgent newAgent = new RobotAgent();
+
+                // set an instance of shortest path here otherwise it will not be initialised at
+                // first load.
+                // this is before memory updates etc
+                try {
+                    robot.getWorld().setShortestPathGraph(
+                            new ShortestPathGraph(world.getMapMatrix(), world));
+                    robot.getWorld().setShortestPathGraphComplete(
+                            new ShortestPathGraph(world.getCompleteMapMatrix(), world));
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                newAgent.setRobot(robot);
+                agents.put(robot.getName(), newAgent);
+            }
+        }
+
+        for (RobotAgent agent : deadAgents) {
+            agents.values().remove(agent);
+            agent.dispose();
+        }
     }
 
-    public static WorldPanel getWorldPanel() {
-        return worldPanel;
+    public void startAgent() {
+        for (RobotAgent agent : agents.values()) {
+            agent.addListener(moveResponder);
+            agent.start();
+        }
+        worldPanel.repaint();
     }
 
-    public static World getWorld() {
-        return world;
+    public void stopAgent() {
+        for (RobotAgent agent : agents.values()) {
+            agent.stop();
+        }
     }
+
+    public void stepAgent() {
+        for (RobotAgent agent : agents.values()) {
+            agent.addListener(moveResponder);
+            agent.step();
+        }
+        worldPanel.repaint();
+    }
+
+    public void reInitializeAgent() throws IOException {
+
+        mainFrame.setVisible(false);
+        mainFrame.dispose();
+
+        // panelUI = new PanelUI();
+        initUI();
+
+        // jpanel
+        revalidate();
+        repaint();
+
+        // jframe
+        mainFrame.invalidate();
+        mainFrame.validate();
+        mainFrame.repaint();
+
+        for (RobotAgent agent : agents.values()) {
+            synchronized (agent) {
+                agent.reInitialize();
+            }
+
+        }
+
+        // close graph if any instance is open
+        closeGraph();
+
+        // close matrix graph if any instance is open
+        closeMatrixGraph();
+
+        // close debugger if any instance is open
+        closeDebugger();
+    }
+
+    public void openDebugger() {
+        // open a signle debugger if any agent exists
+        if (agents != null && agents.size() > 0) {
+            RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
+            agent.openDebugger();
+        }
+    }
+
+    public void closeDebugger() {
+        // close a signle debugger if any agent exists
+        if (agents != null && agents.size() > 0) {
+            RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
+            agent.closeDebugger();
+        }
+    }
+
+    public void startGraph() throws IOException {
+        if (agents != null && agents.size() > 0) {
+            RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
+
+            // only get one instance from nodeGraphui. Singleton pattern using getInstance
+            // method.
+            graph = NodeGraphUI.getInstance(agent.getThreadedAgent());
+        }
+    }
+
+    public void startMatrixGraph() throws IOException {
+        if (agents != null && agents.size() > 0) {
+            RobotAgent agent = (RobotAgent) agents.values().toArray()[0];
+
+            // only get one instance from matrixGraph. Singleton pattern using getInstance
+            // method.
+            matrixGraph = ShortestPathGraphUI.getInstance(agent.getThreadedAgent(),
+                    world.getMapMatrix(), world);
+        }
+    }
+
+    public void closeGraph() throws IOException {
+        if (graph != null) {
+            graph.setFrameVisibility(false);
+        }
+    }
+
+    public void closeMatrixGraph() throws IOException {
+        if (matrixGraph != null) {
+            matrixGraph.setFrameVisibility(false);
+        }
+    }
+
+    // public static World getWorld() {
+    //     return world;
+    // }
 
     public JFrame getMainFrame() {
         return mainFrame;
