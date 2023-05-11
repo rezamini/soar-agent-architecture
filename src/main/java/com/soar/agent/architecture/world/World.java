@@ -10,6 +10,7 @@ import java.util.Map;
 import java.awt.geom.*;
 
 import org.jsoar.util.events.SoarEventManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.soar.agent.architecture.beans.Landmark;

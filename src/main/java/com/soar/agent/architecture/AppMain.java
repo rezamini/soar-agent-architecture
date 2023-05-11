@@ -192,9 +192,9 @@ public class AppMain {
     //     }
     // }
 
-    public static void PerformUIRePaint() {
-        // PanelUI.getWorldPanel().repaint();
-    }
+    // public static void PerformUIRePaint() {
+    //     // PanelUI.getWorldPanel().repaint();
+    // }
 
     // public void startGraph() throws IOException {
     //     if (agents != null && agents.size() > 0) {

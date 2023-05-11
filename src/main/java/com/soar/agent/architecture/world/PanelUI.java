@@ -45,6 +45,9 @@ public class PanelUI extends JPanel {
     @Autowired
     private WorldPanel worldPanel;
 
+    @Autowired
+    private RobotAgent robotAgent;
+
     // @Autowired
     // private AppMain appMain;
 
@@ -297,7 +300,7 @@ public class PanelUI extends JPanel {
                 deadAgents.remove(existing);
                 existing.setRobot(robot);
             } else {
-                final RobotAgent newAgent = new RobotAgent();
+                // final RobotAgent newAgent = new RobotAgent();
 
                 // set an instance of shortest path here otherwise it will not be initialised at
                 // first load.
@@ -312,8 +315,8 @@ public class PanelUI extends JPanel {
                     e.printStackTrace();
                 }
 
-                newAgent.setRobot(robot);
-                agents.put(robot.getName(), newAgent);
+                robotAgent.setRobot(robot);
+                agents.put(robot.getName(), robotAgent);
             }
         }
 

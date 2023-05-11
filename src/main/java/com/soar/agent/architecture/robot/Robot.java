@@ -10,15 +10,24 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class Robot {
+    @Autowired
+    private World world;
+
+    @Value("${default.param.value:agent}")
+    private String name;
+
     public final double widthMultiplier = 4.0;
     public final double heightMultiplier = 1.5;
     public final double shapeStartingPoint = 0.4;
     public final double shapeWidth = shapeStartingPoint * widthMultiplier;
     public final double shapeHeight = shapeStartingPoint * heightMultiplier;
     public final Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4, shapeWidth, shapeHeight);
-    private final World world;
-    private final String name;
     private double yaw;
     private double tempYaw; // for checking agent temp surrounding
     private double speed;
@@ -34,15 +43,12 @@ public class Robot {
     private DecimalFormat batteryDecimalFormat = new DecimalFormat("0.#");
     private Path2D tempShape = new Path2D.Double();
 
-    public Robot(World game, String name) {
-        this.world = game;
-        this.name = name;
+    public Robot() {
         radarBattery = 100;
         toggleRadar = true;
 
         // initMultipleRobotRadar();
         initSingleRobotRadar();
-
     }
 
     private void initMultipleRobotRadar() {
@@ -502,6 +508,10 @@ public class Robot {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 
     public Rectangle2D getShape() {

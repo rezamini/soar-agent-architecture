@@ -29,6 +29,9 @@ public class MapLoader {
     @Autowired
     private World world;
 
+    @Autowired
+    private Robot robot;
+
     private final Color LANDMARK_BASE_COLOR = Color.ORANGE;
     private final double CELL_SIZE = 2.0;
 
@@ -146,14 +149,15 @@ public class MapLoader {
                 final double cx = x * CELL_SIZE + CELL_SIZE / 2.0;
                 final double cy = y * CELL_SIZE + CELL_SIZE / 2.0;
                 if (Character.isLetter(c) && Character.isUpperCase(c)) {
-                    final Robot r = new Robot(world, Character.toString(c));
+                    // final Robot r = new Robot(world, Character.toString(c));
                     // r.setYaw(Math.toRadians(180));
 
-                    r.move(cx, cy);
-                    r.setSpeed(0.5);
-                    r.setTurnRate(Math.toRadians(25));
+                    // robot.setName(Character.toString(c));
+                    robot.move(cx, cy);
+                    robot.setSpeed(0.5);
+                    robot.setTurnRate(Math.toRadians(25));
 
-                    world.addRobot(r);
+                    world.addRobot(robot);
 
                     mapMatrix[y][x] = 3;
 
@@ -166,7 +170,7 @@ public class MapLoader {
 
                     // complete matrix
                     completeMapMatrix[(int) yMatrix][(int) xMatrix] = 3;
-                    completeMapMatrix[(int) ((int) yMatrix)][(int) ((int) xMatrix + r.getSpeed() * 2)] = 3;
+                    completeMapMatrix[(int) ((int) yMatrix)][(int) ((int) xMatrix + robot.getSpeed() * 2)] = 3;
                 }
             }
         }
