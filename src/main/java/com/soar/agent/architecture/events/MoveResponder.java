@@ -1,12 +1,20 @@
 package com.soar.agent.architecture.events;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.soar.agent.architecture.AppMain;
 import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
+import com.soar.agent.architecture.world.WorldPanel;
 
+@Service
 public class MoveResponder implements MoveListenerEvent{
+
+    @Autowired
+    private WorldPanel worldPanel;
     
     DirectionEnum currentDirection;
 
@@ -18,8 +26,7 @@ public class MoveResponder implements MoveListenerEvent{
             robot.setYaw(Math.toRadians(currentDirection.getAngle()));
             robot.getWorld().updateAndMoveAgents(0);
     
-            //better to get ui repaint from a method than the ui class directly. to keep them seperate at initial level for changes.
-            AppMain.PerformUIRePaint();
+            worldPanel.repaint();
 
             robotAgent.getEvents().fireEvent(new AreaResponder(robot, robotAgent));
             

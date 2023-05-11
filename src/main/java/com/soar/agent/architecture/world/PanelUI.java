@@ -55,7 +55,10 @@ public class PanelUI extends JPanel {
     private final JToolBar toolBar;
 
     private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
-    private MoveResponder moveResponder = new MoveResponder();
+
+    @Autowired
+    private MoveResponder moveResponder;
+    
     private NodeGraphUI graph;
     private ShortestPathGraphUI matrixGraph;
     
