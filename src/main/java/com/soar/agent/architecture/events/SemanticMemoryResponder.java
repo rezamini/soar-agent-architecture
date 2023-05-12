@@ -74,7 +74,7 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
             if (semanticMemoryEntity != null) {
                 StringBuilder sb = new StringBuilder();
                 String name = semanticMemoryEntity.getName() != null ? semanticMemoryEntity.getName() : "default-name";
-                
+
                 String identifierName = "<" + name.substring(0, 2) + ">";
                 // add the main name. top hierarchy/parent name
                 sb.append("(<ss> ^").append(name).append(" ").append(identifierName).append(" )");
@@ -83,21 +83,21 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
                     for (Map.Entry<String, List<String>> pair : semanticMemoryEntity.getAttributes().entrySet()) {
                         if (pair.getValue() != null && pair.getValue().size() > 0) {
 
-                            for(String keyValue: pair.getValue()){
+                            for (String keyValue : pair.getValue()) {
                                 sb.append("( ")
-                                .append(identifierName)
-                                .append(" ^")
-                                .append(pair.getKey())
-                                .append(" ")
-                                .append(keyValue)
-                                .append(" )");
+                                        .append(identifierName)
+                                        .append(" ^")
+                                        .append(pair.getKey())
+                                        .append(" ")
+                                        .append(keyValue)
+                                        .append(" )");
                             }
                         }
                     }
                 }
 
-                if(sb.length() != 0){
-                    System.out.println("adding smem data : "+ sb.toString());
+                if (sb.length() != 0) {
+                    System.out.println("adding smem data : " + sb.toString());
                     robotAgent.getThreadedAgent().getInterpreter().eval("smem --add { " + sb.toString() + "}");
                     smem.smem_go(true);
                 }
@@ -224,6 +224,7 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
                 // split by whitespaces
                 String[] split = writerResult.split("\\s+");
 
+                System.out.println(writerResult);
                 for (int i = split.length - 1; i >= 0; i--) {
                     String attributeName = split[i];
 
@@ -231,10 +232,12 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
                     if (attributeName.startsWith("^")) {
                         attributeName = attributeName.toLowerCase().replace("^", "");
 
-                        if (i + 1 < split.length) {
-                            String attributeValue = split[i + 1].toLowerCase();
+                        int j = i + 1;
+                        while (j < split.length) {
+                            String attributeValue = split[j].toLowerCase();
 
-                            if (!attributeValue.startsWith("<") && !attributeValue.startsWith("@")) {
+                            if (attributeValue.startsWith("|")) {
+                                // if (!attributeValue.startsWith("<") && !attributeValue.startsWith("@")) {
                                 attributeValue = attributeValue.toLowerCase().replace("|", "");
 
                                 Set<String> previousSet = new HashSet<String>();
@@ -246,7 +249,11 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
                                 previousSet.add(attributeValue);
 
                                 result.put(attributeName, previousSet);
+
+                            } else {
+                                break;
                             }
+                            j++;
                         }
                     }
                 }
