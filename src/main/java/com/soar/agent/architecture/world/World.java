@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.awt.geom.*;
 
 import org.jsoar.util.events.SoarEventManager;
@@ -25,6 +26,7 @@ public class World {
     private final List<Robot> robots = new ArrayList<Robot>();
     private final List<Shape> obstacles = new ArrayList<Shape>();
     private final List<Landmark> landmarks = new ArrayList<Landmark>();
+    private Map<String, Set<String>> smemAttributes = new HashMap<String, Set<String>>();
     private int[][] mapMatrix;
     private int[][] completeMapMatrix;
     private Integer agentMapMatrixX = null;
@@ -205,6 +207,14 @@ public class World {
 
     public void setShortestPathGraphComplete(ShortestPathGraph shortestPathGraphComplete) {
         this.shortestPathGraphComplete = shortestPathGraphComplete;
+    }
+
+    public Map<String, Set<String>> getSmemAttributes() {
+        return smemAttributes;
+    }
+
+    public void setSmemAttributes(Map<String, Set<String>> smemAttributes) {
+        this.smemAttributes = smemAttributes;
     }
 
     public void updateAndMoveAgents(double dt) {

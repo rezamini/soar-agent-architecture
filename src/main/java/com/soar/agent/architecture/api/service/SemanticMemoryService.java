@@ -15,6 +15,7 @@ import com.soar.agent.architecture.api.entity.SemanticMemoryEntity;
 import com.soar.agent.architecture.api.repository.SemanticMemoryRepository;
 import com.soar.agent.architecture.events.SemanticMemoryResponder;
 import com.soar.agent.architecture.robot.RobotAgent;
+import com.soar.agent.architecture.world.World;
 
 @Service
 public class SemanticMemoryService implements SemanticMemoryRepository {
@@ -24,6 +25,9 @@ public class SemanticMemoryService implements SemanticMemoryRepository {
 
     @Autowired
     private SemanticMemoryResponder semanticMemoryResponder;
+
+    @Autowired
+    private World world;
 
     /*
      * This method runs once at the start of the program with the @EventListener and
@@ -38,8 +42,8 @@ public class SemanticMemoryService implements SemanticMemoryRepository {
         Map<String, Set<String>> result = semanticMemoryResponder.retrieveAllAttributes();
 
         // update the latest values for the live agent use
-        // robotAgent.setSmemAttributes(result);
-
+        world.setSmemAttributes(result);
+        
         return result;
     }
 
