@@ -268,7 +268,7 @@ public class WorldPanel extends JPanel {
         final Ellipse2D circle1 = new Ellipse2D.Double(p.getX() - r, p.getY() - r, 2
                 * r, 2 * r);
 
-        drawShape(g2d, circle1, isReached ? Color.RED : landmark.getColor(), Color.BLACK);
+        drawShape(g2d, circle1, isReached ? Color.RED : landmark.getPaintColor(), Color.BLACK);
 
         final double r2 = r * 1.4;
         final Ellipse2D circle2 = new Ellipse2D.Double(p.getX() - r2, p.getY() - r2,

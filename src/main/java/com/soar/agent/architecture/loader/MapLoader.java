@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.net.URL;
+import java.text.Format.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +34,7 @@ public class MapLoader {
     private Robot robot;
 
     private final Color LANDMARK_BASE_COLOR = Color.ORANGE;
+    private final String LANDMARK_BASE_COLOR_NAME = "orange";
     private final double CELL_SIZE = 2.0;
 
     /*
@@ -46,11 +48,11 @@ public class MapLoader {
     private int[][] completeMapMatrix;
 
     // public static class Result {
-    //     public final World world;
+    // public final World world;
 
-    //     public Result(World world) {
-    //         this.world = world;
-    //     }
+    // public Result(World world) {
+    // this.world = world;
+    // }
     // }
 
     public World load(URL url) throws IOException {
@@ -123,7 +125,13 @@ public class MapLoader {
                 final double cy = y * CELL_SIZE + CELL_SIZE / 2.0;
 
                 if (Character.isLetter(c) && Character.isLowerCase(c)) {
-                    Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy), LANDMARK_BASE_COLOR);
+                    // for(Field field : obj.getClass().getFields()) {
+                    // if(fooList.contains(field.get()) {
+                    // System.out.println(field.getName());
+                    // }
+                    // }
+                    Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy),
+                            LANDMARK_BASE_COLOR, LANDMARK_BASE_COLOR_NAME);
                     world.addLandmark(landmark);
                     world.addLandmarkMap(landmark, false);
 
@@ -194,8 +202,8 @@ public class MapLoader {
         // complete matrix
         int tempStart = (int) (start == 0 ? 0 : (start * CELL_SIZE));
 
-        //&& tempStart > start
-        if (start == 1 ) {
+        // && tempStart > start
+        if (start == 1) {
             tempStart = start;
         }
 

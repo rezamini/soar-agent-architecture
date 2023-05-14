@@ -8,10 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.awt.geom.*;
 
 import org.jsoar.util.events.SoarEventManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.soar.agent.architecture.beans.Landmark;
@@ -443,7 +443,25 @@ public class World {
 
         for (Landmark landmark : landmarks) {
             if (agentShape.contains(landmark.getLocation()) || shapeRadar.contains(landmark.getLocation())) {
-                detectedRadarLandmarks.put(landmark, true);
+
+                //check for color
+
+
+                if(smemAttributes != null && smemAttributes.size() > 0){
+                    for(Entry<String, Set<String>> entry: smemAttributes.entrySet()){
+                        if(entry.getKey().contains("color")){
+                            if(smemAttributes.get(entry.getKey()).contains(landmark.getColorName().toLowerCase())){
+                                detectedRadarLandmarks.put(landmark, true);
+                                
+                            }
+                        }
+                    }
+
+                }else{
+                    //smem attrivutes doesnt exists so rely on landmark object within the range
+                    detectedRadarLandmarks.put(landmark, true);
+                }
+                
             }
         }
     }
