@@ -105,18 +105,18 @@ public class MemoryResponder extends MemoryListener {
                                                 .stream()
                                                 .min(Comparator.comparing(entryValue -> entryValue.getValue().size()));
 
-                                if (minLandmarkEntry.isPresent()) {
-                                        boolean validShortestMove = robot.getWorld().validShortestPathMove(
-                                                        minLandmarkEntry.get().getKey(),
-                                                        landmarkCycleCount, robotAgent.getMove().getDirection());
+                                // if (minLandmarkEntry.isPresent()) {
+                                //         boolean validShortestMove = robot.getWorld().validShortestPathMove(
+                                //                         minLandmarkEntry.get().getKey(),
+                                //                         landmarkCycleCount, robotAgent.getMove().getDirection());
 
-                                        // reset the landmark-cycle-count to 0 and update the shortest path if it was
-                                        // not valid shortest path move
-                                        if(!validShortestMove){
-                                                landmarkCycleCount = 0;
-                                                robot.getWorld().updateShortestPath();
-                                        }   
-                                }
+                                //         // reset the landmark-cycle-count to 0 and update the shortest path if it was
+                                //         // not valid shortest path move
+                                //         if(!validShortestMove){
+                                //                 landmarkCycleCount = 0;
+                                //                 robot.getWorld().updateShortestPath();
+                                //         }   
+                                // }
 
                                 //check validity of the next shortest path
                                 if (minLandmarkEntry.isPresent()) {

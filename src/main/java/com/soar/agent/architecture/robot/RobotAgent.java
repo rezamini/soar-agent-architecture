@@ -43,6 +43,7 @@ public class RobotAgent {
     private final QMemory qMemory = DefaultQMemory.create();
     private File source = null;
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
+
     private UtilityResponder utilityResponder;
     private SemanticMemoryResponder smemResponder;
 
@@ -51,10 +52,15 @@ public class RobotAgent {
     @Autowired
     private Move move;
 
+    public void setMove(Move move) {
+        this.move = move;
+    }
+
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
-        // move = new Move(); // this need to be initialised otherwise it will throw an error if we are
-                           // setting values from other classes
+        // move = new Move(); // this need to be initialised otherwise it will throw an
+        // error if we are
+        // setting values from other classes
         SoarQMemoryAdapter.attach(threadedAgent.getAgent(), getQMemory());
         new CycleCountInput(threadedAgent.getInputOutput());
 
@@ -65,6 +71,11 @@ public class RobotAgent {
         moveListeners.add(toAdd);
     }
 
+    // public void initListeners(Robot robot){
+    //     utilityResponder = new UtilityResponder(this, robot);
+    //     utilityResponder.addAllListeners();
+    // }
+
     public void setRobot(Robot newRobot) {
         try {
             robot = newRobot;
@@ -72,11 +83,12 @@ public class RobotAgent {
             threadedAgent.setName(robot.getName());
 
             // initialize the output command listener for later use
-            initRadarCommandListenerObject();
-            initMoveCommandListenerObject();
 
-            initCommandListener("move");
+            // initRadarCommandListenerObject();
+            // initMoveCommandListenerObject();
 
+            // initCommandListener("move");
+            // initListeners();
             // areaResponder = new AreaResponder(robot, this);
             utilityResponder = new UtilityResponder(this, robot);
             utilityResponder.addAllListeners();
@@ -146,154 +158,162 @@ public class RobotAgent {
 
                 threadedAgent.execute(call, null);
 
-                //it is safer to initialised the smem db after loading the soar file and the agent
-                // smemResponder = new SemanticMemoryResponder(this, MemoryEnum.DEFAULT_SMEM_DB_NAME.getName());
+                // it is safer to initialised the smem db after loading the soar file and the
+                // agent
+                // smemResponder = new SemanticMemoryResponder(this,
+                // MemoryEnum.DEFAULT_SMEM_DB_NAME.getName());
                 // smemResponder.manuallyEnableDB();
                 // smemResponder.addSemanticKnowledge();
                 // smemResponder.getAttributeValues("color");
 
                 // System.out.println(smemResponder.retrieveAllAttributes());
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void initMoveCommandListenerObject() {
-        final SoarBeanOutputManager manager = new SoarBeanOutputManager(threadedAgent.getEvents());
-        final SoarBeanOutputHandler<Move> handler = new SoarBeanOutputHandler<Move>() {
+    // public void initMoveCommandListenerObject() {
+    // final SoarBeanOutputManager manager = new
+    // SoarBeanOutputManager(threadedAgent.getEvents());
+    // final SoarBeanOutputHandler<Move> handler = new SoarBeanOutputHandler<Move>()
+    // {
 
-            @Override
-            public void setExceptionHandler(SoarBeanExceptionHandler handler) {
-                super.setExceptionHandler(handler);
-            }
+    // @Override
+    // public void setExceptionHandler(SoarBeanExceptionHandler handler) {
+    // super.setExceptionHandler(handler);
+    // }
 
-            @Override
-            public void handleOutputCommand(SoarBeanOutputContext context, Move bean) {
-                // we can do something with bean.direction etc ...
-                // added other related command data that might be used elsewhere
+    // @Override
+    // public void handleOutputCommand(SoarBeanOutputContext context, Move bean) {
+    // System.out.println("XXXXXXXXXXXXXX handleOutputCommand ");
+    // // we can do something with bean.direction etc ...
+    // // added other related command data that might be used elsewhere
 
-                /*
-                 * -> Other ways of delaying the agent for UI updates:
-                 * 
-                 * int delay = 100; // number of milliseconds to sleep
-                 * long start = System.currentTimeMillis();
-                 * while(start >= System.currentTimeMillis() - delay); // do nothing
-                 * do {
-                 * } while (System.currentTimeMillis() < timestamp + timeInMilliSeconds);
-                 */
+    // /*
+    // * -> Other ways of delaying the agent for UI updates:
+    // *
+    // * int delay = 100; // number of milliseconds to sleep
+    // * long start = System.currentTimeMillis();
+    // * while(start >= System.currentTimeMillis() - delay); // do nothing
+    // * do {
+    // * } while (System.currentTimeMillis() < timestamp + timeInMilliSeconds);
+    // */
 
-                try {
-                    // utilise the agent thread to synchronized and make 100 milisecond pause before
-                    // every move. much more realistic ui
-                    synchronized (threadedAgent.getAgent()) {
-                        threadedAgent.getAgent().wait(100);
+    // try {
+    // // utilise the agent thread to synchronized and make 100 milisecond pause
+    // before
+    // // every move. much more realistic ui
+    // synchronized (threadedAgent.getAgent()) {
+    // threadedAgent.getAgent().wait(100);
 
-                        bean.setAttribute(context.getCommand().getAttribute());
-                        bean.setTimeTag(context.getCommand().getTimetag());
-                        bean.setChildren(context.getCommand().getChildren());
-                        bean.setIdentifier(context.getCommand().getIdentifier());
-                        bean.setPreference(context.getCommand().getPreferences());
-                        move = bean;
+    // bean.setAttribute(context.getCommand().getAttribute());
+    // bean.setTimeTag(context.getCommand().getTimetag());
+    // bean.setChildren(context.getCommand().getChildren());
+    // bean.setIdentifier(context.getCommand().getIdentifier());
+    // bean.setPreference(context.getCommand().getPreferences());
+    // move = bean;
 
-                        context.setStatus("complete");
+    // context.setStatus("complete");
 
-                        // notify the listers that are outside of the agent listening
-                        for (MoveListenerEvent listener : moveListeners) {
-                            listener.moveCompleted(bean, robot, RobotAgent.this);
+    // // notify the listers that are outside of the agent listening
+    // for (MoveListenerEvent listener : moveListeners) {
+    // listener.moveCompleted(bean, robot, RobotAgent.this);
 
-                            // Old way of calling area responder
-                            // areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
-                            // areaResponder.setLocaleInfo(qMemory, bean.getDirection(),
-                            // CellTypeEnum.NORMAL.getName());
-                            // areaResponder.updateOppositeCell(qMemory, bean.getDirection());
-                            // updateRobotMemory();
-                        }
-                    }
+    // // Old way of calling area responder
+    // // areaResponder.setFormerLocaleInfo(qMemory, CellTypeEnum.NONE.getName());
+    // // areaResponder.setLocaleInfo(qMemory, bean.getDirection(),
+    // // CellTypeEnum.NORMAL.getName());
+    // // areaResponder.updateOppositeCell(qMemory, bean.getDirection());
+    // // updateRobotMemory();
+    // }
+    // }
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    // } catch (InterruptedException e) {
+    // e.printStackTrace();
+    // }
 
-            }
-        };
-        manager.registerHandler("move", handler, Move.class);
-    }
+    // }
+    // };
+    // manager.registerHandler("move", handler, Move.class);
+    // }
 
-    public void initRadarCommandListenerObject() {
-        final SoarBeanOutputManager manager = new SoarBeanOutputManager(threadedAgent.getEvents());
-        final SoarBeanOutputHandler<Radar> handler = new SoarBeanOutputHandler<Radar>() {
+    // public void initRadarCommandListenerObject() {
+    //     final SoarBeanOutputManager manager = new SoarBeanOutputManager(threadedAgent.getEvents());
+    //     final SoarBeanOutputHandler<Radar> handler = new SoarBeanOutputHandler<Radar>() {
 
-            @Override
-            public void setExceptionHandler(SoarBeanExceptionHandler handler) {
-                super.setExceptionHandler(handler);
-            }
+    //         @Override
+    //         public void setExceptionHandler(SoarBeanExceptionHandler handler) {
+    //             super.setExceptionHandler(handler);
+    //         }
 
-            @Override
-            public void handleOutputCommand(SoarBeanOutputContext context, Radar bean) {
+    //         @Override
+    //         public void handleOutputCommand(SoarBeanOutputContext context, Radar bean) {
 
-                try {
-                    synchronized (threadedAgent.getAgent()) {
-                        // set the radar status only if there is battery otherwise it be set to off
-                        if (robot.getRadarBattery() > 0) {
-                            robot.setToggleRadar(bean.isToggleRadar());
-                        } else if (robot.getRadarBattery() <= 0) {
-                            robot.setToggleRadar(false);
-                        }
+    //             try {
+    //                 synchronized (threadedAgent.getAgent()) {
+    //                     // set the radar status only if there is battery otherwise it be set to off
+    //                     if (robot.getRadarBattery() > 0) {
+    //                         robot.setToggleRadar(bean.isToggleRadar());
+    //                     } else if (robot.getRadarBattery() <= 0) {
+    //                         robot.setToggleRadar(false);
+    //                     }
 
-                        context.setStatus("complete");
-                    }
+    //                     context.setStatus("complete");
+    //                 }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    //             } catch (Exception e) {
+    //                 e.printStackTrace();
+    //             }
 
-            }
-        };
-        manager.registerHandler("radar", handler, Radar.class);
-    }
+    //         }
+    //     };
+    //     manager.registerHandler("radar", handler, Radar.class);
+    // }
 
     // it will listen to specific commands upon remove/add. for example move command
-    private void initCommandListener(String commandNameToListen) {
-        OutputCommandManager outputManager = new OutputCommandManager(threadedAgent.getEvents());
-        OutputCommandHandler handler = new OutputCommandHandler() {
-            @Override
-            public void onCommandRemoved(String commandName, Identifier commandId) {
+    // private void initCommandListener(String commandNameToListen) {
+    // OutputCommandManager outputManager = new
+    // OutputCommandManager(threadedAgent.getEvents());
+    // OutputCommandHandler handler = new OutputCommandHandler() {
+    // @Override
+    // public void onCommandRemoved(String commandName, Identifier commandId) {
 
-            }
+    // }
 
-            @Override
-            public void onCommandAdded(String commandName, Identifier commandId) {
-                // area.view
-                removeMemoryPath("area.view");
+    // @Override
+    // public void onCommandAdded(String commandName, Identifier commandId) {
+    // // area.view
+    // removeMemoryPath("area.view");
 
-                // radar.live
-                removeMemoryPath(
-                        MemoryEnum.RADAR_BASE.getName() +
-                                UtilitiesEnum.DOTSEPERATOR.getName() +
-                                MemoryEnum.RADAR_LIVE.getName());
+    // // radar.live
+    // removeMemoryPath(
+    // MemoryEnum.RADAR_BASE.getName() +
+    // UtilitiesEnum.DOTSEPERATOR.getName() +
+    // MemoryEnum.RADAR_LIVE.getName());
 
-                // landmarks.landmark-a.path
-                robot.getWorld().getLandmarkMap().forEach((landmark, v) -> {
-                    removeMemoryPath(MemoryEnum.LANDMARK_MAIN.getName() +
-                            UtilitiesEnum.DOTSEPERATOR.getName() +
-                            MemoryEnum.LANDMARK_SUB.getName() +
-                            UtilitiesEnum.DASHSEPERATOR.getName() +
-                            landmark.getName() +
-                            UtilitiesEnum.DOTSEPERATOR.getName() +
-                            MemoryEnum.LANDMARK_PATH.getName());
-                });
+    // // landmarks.landmark-a.path
+    // robot.getWorld().getLandmarkMap().forEach((landmark, v) -> {
+    // removeMemoryPath(MemoryEnum.LANDMARK_MAIN.getName() +
+    // UtilitiesEnum.DOTSEPERATOR.getName() +
+    // MemoryEnum.LANDMARK_SUB.getName() +
+    // UtilitiesEnum.DASHSEPERATOR.getName() +
+    // landmark.getName() +
+    // UtilitiesEnum.DOTSEPERATOR.getName() +
+    // MemoryEnum.LANDMARK_PATH.getName());
+    // });
 
-            }
-        };
-        outputManager.registerHandler(commandNameToListen, handler);
-    }
+    // }
+    // };
+    // outputManager.registerHandler(commandNameToListen, handler);
+    // }
 
-    private void removeMemoryPath(String path) {
-        synchronized (qMemory) {
-            qMemory.remove(path);
-        }
-    }
+    // private void removeMemoryPath(String path) {
+    // synchronized (qMemory) {
+    // qMemory.remove(path);
+    // }
+    // }
 
     public Robot getRobot() {
         return robot;
@@ -325,6 +345,10 @@ public class RobotAgent {
 
     public void stop() {
         threadedAgent.stop();
+    }
+
+    public Set<MoveListenerEvent> getMoveListeners() {
+        return moveListeners;
     }
 
     public SemanticMemoryResponder getSmemResponder() {
