@@ -33,6 +33,7 @@ import org.jsoar.kernel.symbols.Identifier;
 import org.jsoar.runtime.ThreadedAgent;
 import org.jsoar.util.commands.SoarCommands;
 import org.jsoar.util.events.SoarEventManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,11 +47,13 @@ public class RobotAgent {
     private SemanticMemoryResponder smemResponder;
 
     public final SoarEventManager events = new SoarEventManager();
+
+    @Autowired
     private Move move;
 
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
-        move = new Move(); // this need to be initialised otherwise it will throw an error if we are
+        // move = new Move(); // this need to be initialised otherwise it will throw an error if we are
                            // setting values from other classes
         SoarQMemoryAdapter.attach(threadedAgent.getAgent(), getQMemory());
         new CycleCountInput(threadedAgent.getInputOutput());
@@ -104,8 +107,8 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
-            source = new
-            File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
+            // source = new
+            // File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
             // source = new
@@ -133,7 +136,7 @@ public class RobotAgent {
             // source = new
             // File(getClass().getResource("/rules/explore-map-radar_4.0_epmem.soar").toURI());
 
-            // source = new File(getClass().getResource("/rules/explore-map-radar_4.0_smem-epmem.soar").toURI());
+            source = new File(getClass().getResource("/rules/explore-map-radar_4.0_smem-epmem.soar").toURI());
 
             if (source != null) {
                 final Callable<Void> call = () -> {

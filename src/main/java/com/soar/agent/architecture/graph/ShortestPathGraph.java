@@ -123,7 +123,8 @@ public class ShortestPathGraph extends SwingWorker {
 
         List<String> tempDirectionList = new ArrayList<String>();
 
-        Robot robot = world.getRobots().get(0);
+        // Robot robot = world.getRobots().get(0);
+        Robot robot = world.getRobots().iterator().next();
         // int tempY = (int) agentNode.getAttribute("y");
         // int tempX = (int) agentNode.getAttribute("x");
 

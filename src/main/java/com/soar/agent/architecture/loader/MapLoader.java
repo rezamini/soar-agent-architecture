@@ -161,12 +161,15 @@ public class MapLoader {
                     // r.setYaw(Math.toRadians(180));
 
                     // robot.setName(Character.toString(c));
+
                     robot.move(cx, cy);
                     robot.setSpeed(0.5);
                     robot.setTurnRate(Math.toRadians(25));
+                    robot.setYaw(0);
 
                     world.addRobot(robot);
 
+                    System.out.println(world.getRobots().size());
                     mapMatrix[y][x] = 3;
 
                     // // complete matrix

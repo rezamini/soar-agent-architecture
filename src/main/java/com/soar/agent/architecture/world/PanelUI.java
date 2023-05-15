@@ -22,6 +22,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.*;
 import org.jsoar.debugger.util.SwingTools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.soar.agent.architecture.AppMain;
@@ -51,11 +53,11 @@ public class PanelUI extends JPanel {
     // @Autowired
     // private AppMain appMain;
 
-    private final JFrame mainFrame;
+    private JFrame mainFrame;
 
     @Autowired
     private World world;
-    private final JToolBar toolBar;
+    private JToolBar toolBar;
 
     private Map<String, RobotAgent> agents = new HashMap<String, RobotAgent>();
 
@@ -64,6 +66,12 @@ public class PanelUI extends JPanel {
     
     private NodeGraphUI graph;
     private ShortestPathGraphUI matrixGraph;
+
+    @Autowired
+    ApplicationContext context;
+    
+    @Autowired
+    DefaultListableBeanFactory beanFactory;
     
     public PanelUI() throws IOException {
         super(new BorderLayout());
@@ -353,9 +361,12 @@ public class PanelUI extends JPanel {
         mainFrame.setVisible(false);
         mainFrame.dispose();
 
-        // panelUI = new PanelUI();
-        initUI();
+        mapLoader.load(getClass().getResource("/map/map.txt"));
+        worldPanel.fit();
+        updateAgents();
 
+        initUI();
+        
         // jpanel
         revalidate();
         repaint();

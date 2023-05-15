@@ -4,6 +4,7 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import com.soar.agent.architecture.robot.Robot;
 public class World {
     public final SoarEventManager events = new SoarEventManager();
     public final Rectangle2D extents = new Rectangle2D.Double(-5.0, -5.0, 10.0, 10.0);
-    private final List<Robot> robots = new ArrayList<Robot>();
+    private final Set<Robot> robots = new HashSet<Robot>();
     private final List<Shape> obstacles = new ArrayList<Shape>();
     private final List<Landmark> landmarks = new ArrayList<Landmark>();
     private Map<String, Set<String>> smemAttributes = new HashMap<String, Set<String>>();
@@ -117,7 +118,7 @@ public class World {
         robots.remove(robot);
     }
 
-    public List<Robot> getRobots() {
+    public Set<Robot> getRobots() {
         return robots;
     }
 

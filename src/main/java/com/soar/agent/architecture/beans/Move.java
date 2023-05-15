@@ -6,7 +6,9 @@ import org.jsoar.kernel.memory.Preference;
 import org.jsoar.kernel.memory.Wme;
 import org.jsoar.kernel.symbols.Identifier;
 import org.jsoar.kernel.symbols.Symbol;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Move {
     //from the context of the listener
     public Symbol attribute;
