@@ -12,6 +12,8 @@ import org.jsoar.kernel.io.commands.OutputCommandManager;
 import org.jsoar.kernel.symbols.Identifier;
 import org.jsoar.util.events.SoarEvent;
 import org.jsoar.util.events.SoarEventListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.beans.Radar;
@@ -22,17 +24,20 @@ import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 
+@Service
 public class UtilityResponder extends UtilityListener {
-    private MemoryResponder memoryResponder;
-    private AreaResponder areaResponder;
 
+    @Autowired
     private Move move;
 
-    public UtilityResponder(RobotAgent robotAgent, Robot robot) {
-        super(robotAgent, robot);
+    @Autowired
+    public UtilityResponder(RobotAgent robotAgent, Robot robot, MemoryResponder memoryResponder,
+            AreaResponder areaResponder) {
+        super(robotAgent, robot, memoryResponder, areaResponder);
 
-        memoryResponder = new MemoryResponder(robot, robotAgent);
-        areaResponder = new AreaResponder(robot, robotAgent);
+        // memoryResponder = new MemoryResponder(robot, robotAgent);
+        // areaResponder = new AreaResponder(robot, robotAgent);
+        // move = new Move();
     }
 
     @Override
@@ -48,22 +53,27 @@ public class UtilityResponder extends UtilityListener {
         });
 
         robotAgent.getEvents().addListener(AreaResponder.class, event -> {
-            if (robotAgent.getMove() != null && robotAgent.getMove().getDirection() != null
-                    && !robotAgent.getMove().getDirection().equals("")) {
-                areaResponder.setFormerLocaleInfo(robotAgent.getQMemory(),
-                        CellTypeEnum.NONE.getName());
-                areaResponder.setLocaleInfo(robotAgent.getQMemory(),
-                        robotAgent.getMove().getDirection(),
-                        CellTypeEnum.NORMAL.getName());
-            }
+            areaResponder.updateAreaMemory();
+        });
 
-            // if (move != null && move.getDirection() != null
-            // && !move.getDirection().equals("")) {
+        robotAgent.getEvents().addListener(AreaResponder.class, event -> {
+            // if (robotAgent.getMove() != null && robotAgent.getMove().getDirection() !=
+            // null
+            // && !robotAgent.getMove().getDirection().equals("")) {
             // areaResponder.setFormerLocaleInfo(robotAgent.getQMemory(),
             // CellTypeEnum.NONE.getName());
-            // areaResponder.setLocaleInfo(robotAgent.getQMemory(), move.getDirection(),
+            // areaResponder.setLocaleInfo(robotAgent.getQMemory(),
+            // robotAgent.getMove().getDirection(),
             // CellTypeEnum.NORMAL.getName());
             // }
+
+            if (move != null && move.getDirection() != null
+                    && !move.getDirection().equals("")) {
+                areaResponder.setFormerLocaleInfo(robotAgent.getQMemory(),
+                        CellTypeEnum.NONE.getName());
+                areaResponder.setLocaleInfo(robotAgent.getQMemory(), move.getDirection(),
+                        CellTypeEnum.NORMAL.getName());
+            }
         });
     }
 
@@ -96,7 +106,8 @@ public class UtilityResponder extends UtilityListener {
                 // converted yaw which is the angle degree
                 DirectionEnum startingDirection = DirectionEnum.findByAngleDegree((int) Math.toDegrees(currentYaw));
 
-                robotAgent.getMove().setDirection(startingDirection.getName());
+                
+                move.setDirection(startingDirection.getName());
                 robotAgent.getEvents().fireEvent(areaResponder);
             }
         });
@@ -198,7 +209,6 @@ public class UtilityResponder extends UtilityListener {
 
             @Override
             public void handleOutputCommand(SoarBeanOutputContext context, Move bean) {
-                System.out.println("XXXXXXXXXXXXXX handleOutputCommand  ");
                 // we can do something with bean.direction etc ...
                 // added other related command data that might be used elsewhere
 
@@ -223,8 +233,10 @@ public class UtilityResponder extends UtilityListener {
                         bean.setChildren(context.getCommand().getChildren());
                         bean.setIdentifier(context.getCommand().getIdentifier());
                         bean.setPreference(context.getCommand().getPreferences());
+                        bean.setDirection(bean.getDirection());
                         // robotAgent.setMove(bean);
-                        move = bean;
+                        // move = bean;
+                        move.setDirection(bean.getDirection());
 
                         context.setStatus("complete");
 

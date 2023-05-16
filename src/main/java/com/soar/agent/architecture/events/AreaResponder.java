@@ -1,14 +1,18 @@
 package com.soar.agent.architecture.events;
 
 import org.jsoar.kernel.io.quick.QMemory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.soar.agent.architecture.enums.CellTypeEnum;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 
+@Service
 public class AreaResponder extends AreaListener {
 
+    @Autowired
     public AreaResponder(Robot robot, RobotAgent robotAgent) {
         super(robot, robotAgent);
         // updateSurroundingMemory();

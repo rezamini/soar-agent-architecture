@@ -7,9 +7,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
+
 import org.jsoar.kernel.io.quick.QMemory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.soar.agent.architecture.beans.Landmark;
+import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.beans.Radar;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.enums.MemoryEnum;
@@ -17,19 +22,18 @@ import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
 
+@Service
 public class MemoryResponder extends MemoryListener {
         private int landmarkCycleCount = 0;
 
         QMemory qMemory = robotAgent.getQMemory();
-        private AreaResponder areaResponder;
 
-        public MemoryResponder(Robot robot, RobotAgent robotAgent) {
-                super(robot, robotAgent);
-                areaResponder = new AreaResponder(robot, robotAgent);
+        @Autowired
+        private Move move;
 
-                robotAgent.getEvents().addListener(AreaResponder.class, event -> {
-                        areaResponder.updateAreaMemory();
-                });
+        @Autowired
+        public MemoryResponder(Robot robot, RobotAgent robotAgent, AreaResponder areaResponder) {
+                super(robot, robotAgent, areaResponder);
         }
 
         @Override
@@ -70,7 +74,8 @@ public class MemoryResponder extends MemoryListener {
 
                         // add and increment landmark-cycle-count here. it will reset to 0 later if
                         // landmark is reached.
-                        // qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(), String.valueOf(landmarkCycleCount++));
+                        // qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(),
+                        // String.valueOf(landmarkCycleCount++));
 
                         // areaResponder.updateAreaMemory();
                         robotAgent.getEvents().fireEvent(areaResponder);
@@ -105,34 +110,32 @@ public class MemoryResponder extends MemoryListener {
                                                 .stream()
                                                 .min(Comparator.comparing(entryValue -> entryValue.getValue().size()));
 
-                                // if (minLandmarkEntry.isPresent()) {
-                                //         boolean validShortestMove = robot.getWorld().validShortestPathMove(
-                                //                         minLandmarkEntry.get().getKey(),
-                                //                         landmarkCycleCount, robotAgent.getMove().getDirection());
+                                if (minLandmarkEntry.isPresent()) {
+                                        boolean validShortestMove = robot.getWorld().validShortestPathMove(
+                                                        minLandmarkEntry.get().getKey(),
+                                                        landmarkCycleCount, move.getDirection());
 
-                                //         // reset the landmark-cycle-count to 0 and update the shortest path if it was
-                                //         // not valid shortest path move
-                                //         if(!validShortestMove){
-                                //                 landmarkCycleCount = 0;
-                                //                 robot.getWorld().updateShortestPath();
-                                //         }   
-                                // }
+                                        // reset the landmark-cycle-count to 0 and update the shortest path if it was
+                                        // not valid shortest path move
+                                        if (!validShortestMove) {
+                                                landmarkCycleCount = 0;
+                                                robot.getWorld().updateShortestPath();
+                                        }
+                                }
 
-                                //check validity of the next shortest path
+                                // check validity of the next shortest path
                                 if (minLandmarkEntry.isPresent()) {
                                         boolean validShortestMove = robot.getWorld().validNextShortestPathMove(
                                                         robot,
                                                         minLandmarkEntry.get().getKey(),
                                                         landmarkCycleCount);
 
-                                        // System.out.println("XXXXXXXXXXXXXXXXXXXX VALID NEXT : " + validShortestMove);
-
                                         // reset the landmark-cycle-count to 0 and update the shortest path if it was
                                         // not a valid next upcoming move
-                                        if(!validShortestMove){
+                                        if (!validShortestMove) {
                                                 landmarkCycleCount = 0;
                                                 robot.getWorld().updateShortestPath();
-                                        }   
+                                        }
                                 }
 
                                 // create a sub landmark with the landmark name - [name of landmark]
@@ -514,7 +517,8 @@ public class MemoryResponder extends MemoryListener {
 
         private void updateLandmarkCycleCount() {
                 synchronized (qMemory) {
-                        qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(), String.valueOf(landmarkCycleCount++));
+                        qMemory.setString(MemoryEnum.LANDMARK_CYCLE_COUNT.getName(),
+                                        String.valueOf(landmarkCycleCount++));
                 }
         }
 

@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import com.soar.agent.architecture.AppMain;
 import com.soar.agent.architecture.events.MoveResponder;
+import com.soar.agent.architecture.events.UtilityResponder;
 import com.soar.agent.architecture.graph.NodeGraphUI;
 import com.soar.agent.architecture.graph.ShortestPathGraph;
 import com.soar.agent.architecture.graph.ShortestPathGraphUI;
@@ -49,6 +50,9 @@ public class PanelUI extends JPanel {
 
     @Autowired
     private RobotAgent robotAgent;
+
+    @Autowired
+    private UtilityResponder utilityResponder;
 
     // @Autowired
     // private AppMain appMain;
@@ -323,6 +327,7 @@ public class PanelUI extends JPanel {
                     e.printStackTrace();
                 }
 
+                utilityResponder.addAllListeners();
                 robotAgent.setRobot(robot);
                 agents.put(robot.getName(), robotAgent);
             }

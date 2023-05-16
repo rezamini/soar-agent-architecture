@@ -38,23 +38,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RobotAgent {
+    @Autowired
     private Robot robot;
+
     private final ThreadedAgent threadedAgent;
     private final QMemory qMemory = DefaultQMemory.create();
     private File source = null;
     private Set<MoveListenerEvent> moveListeners = new HashSet<MoveListenerEvent>();
 
-    private UtilityResponder utilityResponder;
-    private SemanticMemoryResponder smemResponder;
+    // private UtilityResponder utilityResponder;
+    // private SemanticMemoryResponder smemResponder;
 
     public final SoarEventManager events = new SoarEventManager();
 
-    @Autowired
-    private Move move;
+    // @Autowired
+    // private Move move;
 
-    public void setMove(Move move) {
-        this.move = move;
-    }
+    // public void setMove(Move move) {
+    //     this.move = move;
+    // }
 
     public RobotAgent() {
         this.threadedAgent = ThreadedAgent.create();
@@ -90,8 +92,8 @@ public class RobotAgent {
             // initCommandListener("move");
             // initListeners();
             // areaResponder = new AreaResponder(robot, this);
-            utilityResponder = new UtilityResponder(this, robot);
-            utilityResponder.addAllListeners();
+            // utilityResponder = new UtilityResponder(this, robot);
+            // utilityResponder.addAllListeners();
 
             threadedAgent.initialize(); // Do an init-soar
 
@@ -119,8 +121,8 @@ public class RobotAgent {
             // File(getClass().getResource("/rules/move-to-landmark-2.4.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0.soar").toURI());
-            // source = new
-            // File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
+            source = new
+            File(getClass().getResource("/rules/move-to-landmark-3.0_ShortPath.soar").toURI());
             // source = new
             // File(getClass().getResource("/rules/move-to-landmark-3.0-rl.soar").toURI());
             // source = new
@@ -148,7 +150,7 @@ public class RobotAgent {
             // source = new
             // File(getClass().getResource("/rules/explore-map-radar_4.0_epmem.soar").toURI());
 
-            source = new File(getClass().getResource("/rules/explore-map-radar_4.0_smem-epmem.soar").toURI());
+            // source = new File(getClass().getResource("/rules/explore-map-radar_4.0_smem-epmem.soar").toURI());
 
             if (source != null) {
                 final Callable<Void> call = () -> {
@@ -323,9 +325,9 @@ public class RobotAgent {
         return threadedAgent;
     }
 
-    public Move getMove() {
-        return move;
-    }
+    // public Move getMove() {
+    //     return move;
+    // }
 
     public SoarEventManager getEvents() {
         return events;
@@ -349,10 +351,6 @@ public class RobotAgent {
 
     public Set<MoveListenerEvent> getMoveListeners() {
         return moveListeners;
-    }
-
-    public SemanticMemoryResponder getSmemResponder() {
-        return smemResponder;
     }
 
     public synchronized void reInitialize() {
