@@ -32,8 +32,8 @@ public class MemoryResponder extends MemoryListener {
         private Move move;
 
         @Autowired
-        public MemoryResponder(Robot robot, RobotAgent robotAgent, AreaResponder areaResponder) {
-                super(robot, robotAgent, areaResponder);
+        public MemoryResponder(Robot robot, RobotAgent robotAgent) {
+                super(robot, robotAgent);
         }
 
         @Override
@@ -78,7 +78,7 @@ public class MemoryResponder extends MemoryListener {
                         // String.valueOf(landmarkCycleCount++));
 
                         // areaResponder.updateAreaMemory();
-                        robotAgent.getEvents().fireEvent(areaResponder);
+                        // robotAgent.getEvents().fireEvent(areaResponder);
 
                         // memory radar has to be called before memory landmarks.
                         updateMemoryRadar();

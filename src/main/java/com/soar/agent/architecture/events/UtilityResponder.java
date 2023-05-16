@@ -52,20 +52,12 @@ public class UtilityResponder extends UtilityListener {
             memoryResponder.updateRobotMemory();
         });
 
-        robotAgent.getEvents().addListener(AreaResponder.class, event -> {
-            areaResponder.updateAreaMemory();
-        });
+        // robotAgent.getEvents().addListener(AreaResponder.class, event -> {
+        //     areaResponder.updateAreaMemory();
+        // });
 
         robotAgent.getEvents().addListener(AreaResponder.class, event -> {
-            // if (robotAgent.getMove() != null && robotAgent.getMove().getDirection() !=
-            // null
-            // && !robotAgent.getMove().getDirection().equals("")) {
-            // areaResponder.setFormerLocaleInfo(robotAgent.getQMemory(),
-            // CellTypeEnum.NONE.getName());
-            // areaResponder.setLocaleInfo(robotAgent.getQMemory(),
-            // robotAgent.getMove().getDirection(),
-            // CellTypeEnum.NORMAL.getName());
-            // }
+            areaResponder.updateAreaMemory();
 
             if (move != null && move.getDirection() != null
                     && !move.getDirection().equals("")) {
@@ -83,6 +75,7 @@ public class UtilityResponder extends UtilityListener {
             @Override
             public void onEvent(SoarEvent event) {
                 robotAgent.getEvents().fireEvent(memoryResponder);
+                robotAgent.getEvents().fireEvent(areaResponder);
             }
         });
     }

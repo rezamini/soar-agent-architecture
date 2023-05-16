@@ -16,16 +16,15 @@ public class MoveResponder implements MoveListenerEvent{
     @Autowired
     private WorldPanel worldPanel;
 
-    @Autowired
-    private AreaResponder areaResponder;
+    // @Autowired
+    // private AreaResponder areaResponder;
     
     DirectionEnum currentDirection;
 
     @Override
-    @Autowired
     public void moveCompleted(Move move, Robot robot, RobotAgent robotAgent) {
         currentDirection = DirectionEnum.findByName(move.getDirection());
-        System.out.println("XXXXXXXXXXXXXXXX IN MOVE : "+move.getDirection());
+        
         if(currentDirection != null){
             robot.setYaw(Math.toRadians(currentDirection.getAngle()));
             robot.getWorld().updateAndMoveAgents(0);

@@ -8,5 +8,6 @@ import com.soar.agent.architecture.robot.RobotAgent;
 
 @Repository
 public interface MoveListenerEvent {
+
     void moveCompleted(Move move, Robot robot, RobotAgent robotAgent);
 }

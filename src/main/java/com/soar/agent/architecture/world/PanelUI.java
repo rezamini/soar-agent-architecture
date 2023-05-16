@@ -23,7 +23,10 @@ import java.awt.event.*;
 import org.jsoar.debugger.util.SwingTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.soar.agent.architecture.AppMain;
@@ -71,11 +74,14 @@ public class PanelUI extends JPanel {
     private NodeGraphUI graph;
     private ShortestPathGraphUI matrixGraph;
 
-    @Autowired
-    ApplicationContext context;
+    // @Autowired
+    // ApplicationContext context;
     
+    // @Autowired
+    // DefaultListableBeanFactory beanFactory;
+
     @Autowired
-    DefaultListableBeanFactory beanFactory;
+    private ConfigurableApplicationContext context; 
     
     public PanelUI() throws IOException {
         super(new BorderLayout());
@@ -366,11 +372,14 @@ public class PanelUI extends JPanel {
         mainFrame.setVisible(false);
         mainFrame.dispose();
 
-        mapLoader.load(getClass().getResource("/map/map.txt"));
-        worldPanel.fit();
-        updateAgents();
+        // mapLoader.load(getClass().getResource("/map/map.txt"));
+        // worldPanel.fit();
+        // updateAgents();
 
-        initUI();
+        // initUI();
+
+        restart();
+        
         
         // jpanel
         revalidate();
@@ -396,6 +405,29 @@ public class PanelUI extends JPanel {
 
         // close debugger if any instance is open
         closeDebugger();
+    }
+
+    void restart() {
+        Thread restartThread = new Thread(() -> {
+            try {
+                restartApp();
+            } catch (Exception e) {
+            }
+        });
+        restartThread.setDaemon(false);
+        restartThread.start();
+    }
+
+    private void restartApp(){
+        // close previous context
+        context.close();
+
+        // ApplicationArguments args = context.getBean(ApplicationArguments.class);
+
+        //build a new one
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(AppMain.class);
+        builder.headless(false);
+        context = builder.run();
     }
 
     public void openDebugger() {

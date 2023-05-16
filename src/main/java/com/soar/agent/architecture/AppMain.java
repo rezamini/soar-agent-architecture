@@ -53,7 +53,7 @@ public class AppMain {
         // if this is not set on some sytems the UI icons or images might be blury and
         // upscaled.
         System.setProperty("sun.java2d.uiScale", "1.0");
-
+        
         // try {
         // panelUI = new PanelUI(new AppMain());
         // panelUI = new PanelUI();

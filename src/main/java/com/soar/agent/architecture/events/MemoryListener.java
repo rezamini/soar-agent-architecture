@@ -15,12 +15,12 @@ import com.soar.agent.architecture.robot.RobotAgent;
 public abstract class MemoryListener implements SoarEvent{
     public final RobotAgent robotAgent;
     public final Robot robot;
-    public AreaResponder areaResponder;
+    // public AreaResponder areaResponder;
 
-    public MemoryListener(Robot robot, RobotAgent robotAgent, AreaResponder areaResponder){
+    public MemoryListener(Robot robot, RobotAgent robotAgent){
         this.robot = robot;
         this.robotAgent = robotAgent;
-        this.areaResponder = areaResponder;
+        // this.areaResponder = areaResponder;
     }
 
     public abstract void updateRobotMemory();
