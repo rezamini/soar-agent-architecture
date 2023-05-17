@@ -164,7 +164,7 @@ public class WorldPanel extends JPanel {
         Ellipse2D firstWheel = new Ellipse2D.Double(-r + 0.2, -r - 0.2, 0.3, 0.3);
         Ellipse2D secondWheel = new Ellipse2D.Double(-r + 1, -r - 0.2, 0.3, 0.3);
         Rectangle2D.Double roof = new Rectangle2D.Double(-r + 0.2, -r + 0.6, r * robot.getWidthMultiplier() / 1.5,
-                r * robot.getHeightMultiplier() / 2);
+                r * (robot.getHeightMultiplier() - 0.35) / 2);
 
         drawCar(g2d, body, firstWheel, secondWheel, roof, Color.YELLOW, Color.BLACK);
 

@@ -40,7 +40,7 @@ sp {propose*move-to-landmark
    (<area-view> ^<computed-path>.type <cell-type>)
 -->
 # (write (crlf) |<move-index>-| <move-index> (crlf) | : |  <landmarks>)
-   (<s> ^operator <o> + = )
+   (<s> ^operator <o> + > )
    (<o> ^name move-to-landmark
         ^landmark <landmark>
         ^direction-command <computed-path>
