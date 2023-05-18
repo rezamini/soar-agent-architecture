@@ -33,8 +33,13 @@ public class MapLoader {
     @Autowired
     private Robot robot;
 
-    private final Color LANDMARK_BASE_COLOR = Color.ORANGE;
-    private final String LANDMARK_BASE_COLOR_NAME = "orange";
+    // private final Color LANDMARK_BASE_COLOR = Color.ORANGE;
+    // private final String LANDMARK_BASE_COLOR_NAME = "orange";
+
+    private final List<Color> LANDMARK_BASE_COLOR_LIST = new ArrayList<Color>(Arrays.asList(Color.ORANGE, Color.BLUE, Color.GREEN, Color.CYAN));
+    private final List<String> LANDMARK_BASE_COLOR_NAME_LIST = new ArrayList<String>(Arrays.asList("orange", "blue", "green", "cyan"));
+    private int colorIndex = 0;
+
     private final double CELL_SIZE = 2.0;
 
     /*
@@ -130,8 +135,16 @@ public class MapLoader {
                     // System.out.println(field.getName());
                     // }
                     // }
+
+                    if(colorIndex >= LANDMARK_BASE_COLOR_NAME_LIST.size() ){
+                        colorIndex = 0;
+                    }
+
                     Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy),
-                            LANDMARK_BASE_COLOR, LANDMARK_BASE_COLOR_NAME);
+                            LANDMARK_BASE_COLOR_LIST.get(colorIndex), LANDMARK_BASE_COLOR_NAME_LIST.get(0));
+                    
+                    colorIndex++;
+
                     world.addLandmark(landmark);
                     world.addLandmarkMap(landmark, false);
 

@@ -348,7 +348,17 @@ sp {apply*operator*remove-command
 #    (<s> ^epmem-checked <epmem-checked> -)}  
 
 sp {state*goal*reached
-   (state <s> ^io.input-link.landmarks.status inactive )
+   (state <s> ^io.input-link.landmarks.status inactive
+              ^epmem-checked true )
+   -->
+   (write | All Landmarks Reached !! |)
+   (halt)}
+
+sp {state*goal*reached2
+   (state <s> ^io.input-link.landmarks.status inactive
+              ^io.input-link.landmarks.total <total-landmarks>
+              ^io.input-link.radar.landmarks.total <radar-total-landmarks> <total-landmarks>
+              -^epmem-checked true )
    -->
    (write | All Landmarks Explored !! |)
    (halt)}

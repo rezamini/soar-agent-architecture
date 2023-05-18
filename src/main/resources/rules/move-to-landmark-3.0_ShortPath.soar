@@ -40,7 +40,7 @@ sp {propose*move-to-landmark
    (<area-view> ^<computed-path>.type <cell-type>)
 -->
 # (write (crlf) |<move-index>-| <move-index> (crlf) | : |  <landmarks>)
-   (<s> ^operator <o> + > )
+   (<s> ^operator <o> + = )
    (<o> ^name move-to-landmark
         ^landmark <landmark>
         ^direction-command <computed-path>
@@ -163,6 +163,14 @@ sp {select*move-to-landmark*pick-original-landmark-direction
 -->
 (<s> ^operator <o1> > )}
 
+sp {select*move-to-landmark*select-move-to-landmark-over-others
+    (state <s> ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-to-landmark
+          ^cell-type << normal none >> )
+    (<o2> ^name move-random )
+-->
+(<s> ^operator <o1> > <o2> )}
 
 sp {select*move-to-landmark*pick-prefer-directions-over-others-if-landmark-block
     (state <s> ^operator <o1> + 

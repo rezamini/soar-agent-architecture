@@ -452,6 +452,8 @@ public class World {
                     for(Entry<String, Set<String>> entry: smemAttributes.entrySet()){
                         if(entry.getKey().contains("color")){
                             if(smemAttributes.get(entry.getKey()).contains(landmark.getColorName().toLowerCase())){
+                                System.out.println("Checked and validated the landmark detection with [" + landmark.getName().toUpperCase() + "] color attribute from Semantic Memory.");
+                                System.out.println(landmark.getColorName().toLowerCase());
                                 detectedRadarLandmarks.put(landmark, true);
                                 
                             }
