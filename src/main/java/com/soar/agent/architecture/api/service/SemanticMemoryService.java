@@ -51,6 +51,8 @@ public class SemanticMemoryService implements SemanticMemoryRepository {
     public void saveSemanticMemoryAttributes(SemanticMemoryEntity semanticMemoryEntity) {
         semanticMemoryResponder.manuallyEnableDB();
         semanticMemoryResponder.addSemanticKnowledge(semanticMemoryEntity);
+
+        getSemanticMemoryAttributes();
     }
 
 }

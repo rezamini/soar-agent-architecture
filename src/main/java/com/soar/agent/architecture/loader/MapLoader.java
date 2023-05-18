@@ -141,7 +141,7 @@ public class MapLoader {
                     }
 
                     Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy),
-                            LANDMARK_BASE_COLOR_LIST.get(colorIndex), LANDMARK_BASE_COLOR_NAME_LIST.get(0));
+                            LANDMARK_BASE_COLOR_LIST.get(colorIndex), LANDMARK_BASE_COLOR_NAME_LIST.get(colorIndex));
                     
                     colorIndex++;
 
