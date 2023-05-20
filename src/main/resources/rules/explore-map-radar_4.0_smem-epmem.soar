@@ -125,7 +125,7 @@ sp {propose*move-forward
               ^io.input-link.area.locale.direction <current-direction>
               ^io.input-link.self.pose <e> )
    (<area-view> ^<current-direction>.type block
-                ^<turn-direction>.type normal )
+                ^<turn-direction>.type << normal none >> )
 -->
    (<s> ^operator <o> + =)
    (<o> ^name turn 
