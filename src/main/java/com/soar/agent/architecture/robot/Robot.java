@@ -423,16 +423,14 @@ public class Robot {
     }
 
     private Path2D createTempAgentShape(double newX, double newY, double dx, double dy, double angle) {
-        newX = newX + dx;
-        newY = newY + dy;
+        newX = newX + (dx ) / 2;
+        newY = newY + (dy ) / 2;
 
         Rectangle2D rect = new Rectangle2D.Double();
-        // subtracting 0.1 is to make it slightly smaller so the tight edges and
-        // situations will be passed
-        // and if used for collision it will not be so strict
-        // rect.setFrameFromCenter(newX, newY, newX + shapeWidth - 0.1, newY + shapeHeight - 0.1);
-        rect.setFrameFromCenter(newX, newY, newX + shapeWidth / 2, newY + shapeHeight / 2);
-
+        rect.setFrameFromCenter(newX, newY, newX + (shapeWidth + 0.3) / 2, newY + ( shapeHeight + 0.3) / 2);
+        
+        // rect.setFrameFromCenter(newX, newY, newX + shapeWidth / 2, newY + shapeHeight / 2);
+        // rect.setFrameFromCenter(newX, newY, newX + shapeWidth - 0.1, newY + shapeHeight - 0.1);;
         AffineTransform transform = new AffineTransform();
         transform.rotate(angle, rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
 
