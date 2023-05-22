@@ -41,7 +41,7 @@ public class Robot {
     private boolean toggleRadar;
     private double batteryDeduction = 0.1;
     private DecimalFormat batteryDecimalFormat = new DecimalFormat("0.#");
-    private Path2D tempShape = new Path2D.Double();
+    private Path2D tempShape = new Path2D.Double();;
 
     public Robot() {
         radarBattery = 100;
@@ -104,10 +104,11 @@ public class Robot {
         final double newY = shape.getCenterY() + dy;
 
         // double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
-        Path2D tempAgentShape = createTempAgentShape(newX, newY, dx, dy, yaw);
+        Path2D tempAgentShape = createTempAgentShape(newX, newY, dx, dy, yaw, true);
 
         if (!world.willCollide(this, newX, newY, tempAgentShape)) {
             move(newX, newY);
+            // tempShape = new Path2D.Double();
             tempShape = tempAgentShape;
 
             updateMapMatrix(newX, newY);
@@ -166,8 +167,8 @@ public class Robot {
 
     public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy, Path2D tempAgentShape) {
 
-        int agentMatrixX = (int) Math.round(tempAgentShape.getBounds().getCenterX() - 1);
-        int agentMatrixY = (int) Math.round(tempAgentShape.getBounds().getCenterY() - 1);
+        int agentMatrixX = (int) Math.round(tempAgentShape.getBounds().getCenterX() );
+        int agentMatrixY = (int) Math.round(tempAgentShape.getBounds().getCenterY() );
         int agentMatrixX2 = (int) Math.round(agentMatrixX + dx + dx);
         int agentMatrixY2 = (int) Math.round(agentMatrixY + dy + dy);
 
@@ -181,8 +182,7 @@ public class Robot {
         // places without looping the entire map if required
         world.setAgentMapMatrixX2(agentMatrixX);
         world.setAgentMapMatrixY2(agentMatrixY);
-        world.setSecondAgentMapMatrixX2(agentMatrixX2);
-        world.setSecondAgentMapMatrixY2(agentMatrixY2);
+
 
         // update the agent location on the map matrix
         int[][] currentMapMatrix = world.getCompleteMapMatrix();
@@ -199,7 +199,13 @@ public class Robot {
         }
 
         currentMapMatrix[agentMatrixY][agentMatrixX] = 3;
-        currentMapMatrix[agentMatrixY2][agentMatrixX2] = 3;
+
+        if(agentMatrixY2 < currentMapMatrix.length && agentMatrixX2 < currentMapMatrix[agentMatrixY2].length){
+            currentMapMatrix[agentMatrixY2][agentMatrixX2] = 3;
+            world.setSecondAgentMapMatrixX2(agentMatrixX2);
+            world.setSecondAgentMapMatrixY2(agentMatrixY2);
+        }
+        
 
         // int toFillX = 0;
         // int fromFillX = (int) Math.round(newX);
@@ -347,9 +353,10 @@ public class Robot {
         double newX = centerX + dx;
         double newY = centerY + dy;
 
-        Path2D tempAgentShape = createTempAgentShape(newX, newY, dx, dy, tempNewLocationYaw);
+        Path2D tempAgentShape = createTempAgentShape(newX, newY, dx, dy, tempNewLocationYaw, false);
 
-        // if(currentDirection.getName().equalsIgnoreCase("northeast")){
+        // if(currentDirection.getName().equalsIgnoreCase("east") && tempShape == null){
+        //     tempShape = new Path2D.Double();
         // tempShape = tempAgentShape;
         // }
 
@@ -377,7 +384,7 @@ public class Robot {
         final double newY = shape.getCenterY() + dy;
 
         double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
-        Path2D tempAgentShape = createTempAgentShape(newX, newY, dx, dy, tempYaw);
+        Path2D tempAgentShape = createTempAgentShape(newX, newY , dx, dy, tempYaw, false);
 
         // check to see if it will collide in every enum direction that is passed
         // throught this method
@@ -422,12 +429,17 @@ public class Robot {
         }
     }
 
-    private Path2D createTempAgentShape(double newX, double newY, double dx, double dy, double angle) {
-        newX = newX + (dx ) / 2;
-        newY = newY + (dy ) / 2;
+    private Path2D createTempAgentShape(double newX, double newY, double dx, double dy, double angle, boolean centerPosition) {  
+        
+        if(centerPosition){
+            newX = newX + dx / 2;
+            newY = newY + dy / 2;
+        }
+
+        
 
         Rectangle2D rect = new Rectangle2D.Double();
-        rect.setFrameFromCenter(newX, newY, newX + (shapeWidth + 0.3) / 2, newY + ( shapeHeight + 0.3) / 2);
+        rect.setFrameFromCenter(newX, newY, newX + (shapeWidth  + 0.3) / 2, newY + ( shapeHeight + 0.3 ) / 2);
         
         // rect.setFrameFromCenter(newX, newY, newX + shapeWidth / 2, newY + shapeHeight / 2);
         // rect.setFrameFromCenter(newX, newY, newX + shapeWidth - 0.1, newY + shapeHeight - 0.1);;
