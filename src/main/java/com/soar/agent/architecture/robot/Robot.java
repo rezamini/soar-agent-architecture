@@ -109,7 +109,7 @@ public class Robot {
         if (!world.willCollide(this, newX, newY, tempAgentShape)) {
             move(newX, newY);
             // tempShape = new Path2D.Double();
-            tempShape = tempAgentShape;
+            // tempShape = tempAgentShape;
 
             updateMapMatrix(newX, newY);
             updateCompleteMapMatrix(newX, newY, dx, dy, tempAgentShape);
@@ -166,13 +166,15 @@ public class Robot {
     }
 
     public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy, Path2D tempAgentShape) {
+        newX = newX - 2.0 / 2.0;
+        newY = newY - 2.0 / 2.0;
+        // int column = (int) Math.round(tempAgentShape.getBounds().getCenterX() - 1);
+        // int row = (int) Math.round(tempAgentShape.getBounds().getCenterY() - 1);
+        int column = (int) Math.round(newX );
+        int row = (int) Math.round(newY );
+        int column2 = (int) Math.round(column + dx + dx);
+        int row2 = (int) Math.round(row + dy + dy);
 
-        int agentMatrixX = (int) Math.round(tempAgentShape.getBounds().getCenterX() );
-        int agentMatrixY = (int) Math.round(tempAgentShape.getBounds().getCenterY() );
-        int agentMatrixX2 = (int) Math.round(agentMatrixX + dx + dx);
-        int agentMatrixY2 = (int) Math.round(agentMatrixY + dy + dy);
-
-        
         // int agentMatrixX = (int) tempAgentShape.getBounds().getCenterX() ;
         // int agentMatrixY = (int) tempAgentShape.getBounds().getCenterY();
         // int agentMatrixX2 = (int) (agentMatrixX + dx + dx);
@@ -180,9 +182,8 @@ public class Robot {
 
         // set the agent matrix location on a separate field that could be used in other
         // places without looping the entire map if required
-        world.setAgentMapMatrixX2(agentMatrixX);
-        world.setAgentMapMatrixY2(agentMatrixY);
-
+        world.setAgentMapMatrixX2(column);
+        world.setAgentMapMatrixY2(row);
 
         // update the agent location on the map matrix
         int[][] currentMapMatrix = world.getCompleteMapMatrix();
@@ -198,14 +199,14 @@ public class Robot {
             }
         }
 
-        currentMapMatrix[agentMatrixY][agentMatrixX] = 3;
+        currentMapMatrix[row][column] = 3;
 
-        if(agentMatrixY2 < currentMapMatrix.length && agentMatrixX2 < currentMapMatrix[agentMatrixY2].length){
-            currentMapMatrix[agentMatrixY2][agentMatrixX2] = 3;
-            world.setSecondAgentMapMatrixX2(agentMatrixX2);
-            world.setSecondAgentMapMatrixY2(agentMatrixY2);
+        if (row2 >= 0 && row2 < currentMapMatrix.length &&
+                column2 >= 0 && column2 < currentMapMatrix[row2].length) {
+            currentMapMatrix[row2][column2] = 3;
+            world.setSecondAgentMapMatrixX2(column2);
+            world.setSecondAgentMapMatrixY2(row2);
         }
-        
 
         // int toFillX = 0;
         // int fromFillX = (int) Math.round(newX);
@@ -356,7 +357,7 @@ public class Robot {
         Path2D tempAgentShape = createTempAgentShape(newX, newY, dx, dy, tempNewLocationYaw, false);
 
         // if(currentDirection.getName().equalsIgnoreCase("east") && tempShape == null){
-        //     tempShape = new Path2D.Double();
+        // tempShape = new Path2D.Double();
         // tempShape = tempAgentShape;
         // }
 
@@ -384,7 +385,11 @@ public class Robot {
         final double newY = shape.getCenterY() + dy;
 
         double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
-        Path2D tempAgentShape = createTempAgentShape(newX, newY , dx, dy, tempYaw, false);
+        Path2D tempAgentShape = createTempAgentShape(newX, newY , dx, dy, tempYaw, true);
+
+        // if(currentDirection.getName().equalsIgnoreCase("north")){
+        //     tempShape = tempAgentShape;
+        // }
 
         // check to see if it will collide in every enum direction that is passed
         // throught this method
@@ -429,20 +434,21 @@ public class Robot {
         }
     }
 
-    private Path2D createTempAgentShape(double newX, double newY, double dx, double dy, double angle, boolean centerPosition) {  
-        
-        if(centerPosition){
+    private Path2D createTempAgentShape(double newX, double newY, double dx, double dy, double angle,
+            boolean centerPosition) {
+
+        if (centerPosition) {
             newX = newX + dx / 2;
             newY = newY + dy / 2;
         }
 
-        
-
         Rectangle2D rect = new Rectangle2D.Double();
-        rect.setFrameFromCenter(newX, newY, newX + (shapeWidth  + 0.3) / 2, newY + ( shapeHeight + 0.3 ) / 2);
+        rect.setFrameFromCenter(newX, newY, newX + (shapeWidth + 0.3) / 2, newY + (shapeHeight + 0.3) / 2);
+
+        // rect.setFrameFromCenter(newX, newY, newX + shapeWidth / 2, newY + shapeHeight
+        // / 2);
+        // rect.setFrameFromCenter(newX, newY, newX + shapeWidth - 0.1, newY + shapeHeight - 0.1);
         
-        // rect.setFrameFromCenter(newX, newY, newX + shapeWidth / 2, newY + shapeHeight / 2);
-        // rect.setFrameFromCenter(newX, newY, newX + shapeWidth - 0.1, newY + shapeHeight - 0.1);;
         AffineTransform transform = new AffineTransform();
         transform.rotate(angle, rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
 
@@ -526,7 +532,7 @@ public class Robot {
         return name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
