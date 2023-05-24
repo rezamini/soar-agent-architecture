@@ -186,15 +186,15 @@ public class MapLoader {
                     mapMatrix[y][x] = 3;
 
                     // complete matrix
-                    // completeMapMatrix[(int) cy][(int) cx] = 3;
-                    // completeMapMatrix[(int) ((int) cy)][(int) ((int) cx + robot.getSpeed() * 2)] = 3;
+                    completeMapMatrix[(int) cy][(int) cx] = 3;
+                    completeMapMatrix[(int) ((int) cy)][(int) ((int) cx + robot.getSpeed() * 2)] = 3;
 
-                    double xMatrix = cx - CELL_SIZE / 2.0;
-                    double yMatrix = cy - CELL_SIZE / 2.0;
+                    // double xMatrix = cx - CELL_SIZE / 2.0;
+                    // double yMatrix = cy - CELL_SIZE / 2.0;
 
-                    // // complete matrix
-                    completeMapMatrix[(int) yMatrix][(int) xMatrix] = 3;
-                    completeMapMatrix[(int) ((int) yMatrix)][(int) ((int) xMatrix + robot.getSpeed() * 2)] = 3;
+                    // // // complete matrix
+                    // completeMapMatrix[(int) yMatrix][(int) xMatrix] = 3;
+                    // completeMapMatrix[(int) ((int) yMatrix)][(int) ((int) xMatrix + robot.getSpeed() * 2)] = 3;
                 }
             }
         }

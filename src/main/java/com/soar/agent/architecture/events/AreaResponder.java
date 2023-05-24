@@ -27,10 +27,10 @@ public class AreaResponder extends AreaListener {
         // qMemory.setString("area.view.type", "none");
         String type = CellTypeEnum.NORMAL.getName();
 
-        DirectionEnum updatedCellEnum = updateOppositeCell(qMemory);
+        // DirectionEnum updatedCellEnum = updateOppositeCell(qMemory);
 
         for (DirectionEnum directionEnum : DirectionEnum.values()) {
-            if(directionEnum.equals(updatedCellEnum)) continue;
+            // if(directionEnum.equals(updatedCellEnum)) continue;
 
             synchronized (qMemory) {
                 // call robot to get surrounding directions with tempYaw

@@ -166,8 +166,8 @@ public class Robot {
     }
 
     public void updateCompleteMapMatrix(double newX, double newY, double dx, double dy, Path2D tempAgentShape) {
-        newX = newX - 2.0 / 2.0;
-        newY = newY - 2.0 / 2.0;
+        // newX = newX * 2.0 + 2.0 / 2.0;
+        // newY = newY * 2.0 + 2.0 / 2.0;
         // int column = (int) Math.round(tempAgentShape.getBounds().getCenterX() - 1);
         // int row = (int) Math.round(tempAgentShape.getBounds().getCenterY() - 1);
         int column = (int) Math.round(newX);
@@ -351,21 +351,22 @@ public class Robot {
         double centerX = currentShape != null ? currentShape.getBounds().getCenterX() : shape.getCenterX();
         double centerY = currentShape != null ? currentShape.getBounds().getCenterY() : shape.getCenterY();
 
-        double newX = centerX + dx ;
-        double newY = centerY + dy ;
+        double newX = centerX + dx;
+        double newY = centerY + dy;
 
-        Path2D tempAgentShape = createTempAgentShape(newX + dx, newY + dy, tempNewLocationYaw);
+        Path2D tempAgentShapeForCollision = createTempAgentShape(newX + dx, newY + dy, tempNewLocationYaw);
+        Path2D tempAgentShapeForTracking = createTempAgentShape(newX, newY, tempNewLocationYaw);
 
-        // if(currentDirection.getName().equalsIgnoreCase("east") && tempShape == null){
+        // if(currentDirection.getName().equalsIgnoreCase("northwest")){
         // tempShape = new Path2D.Double();
-        // tempShape = tempAgentShape;
+        // tempShape = tempAgentShapeForCollision;
         // }
 
         // check to see if it will collide in every enum direction that is passed
         // throught this method
-        boolean isObstacle = world.willCollide(this, newX, newY, tempAgentShape);
-
-        result.put(tempAgentShape, isObstacle);
+        boolean isObstacle = world.willCollide(this, newX, newY, tempAgentShapeForCollision);
+        
+        result.put(tempAgentShapeForTracking, isObstacle);
         return result;
     }
 
@@ -387,9 +388,7 @@ public class Robot {
         double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
         Path2D tempAgentShape = createTempAgentShape(newX, newY, tempYaw);
 
-        // if (currentDirection.getName().equalsIgnoreCase("east")) {
-        //     System.out.println(
-        //             "XXXXXXXXXXXXX NEWX : " + newX + " : temp shape : " + tempAgentShape.getBounds2D().getCenterX() + " : agent position : "+shape.getCenterX());
+        // if (currentDirection.getName().equalsIgnoreCase("northwest")) {
         //     tempShape = tempAgentShape;
         // }
 
