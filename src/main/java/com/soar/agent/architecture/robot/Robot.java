@@ -104,7 +104,7 @@ public class Robot {
         final double newY = shape.getCenterY() + dy;
 
         // double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
-        Path2D tempAgentShape = createTempAgentShape(newX, newY, dx, dy, yaw, true);
+        Path2D tempAgentShape = createTempAgentShape(newX, newY , yaw);
 
         if (!world.willCollide(this, newX, newY, tempAgentShape)) {
             move(newX, newY);
@@ -170,8 +170,8 @@ public class Robot {
         newY = newY - 2.0 / 2.0;
         // int column = (int) Math.round(tempAgentShape.getBounds().getCenterX() - 1);
         // int row = (int) Math.round(tempAgentShape.getBounds().getCenterY() - 1);
-        int column = (int) Math.round(newX );
-        int row = (int) Math.round(newY );
+        int column = (int) Math.round(newX);
+        int row = (int) Math.round(newY);
         int column2 = (int) Math.round(column + dx + dx);
         int row2 = (int) Math.round(row + dy + dy);
 
@@ -351,10 +351,10 @@ public class Robot {
         double centerX = currentShape != null ? currentShape.getBounds().getCenterX() : shape.getCenterX();
         double centerY = currentShape != null ? currentShape.getBounds().getCenterY() : shape.getCenterY();
 
-        double newX = centerX + dx;
-        double newY = centerY + dy;
+        double newX = centerX + dx ;
+        double newY = centerY + dy ;
 
-        Path2D tempAgentShape = createTempAgentShape(newX, newY, dx, dy, tempNewLocationYaw, false);
+        Path2D tempAgentShape = createTempAgentShape(newX + dx, newY + dy, tempNewLocationYaw);
 
         // if(currentDirection.getName().equalsIgnoreCase("east") && tempShape == null){
         // tempShape = new Path2D.Double();
@@ -381,13 +381,15 @@ public class Robot {
         final double dx = Math.round(Math.cos(tempYaw)) * speed;
         final double dy = Math.round(Math.sin(tempYaw)) * speed;
 
-        final double newX = shape.getCenterX() + dx;
-        final double newY = shape.getCenterY() + dy;
+        final double newX = shape.getCenterX() + dx + dx;
+        final double newY = shape.getCenterY() + dy + dy;
 
         double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
-        Path2D tempAgentShape = createTempAgentShape(newX, newY , dx, dy, tempYaw, true);
+        Path2D tempAgentShape = createTempAgentShape(newX, newY, tempYaw);
 
-        // if(currentDirection.getName().equalsIgnoreCase("north")){
+        // if (currentDirection.getName().equalsIgnoreCase("east")) {
+        //     System.out.println(
+        //             "XXXXXXXXXXXXX NEWX : " + newX + " : temp shape : " + tempAgentShape.getBounds2D().getCenterX() + " : agent position : "+shape.getCenterX());
         //     tempShape = tempAgentShape;
         // }
 
@@ -434,21 +436,24 @@ public class Robot {
         }
     }
 
-    private Path2D createTempAgentShape(double newX, double newY, double dx, double dy, double angle,
-            boolean centerPosition) {
+    private Path2D createTempAgentShape(double newX, double newY, double angle) {
 
-        if (centerPosition) {
-            newX = newX + dx / 2;
-            newY = newY + dy / 2;
-        }
+        // newX = newX - shapeWidth / 2;
+        // newY = newY - shapeHeight / 2;
+
+        // Rectangle2D rect = new Rectangle2D.Double(newX, newY, shapeWidth, shapeHeight);
 
         Rectangle2D rect = new Rectangle2D.Double();
-        rect.setFrameFromCenter(newX, newY, newX + (shapeWidth + 0.3) / 2, newY + (shapeHeight + 0.3) / 2);
+        rect.setFrameFromCenter(newX, newY, newX + (shapeWidth + 0.3) / 2.0, newY + (shapeHeight + 0.3) / 2.0);
+
+        // rect.setFrameFromCenter(newX, newY, newX + (shapeWidth ) / 2, newY +
+        // (shapeHeight ) / 2);
 
         // rect.setFrameFromCenter(newX, newY, newX + shapeWidth / 2, newY + shapeHeight
         // / 2);
-        // rect.setFrameFromCenter(newX, newY, newX + shapeWidth - 0.1, newY + shapeHeight - 0.1);
-        
+        // rect.setFrameFromCenter(newX, newY, newX + shapeWidth - 0.1, newY +
+        // shapeHeight - 0.1);
+
         AffineTransform transform = new AffineTransform();
         transform.rotate(angle, rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
 
