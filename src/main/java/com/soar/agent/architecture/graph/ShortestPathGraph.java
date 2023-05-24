@@ -129,40 +129,34 @@ public class ShortestPathGraph extends SwingWorker {
         // int tempX = (int) agentNode.getAttribute("x");
 
         // get the first index which is the agent position
-        double tempY = ((Number) paths.get(0).getAttribute("y")).doubleValue();
-        double tempX = ((Number) paths.get(0).getAttribute("x")).doubleValue();
+        // double tempY = ((Number) paths.get(0).getAttribute("y")).doubleValue();
+        // double tempX = ((Number) paths.get(0).getAttribute("x")).doubleValue();
 
         // remove the first index from the computed path which is the agent current
         // position
         // we have a temp copy above for direction calculation
-        paths.remove(0);
+        // paths.remove(0);
 
         int totalDirections = (int) (paths.size() / robot.getSpeed());
         int pathMultiplier = totalDirections / paths.size();
         Path2D tempAgentShape = null;
 
-        for (int i = 0; i < paths.size(); i++) {
-
-            String[] tempArr = new String[(int) pathMultiplier];
-
+        for (int i = 0; i < paths.size() - 1; i++) {
+            Node current = paths.get(i);
+            Node next = paths.get(i + 1);
             String direction = "";
-            Node path = paths.get(i);
 
-            // set the previous node as temp node
-            // this is to compare every two nodes together.
-            if (i > 0) {
-                tempY = ((Number) paths.get(i - 1).getAttribute("y")).doubleValue();
-                tempX = ((Number) paths.get(i - 1).getAttribute("x")).doubleValue();
-            }
+            double currentY = ((Number) current.getAttribute("y")).doubleValue();
+            double currentX = ((Number) current.getAttribute("x")).doubleValue();
 
-            int targetY = ((Number) path.getAttribute("y")).intValue();
-            int targetX = ((Number) path.getAttribute("x")).intValue();
+            int nextY = ((Number) next.getAttribute("y")).intValue();
+            int nextX = ((Number) next.getAttribute("x")).intValue();
 
-            direction += tempY < targetY ? DirectionEnum.NORTH.getName()
-                    : tempY > targetY ? DirectionEnum.SOUTH.getName() : "";
+            direction += currentY < nextY ? DirectionEnum.NORTH.getName()
+                    : currentY > nextY ? DirectionEnum.SOUTH.getName() : "";
 
-            direction += tempX < targetX ? DirectionEnum.EAST.getName()
-                    : tempX > targetX ? DirectionEnum.WEST.getName() : "";
+            direction += currentX < nextX ? DirectionEnum.EAST.getName()
+                    : currentX > nextX ? DirectionEnum.WEST.getName() : "";
 
             for (int j = 0; j < pathMultiplier; j++) {
 
@@ -173,7 +167,7 @@ public class ShortestPathGraph extends SwingWorker {
                 if (!isObstacle) {
                     tempAgentShape = (Path2D) tempResult.entrySet().iterator().next().getKey().clone();
                     tempDirectionList.add(direction);
-                } 
+                }
             }
 
             // Arrays.fill(tempArr, 0, tempArr.length, direction);
