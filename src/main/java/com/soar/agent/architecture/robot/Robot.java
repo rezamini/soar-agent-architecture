@@ -170,8 +170,8 @@ public class Robot {
         // newY = newY * 2.0 + 2.0 / 2.0;
         // int column = (int) Math.round(tempAgentShape.getBounds().getCenterX() - 1);
         // int row = (int) Math.round(tempAgentShape.getBounds().getCenterY() - 1);
-        int column = (int) Math.round(newX);
-        int row = (int) Math.round(newY);
+        int column = (int) Math.round(newX -1);
+        int row = (int) Math.round(newY-1);
         int column2 = (int) Math.round(column + dx + dx);
         int row2 = (int) Math.round(row + dy + dy);
 
