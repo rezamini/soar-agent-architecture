@@ -69,7 +69,8 @@ sp {apply*move
    (<o> ^name { <name> << move-to-landmark move-random >> }
         ^direction-command <dir>)
 -->
-   (<ol> ^move.direction <dir>)} 
+   (<ol> ^move.direction <dir>
+         ^radar.toggleRadar off )} 
 
 
 sp {apply*move*remove-move
@@ -78,7 +79,8 @@ sp {apply*move*remove-move
    (<ol> ^move <direction>)
    (<direction> ^status complete)
 -->
-   (<ol> ^move <direction> -)}
+   (<ol> ^move <direction> -
+         ^radar <radar> - )}
 
 sp {apply*move*create*current-landmark-name
    (state <s> ^operator <o>)
