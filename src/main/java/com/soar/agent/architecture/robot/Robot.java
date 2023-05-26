@@ -104,7 +104,7 @@ public class Robot {
         final double newY = shape.getCenterY() + dy;
 
         // double[] dimensions = calcAgentDimensionsForDirection(dx, dy);
-        Path2D tempAgentShape = createTempAgentShape(newX, newY , yaw);
+        Path2D tempAgentShape = createTempAgentShape(newX + dx, newY + dy, yaw);
 
         if (!world.willCollide(this, newX, newY, tempAgentShape)) {
             move(newX, newY);

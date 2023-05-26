@@ -36,8 +36,10 @@ public class MapLoader {
     // private final Color LANDMARK_BASE_COLOR = Color.ORANGE;
     // private final String LANDMARK_BASE_COLOR_NAME = "orange";
 
-    private final List<Color> LANDMARK_BASE_COLOR_LIST = new ArrayList<Color>(Arrays.asList(Color.ORANGE, Color.BLUE, Color.GREEN, Color.CYAN));
-    private final List<String> LANDMARK_BASE_COLOR_NAME_LIST = new ArrayList<String>(Arrays.asList("orange", "blue", "green", "cyan"));
+    private final List<Color> LANDMARK_BASE_COLOR_LIST = new ArrayList<Color>(
+            Arrays.asList(Color.ORANGE, Color.BLUE, Color.GREEN, Color.CYAN));
+    private final List<String> LANDMARK_BASE_COLOR_NAME_LIST = new ArrayList<String>(
+            Arrays.asList("orange", "blue", "green", "cyan"));
     private int colorIndex = 0;
 
     private final double CELL_SIZE = 2.0;
@@ -136,13 +138,13 @@ public class MapLoader {
                     // }
                     // }
 
-                    if(colorIndex >= LANDMARK_BASE_COLOR_NAME_LIST.size() ){
+                    if (colorIndex >= LANDMARK_BASE_COLOR_NAME_LIST.size()) {
                         colorIndex = 0;
                     }
 
                     Landmark landmark = new Landmark(Character.toString(c), new Point2D.Double(cx, cy),
                             LANDMARK_BASE_COLOR_LIST.get(colorIndex), LANDMARK_BASE_COLOR_NAME_LIST.get(colorIndex));
-                    
+
                     colorIndex++;
 
                     world.addLandmark(landmark);
@@ -153,13 +155,12 @@ public class MapLoader {
                     // double xMatrix = cx;
                     // double yMatrix = cy;
                     // if (x == 0) {
-                    //     cx = cx - CELL_SIZE / 2.0;
+                    // cx = cx - CELL_SIZE / 2.0;
                     // }
 
                     // if (y == 0) {
-                    //     cy = cy - CELL_SIZE / 2.0;
+                    // cy = cy - CELL_SIZE / 2.0;
                     // }
-
 
                     completeMapMatrix[(int) cy - 1][(int) cx - 1] = 2;
                 }
@@ -194,15 +195,18 @@ public class MapLoader {
                     cy = cy - 1;
                     cx = cx - 1;
 
-                    completeMapMatrix[(int) cy ][(int) cx ] = 3;
-                    completeMapMatrix[(int) cy][(int) ((int) (cx + robot.getSpeed() * 2) >=  completeMapMatrix.length ? (cx - robot.getSpeed() * 2) : (cx + robot.getSpeed() * 2))] = 3;
+                    completeMapMatrix[(int) cy][(int) cx] = 3;
+                    completeMapMatrix[(int) cy][(int) ((int) (cx + robot.getSpeed() * 2) >= completeMapMatrix.length
+                            ? (cx - robot.getSpeed() * 2)
+                            : (cx + robot.getSpeed() * 2))] = 3;
 
                     // double xMatrix = cx - CELL_SIZE / 2.0;
                     // double yMatrix = cy - CELL_SIZE / 2.0;
 
                     // // // complete matrix
                     // completeMapMatrix[(int) yMatrix][(int) xMatrix] = 3;
-                    // completeMapMatrix[(int) ((int) yMatrix)][(int) ((int) xMatrix + robot.getSpeed() * 2)] = 3;
+                    // completeMapMatrix[(int) ((int) yMatrix)][(int) ((int) xMatrix +
+                    // robot.getSpeed() * 2)] = 3;
                 }
             }
         }
@@ -220,8 +224,25 @@ public class MapLoader {
             i++;
         }
 
-        double w = (i - start) * CELL_SIZE;
-        world.addObstacle(new Rectangle2D.Double(start * CELL_SIZE, y * CELL_SIZE, w, CELL_SIZE));
+        // start and end of obstacle rectangle
+        double startX = start;
+        double endX = i;
+
+        // smooth the start of the rectangle
+        if (startX > 0) {
+            startX = startX + 0.2;
+        }
+
+        // smooth the end of the rectangle
+        if (endX != line.length()) {
+            endX = endX - 0.2;
+        }
+
+        double w = (endX - startX) * CELL_SIZE;
+        world.addObstacle(new Rectangle2D.Double(startX * CELL_SIZE, y * CELL_SIZE, w, CELL_SIZE - 0.2)); // smooth the
+                                                                                                          // height of
+                                                                                                          // the
+                                                                                                          // rectangle
 
         // complete matrix
         int tempStart = (int) (start == 0 ? 0 : (start * CELL_SIZE));
@@ -238,7 +259,7 @@ public class MapLoader {
         if (tempEnd > completeMapMatrix[0].length - 1) {
             tempEnd = (int) (tempEnd - CELL_SIZE / 2.0);
         }
-        
+
         double firsCY = y * CELL_SIZE + CELL_SIZE / 2.0;
         double secondCY = (y - 1) * CELL_SIZE + CELL_SIZE / 2.0;
         double thirdCY = (y) * CELL_SIZE;
@@ -258,7 +279,10 @@ public class MapLoader {
             max = Math.max(max, line.length());
             lines.add(line);
             line = reader.readLine();
+
+
         }
+        
         Collections.reverse(lines);
 
         maxLine.value = max;
