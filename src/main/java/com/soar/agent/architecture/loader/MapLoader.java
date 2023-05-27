@@ -7,15 +7,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.URL;
-import java.text.Format.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
 
 import org.jsoar.util.ByRef;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +28,6 @@ public class MapLoader {
 
     @Autowired
     private Robot robot;
-
-    // private final Color LANDMARK_BASE_COLOR = Color.ORANGE;
-    // private final String LANDMARK_BASE_COLOR_NAME = "orange";
 
     private final List<Color> LANDMARK_BASE_COLOR_LIST = new ArrayList<Color>(
             Arrays.asList(Color.ORANGE, Color.BLUE, Color.GREEN, Color.CYAN));
@@ -53,14 +46,6 @@ public class MapLoader {
      */
     private int[][] mapMatrix;
     private int[][] completeMapMatrix;
-
-    // public static class Result {
-    // public final World world;
-
-    // public Result(World world) {
-    // this.world = world;
-    // }
-    // }
 
     public World load(URL url) throws IOException {
         final InputStream in = url.openStream();
@@ -102,7 +87,6 @@ public class MapLoader {
         world.setCompleteMapMatrix(completeMapMatrix);
 
         return world;
-        // return new Result(world);
     }
 
     private void readObstacles(World world, String[] lines) {
