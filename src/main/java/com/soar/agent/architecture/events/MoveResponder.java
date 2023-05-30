@@ -3,7 +3,6 @@ package com.soar.agent.architecture.events;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.soar.agent.architecture.AppMain;
 import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.robot.Robot;
@@ -15,9 +14,6 @@ public class MoveResponder implements MoveListenerEvent{
 
     @Autowired
     private WorldPanel worldPanel;
-
-    // @Autowired
-    // private AreaResponder areaResponder;
     
     DirectionEnum currentDirection;
 

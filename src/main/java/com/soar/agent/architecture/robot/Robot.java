@@ -29,14 +29,11 @@ public class Robot {
     public final double shapeHeight = shapeStartingPoint * heightMultiplier;
     public final Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4, shapeWidth, shapeHeight);
     private double yaw;
-    private double tempYaw; // for checking agent temp surrounding
     private double speed;
     private double turnRate;
-    // public final double radius = shape.getWidth() * shape.getHeight() +
     public final double shapeArea = shapeWidth * shapeHeight;
     public Radar[] ranges;
     private Path2D shapeRadar = new Path2D.Double();
-
     private double radarBattery;
     private boolean toggleRadar;
     private double batteryDeduction = 0.1;
@@ -370,7 +367,7 @@ public class Robot {
     }
 
     public boolean tempUpdate(double dt, DirectionEnum currentDirection) {
-        tempYaw = Math.toRadians(currentDirection.getAngle());
+        double tempYaw = Math.toRadians(currentDirection.getAngle());
         tempYaw += dt * turnRate;
 
         while (tempYaw < 0.0)
@@ -612,10 +609,6 @@ public class Robot {
 
     public void setShapeRadar(Path2D shapeRadar) {
         this.shapeRadar = shapeRadar;
-    }
-
-    public double getTempYaw() {
-        return tempYaw;
     }
 
     public Path2D getTempShape() {
