@@ -49,11 +49,14 @@ sp {propose*move-to-landmark
 
 
 sp {propose*move-random
-   (state <s> ^io.input-link.self.pose <e>
+   (state <s> ^io.input-link.landmarks.<landmarks> <landmark>
+              ^io.input-link.self.pose <e>
               ^io.input-link.area.<view> <v-directions> 
               ^io.input-link.landmarks.status 
                { <landmarks-status> <> inactive } )
     (<e> ^x <x> ^y <y>)
+    (<landmark> ^path <shortest-path> )
+    -(<shortest-path> ^|0| here )
     (<v-directions> ^ { << north northeast northwest east west south southeast southwest >> <n-dir> } )
     (<v-directions> ^<n-dir>.type <> block )
     
