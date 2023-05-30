@@ -99,7 +99,7 @@ public class AreaResponder extends AreaListener {
             currentDirectionOpposite = DirectionEnum.getOppositeDirection(DirectionEnum.findByName(formerDirection));
 
             if (currentDirectionOpposite.getName() != null) {
-                setViewMemory(qMemory, currentDirectionOpposite.getName(), CellTypeEnum.NONE.getName(), false);
+                setViewMemory(qMemory, currentDirectionOpposite.getName(), CellTypeEnum.NORMAL.getName(), false);
             }
         }
         return currentDirectionOpposite;

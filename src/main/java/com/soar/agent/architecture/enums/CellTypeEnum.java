@@ -1,7 +1,6 @@
 package com.soar.agent.architecture.enums;
 
 public enum CellTypeEnum {
-    NONE("none"),
     NORMAL("normal"),
     BLOCK("block");
 

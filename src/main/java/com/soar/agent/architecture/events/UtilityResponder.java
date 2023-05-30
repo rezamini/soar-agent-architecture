@@ -62,7 +62,7 @@ public class UtilityResponder extends UtilityListener {
             if (move != null && move.getDirection() != null
                     && !move.getDirection().equals("")) {
                 areaResponder.setFormerLocaleInfo(robotAgent.getQMemory(),
-                        CellTypeEnum.NONE.getName());
+                        CellTypeEnum.NORMAL.getName());
                 areaResponder.setLocaleInfo(robotAgent.getQMemory(), move.getDirection(),
                         CellTypeEnum.NORMAL.getName());
             }
