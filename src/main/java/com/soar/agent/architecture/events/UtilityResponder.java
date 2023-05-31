@@ -23,6 +23,7 @@ import com.soar.agent.architecture.enums.MemoryEnum;
 import com.soar.agent.architecture.enums.UtilitiesEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
+import com.soar.agent.architecture.world.WorldPanel;
 
 @Service
 public class UtilityResponder extends UtilityListener {
@@ -32,8 +33,8 @@ public class UtilityResponder extends UtilityListener {
 
     @Autowired
     public UtilityResponder(RobotAgent robotAgent, Robot robot, MemoryResponder memoryResponder,
-            AreaResponder areaResponder) {
-        super(robotAgent, robot, memoryResponder, areaResponder);
+            AreaResponder areaResponder, WorldPanel worldPanel) {
+        super(robotAgent, robot, memoryResponder, areaResponder, worldPanel);
 
         // memoryResponder = new MemoryResponder(robot, robotAgent);
         // areaResponder = new AreaResponder(robot, robotAgent);
@@ -76,6 +77,7 @@ public class UtilityResponder extends UtilityListener {
             public void onEvent(SoarEvent event) {
                 robotAgent.getEvents().fireEvent(memoryResponder);
                 robotAgent.getEvents().fireEvent(areaResponder);
+                worldPanel.repaint();
             }
         });
     }

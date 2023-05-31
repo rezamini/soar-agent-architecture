@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
+import com.soar.agent.architecture.world.WorldPanel;
 
 @Repository
 public abstract class UtilityListener implements SoarEvent {
@@ -11,13 +12,15 @@ public abstract class UtilityListener implements SoarEvent {
     public final Robot robot;
     public MemoryResponder memoryResponder;
     public AreaResponder areaResponder;
+    public WorldPanel worldPanel;
     
 
-    public UtilityListener(RobotAgent robotAgent, Robot robot, MemoryResponder memoryResponder, AreaResponder areaResponder){
+    public UtilityListener(RobotAgent robotAgent, Robot robot, MemoryResponder memoryResponder, AreaResponder areaResponder, WorldPanel worldPanel){
         this.robotAgent = robotAgent;
         this.robot = robot;
         this.memoryResponder = memoryResponder;
         this.areaResponder = areaResponder;
+        this.worldPanel = worldPanel;
     }
     public abstract void addAllListeners();
 

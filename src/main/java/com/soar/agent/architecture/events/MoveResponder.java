@@ -12,8 +12,8 @@ import com.soar.agent.architecture.world.WorldPanel;
 @Service
 public class MoveResponder implements MoveListenerEvent{
 
-    @Autowired
-    private WorldPanel worldPanel;
+    // @Autowired
+    // private WorldPanel worldPanel;
     
     DirectionEnum currentDirection;
 
@@ -25,7 +25,7 @@ public class MoveResponder implements MoveListenerEvent{
             robot.setYaw(Math.toRadians(currentDirection.getAngle()));
             robot.getWorld().updateAndMoveAgents(0);
     
-            worldPanel.repaint();
+            // worldPanel.repaint();
 
             // robotAgent.getEvents().fireEvent(areaResponder);
             
