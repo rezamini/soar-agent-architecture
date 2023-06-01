@@ -45,9 +45,32 @@ epmem --init
 
 #exclude pre-set constant variables
 epmem --set exclusions preferable-turn-directions
+epmem --set exclusions directions
 epmem --set exclusions opposite
 epmem --set exclusions prefer
 epmem --set exclusions value
+
+# sp {smem*store*preferable-turn-directions
+#   (state <s> ^superstate nil)
+# --> 
+#    (write (crlf) |======= smem store directions ========|)
+#    (cmd smem --add 
+#    |
+#    (<ss> ^directions <n> <s> <e> <w> <ne> <nw> <sw> <se> ) 
+   
+#    (<n> ^value north ^opposite south ^prefer north northeast northwest) 
+#    (<ne> ^value northeast ^opposite southwest ^prefer northeast east north) 
+#    (<nw> ^value northwest ^opposite southeast ^prefer northwest west north)
+
+#    (<s> ^value south ^opposite north ^prefer south southeast southwest)
+#    (<sw> ^value southwest ^opposite northeast ^prefer southwest south west)
+#    (<se> ^value southeast ^opposite northwest ^prefer southeast south east)
+
+#    (<e> ^value east ^opposite west ^prefer east northeast southeast)
+#    (<w> ^value west ^opposite east ^prefer west northwest southwest)
+#    | 
+#    )
+# }
 
 # sp {smem*store*preferable-turn-directions
 #   (state <s> ^superstate nil)
@@ -182,7 +205,8 @@ sp {smem*query
    (write (crlf) |======= SMEM query started ========| <l-dir>)
    (<sc> ^query <cue>)
    (<cue> ^value <l-dir> )
-   (<cue> ^prefer <anyvalue> )
+   (<cue> ^prefer <any-prefer-value> )
+   (<cue> ^opposite <any-opposite-value> )
 }
 
 sp {apply*query-epmem-check-total-landmarks
@@ -305,12 +329,12 @@ sp {select*turn*pick-prefered-turn-directions
                 ^smem.result.retrieved <smem-retrieved>)
                 
     (<smem-retrieved> ^value <current-direction>
-        ^prefer <prefer-direction> )
+        ^prefer <prefer-direction>
+        ^opposite <opposite-direction> )
     (<o1> ^name turn
             ^actions.move.direction <prefer-direction> )
-    
 -->
-(write (crlf) |======= operator selected based on Semantic Memory(SMEM) data ========| <smem-retrieved> )
+(write (crlf) |======= operator selected based on Semantic Memory(SMEM) data first condition========| <smem-retrieved> )
 (<s> ^operator <o1> > )}
 
 
