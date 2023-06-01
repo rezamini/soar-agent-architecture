@@ -1,5 +1,6 @@
 package com.soar.agent.architecture.events;
 
+import org.jsoar.kernel.SoarProperties;
 import org.jsoar.kernel.io.quick.QMemory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,9 +133,20 @@ public class AreaResponder extends AreaListener {
     // }
 
     public String setFormerLocaleInfo(QMemory qMemory, String formerType) {
-        String formerDirection;
+        String formerDirection = null;
+
+        //get the cycle count, this cycle count at this stage is 1 cycle behind what is in the qmemory
+        Long cycleCount = robotAgent.getThreadedAgent().getProperties().get(SoarProperties.D_CYCLE_COUNT);
+        
         synchronized (qMemory) {
-            formerDirection = qMemory.getString(getAreaSubMemoryPath("locale", null, "direction"));
+
+            // at the start of program it doesnt update the former direction and type and only set to to blank values
+            if(cycleCount == 0){
+                formerType = "";
+                formerDirection = "";
+            }else{
+                formerDirection = qMemory.getString(getAreaSubMemoryPath("locale", null, "direction"));
+            }
             // String formerType = qMemory.getString(getAreaSubMemoryPath("view",
             // formerDirection, "type"));
 
