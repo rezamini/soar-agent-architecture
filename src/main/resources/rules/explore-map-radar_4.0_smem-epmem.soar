@@ -332,10 +332,44 @@ sp {select*turn*pick-prefered-turn-directions
         ^prefer <prefer-direction>
         ^opposite <opposite-direction> )
     (<o1> ^name turn
-            ^actions.move.direction <prefer-direction> )
+          ^actions.move.direction <prefer-direction>
+          ^actions.move.direction <> <opposite-direction> )
 -->
-(write (crlf) |======= operator selected based on Semantic Memory(SMEM) data first condition========| <smem-retrieved> )
+(write (crlf) |======= operator selected based on Semantic Memory(SMEM) data first condition ========| <smem-retrieved> )
 (<s> ^operator <o1> > )}
+
+sp {select*turn*do-not-select-opposite-turn-direction
+    (state <s> ^operator <o1> + 
+               ^operator <o2> + 
+                ^io.input-link.area.locale.direction <current-direction> 
+                ^smem.result.success <smem-result>
+                ^smem.result.retrieved <smem-retrieved>)
+                
+    (<smem-retrieved> ^value <current-direction>
+        ^prefer <prefer-direction>
+        ^opposite <opposite-direction> )
+   (<o1> ^name turn
+          ^actions.move.direction <> <opposite-direction> )
+    (<o2> ^name turn
+          ^actions.move.direction <opposite-direction>)
+
+-->
+(write (crlf) |======= operator selected based on Semantic Memory(SMEM) data second condition ========| <smem-retrieved> )
+(<s> ^operator <o1> > <o2> )}
+
+# sp {select*turn*reject-opposite-turn-direction
+#     (state <s> ^operator <o1> + 
+#                 ^io.input-link.area.locale.direction <current-direction> 
+#                 ^smem.result.success <smem-result>
+#                 ^smem.result.retrieved <smem-retrieved>)
+                
+#     (<smem-retrieved> ^value <current-direction>
+#         ^prefer <prefer-direction>
+#         ^opposite <opposite-direction> )
+#     (<o1> ^name turn
+#             ^actions.move.direction <opposite-direction>)
+# -->
+# (<s> ^operator <o1> - )}
 
 
 #create and remove output action commands
