@@ -457,11 +457,14 @@ public class World {
                                 detectedRadarLandmarks.put(landmark, true);
                                 
                             }
+                        }else{
+                            //smem color attributes doesnt exists so rely on landmark object within the range
+                            detectedRadarLandmarks.put(landmark, true);
                         }
                     }
 
                 }else{
-                    //smem attrivutes doesnt exists so rely on landmark object within the range
+                    //smem attributes doesnt exists so rely on landmark object within the range
                     detectedRadarLandmarks.put(landmark, true);
                 }
                 
