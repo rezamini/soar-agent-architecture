@@ -164,7 +164,7 @@ public class MapLoader {
                     // r.setYaw(Math.toRadians(180));
 
                     // robot.setName(Character.toString(c));
-
+                    
                     robot.move(cx, cy);
                     robot.setSpeed(0.5);
                     robot.setTurnRate(Math.toRadians(25));
@@ -180,7 +180,7 @@ public class MapLoader {
                     cx = cx - 1;
 
                     completeMapMatrix[(int) cy][(int) cx] = 3;
-                    completeMapMatrix[(int) cy][(int) ((int) (cx + robot.getSpeed() * 2) >= completeMapMatrix.length
+                    completeMapMatrix[(int) cy][(int) ((int) (cx + robot.getSpeed() * 2) >= completeMapMatrix[(int) cy].length
                             ? (cx - robot.getSpeed() * 2)
                             : (cx + robot.getSpeed() * 2))] = 3;
 
