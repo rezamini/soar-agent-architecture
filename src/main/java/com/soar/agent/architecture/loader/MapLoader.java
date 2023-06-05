@@ -165,6 +165,12 @@ public class MapLoader {
 
                     // robot.setName(Character.toString(c));
                     
+                    //for instances if the agent is in the edge modify so the agent doesnt look its outside the main frame
+                    if(x == line.length() - 1){
+                        //0.5 similar to speed
+                        cx = cx - 0.5;
+                    }
+
                     robot.move(cx, cy);
                     robot.setSpeed(0.5);
                     robot.setTurnRate(Math.toRadians(25));
