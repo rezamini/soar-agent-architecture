@@ -298,33 +298,6 @@ public class Robot {
         world.setCompleteMapMatrix(currentMapMatrix);
     }
 
-    // public Map<Path2D, Boolean> tempNewLocationUpdate2(DirectionEnum
-    // currentDirection, double x, double y) {
-    // Map<Path2D, Boolean> result = new HashMap<Path2D, Boolean>();
-
-    // double tempNewLocationYaw = Math.toRadians(currentDirection.getAngle());
-
-    // while (tempNewLocationYaw < 0.0)
-    // tempNewLocationYaw += 2.0 * Math.PI;
-    // while (tempNewLocationYaw > 2.0 * Math.PI)
-    // tempNewLocationYaw -= 2.0 * Math.PI;
-
-    // double dx = Math.round(Math.cos(tempNewLocationYaw)) * speed;
-    // double dy = Math.round(Math.sin(tempNewLocationYaw)) * speed;
-
-    // double newX = x + dx;
-    // double newY = y + dy;
-
-    // Path2D tempAgentShape = createTempAgentShape(newX, newY, tempNewLocationYaw);
-
-    // // check to see if it will collide in every enum direction that is passed
-    // // throught this method
-    // boolean isObstacle = world.willCollide(this, newX, newY, tempAgentShape);
-
-    // result.put(tempAgentShape, isObstacle);
-    // return result;
-    // }
-
     // * This is temporary making a new agent at a new location and checks if it
     // hits an obstacle at that location. it could be used to get back the temporary
     // agent shape and send it back in order to calculate the new position with
@@ -474,44 +447,6 @@ public class Robot {
         Path2D tempAgentShape = new Path2D.Double(rect, transform);
 
         return tempAgentShape;
-    }
-
-    /*
-     * Calculate the agent width and height based on the new direction which is
-     * caluculated in new dx and dy
-     */
-    private double[] calcAgentDimensionsForDirection(double dx, double dy) {
-        double result[] = new double[2];
-
-        double agentWidth = 0;
-        double agentHeight = 0;
-        // (dx > 0 && dy > 0)
-
-        // left or right
-        if ((dx > 0 || dx < 0) && dy == 0) {
-            agentWidth = shapeWidth;
-            agentHeight = shapeHeight;
-
-            // up or down
-        } else if ((dy > 0 || dy < 0) && dx == 0) {
-            agentHeight = shapeWidth;
-            agentWidth = shapeHeight;
-
-            // top right || top left
-        } else if ((dx > 0 && dy > 0) || (dx < 0 && dy > 0)) {
-            agentWidth = shapeHeight + 0.1;
-            agentHeight = shapeWidth + 0.1;
-
-            // bottom right || bottom left
-        } else if ((dx > 0 && dy < 0) || (dx < 0 && dy < 0)) {
-            agentWidth = shapeHeight + 0.1;
-            agentHeight = shapeWidth + 0.1;
-        }
-
-        result[0] = agentWidth - 0.1;
-        result[1] = agentHeight - 0.1;
-
-        return result;
     }
 
     public Path2D calcShapeRadar(double agentX, double agentY, double radarRange) {
