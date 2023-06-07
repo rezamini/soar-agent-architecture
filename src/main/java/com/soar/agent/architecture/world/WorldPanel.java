@@ -169,7 +169,8 @@ public class WorldPanel extends JPanel {
         drawCar(g2d, body, firstWheel, secondWheel, roof, Color.YELLOW, Color.BLACK);
 
         //for testing purposes of shapes only
-        // drawShape(g2dIn, robot.getTempShape(), Color.YELLOW, Color.BLACK);
+        // drawShape(g2dIn, robot.getTempShape2(), Color.RED, Color.RED);
+        // drawShape(g2dIn, robot.getTempShape(), Color.BLUE, Color.BLUE);
 
         final double dirR = r / 4.0;
         // final double dirR = r / 5.0;

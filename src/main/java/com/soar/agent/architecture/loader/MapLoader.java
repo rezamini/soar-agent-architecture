@@ -172,7 +172,7 @@ public class MapLoader {
                         cx = cx - 0.5;
                     }
 
-                    robot.move(cx, cy);
+                    robot.move(cx, cy, null);
                     robot.setSpeed(0.5);
                     robot.setTurnRate(Math.toRadians(25));
                     robot.setYaw(0);

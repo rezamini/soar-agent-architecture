@@ -27,7 +27,7 @@ public class Robot {
     public final double shapeStartingPoint = 0.4;
     public final double shapeWidth = shapeStartingPoint * widthMultiplier;
     public final double shapeHeight = shapeStartingPoint * heightMultiplier;
-    public final Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4, shapeWidth, shapeHeight);
+    public Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4, shapeWidth, shapeHeight);
     private double yaw;
     private double speed;
     private double turnRate;
@@ -38,7 +38,8 @@ public class Robot {
     private boolean toggleRadar;
     private double batteryDeduction = 0.1;
     private DecimalFormat batteryDecimalFormat = new DecimalFormat("0.#");
-    private Path2D tempShape = new Path2D.Double();;
+    private Rectangle2D tempShape2 = new Rectangle2D.Double();
+    private Path2D tempShape = new Path2D.Double();
 
     public Robot() {
         radarBattery = 100;
@@ -64,9 +65,15 @@ public class Robot {
         ranges[0].setRadarRange(0);
     }
 
-    public void move(double newX, double newY) {
+    public void move(double newX, double newY, Path2D simulatedShape) {
         // shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
-        shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
+
+        if(simulatedShape == null){
+            shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
+        }else{
+            shape = simulatedShape.getBounds2D();
+        }
+        
 
         // calc radar range and data in order to have radar data such as "live" at the
         // beginning of agent phase
@@ -103,7 +110,7 @@ public class Robot {
         Path2D tempAgentShape = createTempAgentShape(newX + dx, newY + dy, yaw);
 
         if (!world.willCollide(this, newX, newY, tempAgentShape)) {
-            move(newX, newY);
+            move(newX, newY, tempAgentShape);
             // tempShape = new Path2D.Double();
             // tempShape = tempAgentShape;
 
@@ -552,5 +559,13 @@ public class Robot {
 
     public void setTempShape(Path2D tempShape) {
         this.tempShape = tempShape;
+    }
+
+    public Rectangle2D getTempShape2() {
+        return tempShape2;
+    }
+
+    public void setTempShape2(Rectangle2D tempShape2) {
+        this.tempShape2 = tempShape2;
     }
 }
