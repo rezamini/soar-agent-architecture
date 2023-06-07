@@ -164,10 +164,11 @@ public class MapLoader {
                     // r.setYaw(Math.toRadians(180));
 
                     // robot.setName(Character.toString(c));
-                    
-                    //for instances if the agent is in the edge modify so the agent doesnt look its outside the main frame
-                    if(x == line.length() - 1){
-                        //0.5 similar to speed
+
+                    // for instances if the agent is in the edge modify so the agent doesnt look its
+                    // outside the main frame
+                    if (x == line.length() - 1) {
+                        // 0.5 similar to speed
                         cx = cx - 0.5;
                     }
 
@@ -177,8 +178,7 @@ public class MapLoader {
                     robot.setYaw(0);
 
                     world.addRobot(robot);
-
-                    System.out.println(world.getRobots().size());
+                    
                     mapMatrix[y][x] = 3;
 
                     // complete matrix
@@ -186,9 +186,10 @@ public class MapLoader {
                     cx = cx - 1;
 
                     completeMapMatrix[(int) cy][(int) cx] = 3;
-                    completeMapMatrix[(int) cy][(int) ((int) (cx + robot.getSpeed() * 2) >= completeMapMatrix[(int) cy].length
-                            ? (cx - robot.getSpeed() * 2)
-                            : (cx + robot.getSpeed() * 2))] = 3;
+                    completeMapMatrix[(int) cy][(int) ((int) (cx
+                            + robot.getSpeed() * 2) >= completeMapMatrix[(int) cy].length
+                                    ? (cx - robot.getSpeed() * 2)
+                                    : (cx + robot.getSpeed() * 2))] = 3;
 
                     // double xMatrix = cx - CELL_SIZE / 2.0;
                     // double yMatrix = cy - CELL_SIZE / 2.0;
@@ -229,10 +230,20 @@ public class MapLoader {
         }
 
         double w = (endX - startX) * CELL_SIZE;
-        world.addObstacle(new Rectangle2D.Double(startX * CELL_SIZE, y * CELL_SIZE, w, CELL_SIZE - 0.2)); // smooth the
-                                                                                                          // height of
-                                                                                                          // the
-                                                                                                          // rectangle
+        double obstacleY = y * CELL_SIZE;
+
+        //check to fit the obstacle to top and edge in correspond to height smooth of 0.
+        //map matrix is used only to check if y is the max y
+        if(y == mapMatrix.length - 1){
+            obstacleY = obstacleY + 0.2;
+        }
+        Rectangle2D obstacle = new Rectangle2D.Double(startX * CELL_SIZE, obstacleY, w, CELL_SIZE - 0.2); // smooth
+                                                                                                              // the
+                                                                                                              // height
+                                                                                                              // of
+                                                                                                              // rectangle
+        
+        world.addObstacle(obstacle);
 
         // complete matrix
         int tempStart = (int) (start == 0 ? 0 : (start * CELL_SIZE));
@@ -251,14 +262,14 @@ public class MapLoader {
         }
 
         double topCY = y * CELL_SIZE + CELL_SIZE / 2.0;
-        double midlleCY = (y * CELL_SIZE + CELL_SIZE / 2.0 ) -1;
-        double bottomCY = (y * CELL_SIZE + CELL_SIZE / 2.0 ) -2;
+        double midlleCY = (y * CELL_SIZE + CELL_SIZE / 2.0) - 1;
+        double bottomCY = (y * CELL_SIZE + CELL_SIZE / 2.0) - 2;
 
-        if(topCY >= completeMapMatrix.length){
+        if (topCY >= completeMapMatrix.length) {
             topCY--;
             midlleCY--;
             bottomCY--;
-        }else if(bottomCY < 0){
+        } else if (bottomCY < 0) {
             topCY++;
             midlleCY++;
             bottomCY++;
@@ -280,9 +291,8 @@ public class MapLoader {
             lines.add(line);
             line = reader.readLine();
 
-
         }
-        
+
         Collections.reverse(lines);
 
         maxLine.value = max;
