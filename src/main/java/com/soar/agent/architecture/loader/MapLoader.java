@@ -250,13 +250,23 @@ public class MapLoader {
             tempEnd = (int) (tempEnd - CELL_SIZE / 2.0);
         }
 
-        double firsCY = y * CELL_SIZE + CELL_SIZE / 2.0;
-        double secondCY = (y - 1) * CELL_SIZE + CELL_SIZE / 2.0;
-        double thirdCY = (y) * CELL_SIZE;
+        double topCY = y * CELL_SIZE + CELL_SIZE / 2.0;
+        double midlleCY = (y * CELL_SIZE + CELL_SIZE / 2.0 ) -1;
+        double bottomCY = (y * CELL_SIZE + CELL_SIZE / 2.0 ) -2;
 
-        Arrays.fill(completeMapMatrix[(int) firsCY], tempStart, (int) tempEnd - 1, 1);
-        Arrays.fill(completeMapMatrix[(int) secondCY], tempStart, (int) tempEnd - 1, 1);
-        Arrays.fill(completeMapMatrix[(int) thirdCY], tempStart, (int) tempEnd - 1, 1);
+        if(topCY >= completeMapMatrix.length){
+            topCY--;
+            midlleCY--;
+            bottomCY--;
+        }else if(bottomCY < 0){
+            topCY++;
+            midlleCY++;
+            bottomCY++;
+        }
+
+        Arrays.fill(completeMapMatrix[(int) topCY], tempStart, (int) tempEnd - 1, 1);
+        Arrays.fill(completeMapMatrix[(int) bottomCY], tempStart, (int) tempEnd - 1, 1);
+        Arrays.fill(completeMapMatrix[(int) midlleCY], tempStart, (int) tempEnd - 1, 1);
 
         return i;
     }
