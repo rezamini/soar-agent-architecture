@@ -68,13 +68,15 @@ public class Robot {
     public void move(double newX, double newY, Path2D simulatedShape) {
         // shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
         
-        if(simulatedShape == null){
-            // shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
-            shape.moveTo(newX, newY);
-        }else{
-            shape = null;
-            shape = simulatedShape;
-        }
+        // if(simulatedShape == null){
+        //     // shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
+        //     shape.moveTo(newX, newY);
+        // }else{
+        //     shape = null;
+        //     shape = simulatedShape;
+        // }
+
+        shape.moveTo(newX, newY);
         
 
         // calc radar range and data in order to have radar data such as "live" at the
@@ -110,8 +112,13 @@ public class Robot {
         final double newY = shape.getBounds2D().getCenterY() + dy;
 
         Path2D tempAgentShape = createTempAgentShape(newX + dx, newY + dy, yaw);
-        tempShape = tempAgentShape;
+
         if (!world.willCollide(this, newX, newY, tempAgentShape)) {
+            // tempShape = new Path2D.Double();
+            // tempShape = tempAgentShape;
+            move(newX, newY, tempAgentShape);
+            
+
             updateMapMatrix(newX, newY);
             updateCompleteMapMatrix(newX, newY, dx, dy, tempAgentShape);
         }
