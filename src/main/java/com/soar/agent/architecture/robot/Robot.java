@@ -27,7 +27,7 @@ public class Robot {
     public final double shapeStartingPoint = 0.4;
     public final double shapeWidth = shapeStartingPoint * widthMultiplier;
     public final double shapeHeight = shapeStartingPoint * heightMultiplier;
-    public Rectangle2D shape = new Rectangle2D.Double(-0.4, -0.4, shapeWidth, shapeHeight);
+    public Path2D shape = new Path2D.Double();
     private double yaw;
     private double speed;
     private double turnRate;
@@ -67,11 +67,13 @@ public class Robot {
 
     public void move(double newX, double newY, Path2D simulatedShape) {
         // shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
-
+        
         if(simulatedShape == null){
-            shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
+            // shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
+            shape.moveTo(newX, newY);
         }else{
-            shape = simulatedShape.getBounds2D();
+            shape = null;
+            shape = simulatedShape;
         }
         
 
@@ -104,16 +106,12 @@ public class Robot {
         // final double dx = Math.cos(yaw) * speed;
         // final double dy = Math.sin(yaw) * speed;
 
-        final double newX = shape.getCenterX() + dx;
-        final double newY = shape.getCenterY() + dy;
+        final double newX = shape.getBounds2D().getCenterX() + dx;
+        final double newY = shape.getBounds2D().getCenterY() + dy;
 
         Path2D tempAgentShape = createTempAgentShape(newX + dx, newY + dy, yaw);
-
+        tempShape = tempAgentShape;
         if (!world.willCollide(this, newX, newY, tempAgentShape)) {
-            move(newX, newY, tempAgentShape);
-            // tempShape = new Path2D.Double();
-            // tempShape = tempAgentShape;
-
             updateMapMatrix(newX, newY);
             updateCompleteMapMatrix(newX, newY, dx, dy, tempAgentShape);
         }
@@ -324,8 +322,8 @@ public class Robot {
         double dx = Math.round(Math.cos(tempNewLocationYaw)) * speed;
         double dy = Math.round(Math.sin(tempNewLocationYaw)) * speed;
 
-        double centerX = currentShape != null ? currentShape.getBounds().getCenterX() : shape.getCenterX();
-        double centerY = currentShape != null ? currentShape.getBounds().getCenterY() : shape.getCenterY();
+        double centerX = currentShape != null ? currentShape.getBounds().getCenterX() : shape.getBounds2D().getCenterX();
+        double centerY = currentShape != null ? currentShape.getBounds().getCenterY() : shape.getBounds2D().getCenterY();
 
         double newX = centerX + dx;
         double newY = centerY + dy;
@@ -358,8 +356,8 @@ public class Robot {
         final double dx = Math.round(Math.cos(tempYaw)) * speed;
         final double dy = Math.round(Math.sin(tempYaw)) * speed;
 
-        final double newX = shape.getCenterX() + dx + dx;
-        final double newY = shape.getCenterY() + dy + dy;
+        final double newX = shape.getBounds2D().getCenterX() + dx + dx;
+        final double newY = shape.getBounds2D().getCenterY() + dy + dy;
 
         Path2D tempAgentShape = createTempAgentShape(newX, newY, tempYaw);
 
@@ -445,8 +443,8 @@ public class Robot {
         // subtracting 0.1 is to make it slightly smaller so the tight edges and
         // situations will be passed
         // and if used for collision it will not be so strict
-        rect.setFrameFromCenter(shape.getCenterX(), shape.getCenterY(),
-                shape.getCenterX() + shapeWidth - 0.1, shape.getCenterY() + shapeHeight - 0.1);
+        rect.setFrameFromCenter(shape.getBounds2D().getCenterX(), shape.getBounds2D().getCenterY(),
+                shape.getBounds2D().getCenterX() + shapeWidth - 0.1, shape.getBounds2D().getCenterY() + shapeHeight - 0.1);
 
         AffineTransform transform = new AffineTransform();
         transform.rotate(yaw, rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
@@ -477,7 +475,7 @@ public class Robot {
         this.name = name;
     }
 
-    public Rectangle2D getShape() {
+    public Path2D getShape() {
         return shape;
     }
 

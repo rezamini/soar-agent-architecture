@@ -109,8 +109,8 @@ public class WorldPanel extends JPanel {
         transform.translate(getWidth() / 2.0, getHeight() / 2.0);
         transform.scale(pixelsPerMeter, -pixelsPerMeter);
         if (follow != null) {
-            panX = -follow.getShape().getCenterX();
-            panY = -follow.getShape().getCenterY();
+            panX = -follow.getShape().getBounds2D().getCenterX();
+            panY = -follow.getShape().getBounds2D().getCenterY();
             transform.rotate(-(follow.getYaw() - Math.toRadians(90)));
         }
         transform.translate(panX, panY);
@@ -139,7 +139,7 @@ public class WorldPanel extends JPanel {
     private void drawRobot(Graphics2D g2dIn, Robot robot) {
         final Graphics2D g2d = (Graphics2D) g2dIn.create();
         final AffineTransform transform = new AffineTransform();
-        transform.translate(robot.getShape().getCenterX(), robot.getShape().getCenterY());
+        transform.translate(robot.getShape().getBounds2D().getCenterX(), robot.getShape().getBounds2D().getCenterY());
         transform.rotate(robot.getYaw());
         g2d.transform(transform);
 
@@ -169,8 +169,8 @@ public class WorldPanel extends JPanel {
         drawCar(g2d, body, firstWheel, secondWheel, roof, Color.YELLOW, Color.BLACK);
 
         //for testing purposes of shapes only
-        // drawShape(g2dIn, robot.getTempShape2(), Color.RED, Color.RED);
-        // drawShape(g2dIn, robot.getTempShape(), Color.BLUE, Color.BLUE);
+        // drawShape(g2dIn, robot.getTempShape(), Color.RED, Color.RED);
+        // drawShape(g2dIn, robot.getShape(), Color.BLUE, Color.BLUE);
 
         final double dirR = r / 4.0;
         // final double dirR = r / 5.0;

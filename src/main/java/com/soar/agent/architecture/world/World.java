@@ -311,8 +311,8 @@ public class World {
         final double dx = delta * Math.round(Math.cos(angle));
         final double dy = delta * Math.round(Math.sin(angle));
         double range = delta;
-        double x = source.getShape().getCenterX() + dx;
-        double y = source.getShape().getCenterY() + dy;
+        double x = source.getShape().getBounds2D().getCenterX() + dx;
+        double y = source.getShape().getBounds2D().getCenterY() + dy;
         double newX_2 = x;
         double newY_2 = y;
 
@@ -321,15 +321,15 @@ public class World {
         }
 
         if (dy < 0 || dy > 0) {
-            newY_2 = (x - source.getShape().getCenterX()) * Math.sin(25)
-                    + (y - source.getShape().getCenterY()) * Math.cos(25)
-                    + source.getShape().getCenterY();
+            newY_2 = (x - source.getShape().getBounds2D().getCenterX()) * Math.sin(25)
+                    + (y - source.getShape().getBounds2D().getCenterY()) * Math.cos(25)
+                    + source.getShape().getBounds2D().getCenterY();
         }
 
         if (dx > 0 || dx < 0) {
-            newX_2 = (x - source.getShape().getCenterX()) * Math.cos(25)
-                    - (y - source.getShape().getCenterY()) * Math.sin(25)
-                    + source.getShape().getCenterX();
+            newX_2 = (x - source.getShape().getBounds2D().getCenterX()) * Math.cos(25)
+                    - (y - source.getShape().getBounds2D().getCenterY()) * Math.sin(25)
+                    + source.getShape().getBounds2D().getCenterX();
         }
 
         if (dx == 0) {
@@ -412,7 +412,7 @@ public class World {
 
     private boolean collides(Robot robot, double x, double y, double radarRange) {
         // get and create shape radar with current data
-        Path2D shapeRadar = robot.calcShapeRadar(robot.getShape().getCenterX(), robot.getShape().getCenterY(),
+        Path2D shapeRadar = robot.calcShapeRadar(robot.getShape().getBounds2D().getCenterX(), robot.getShape().getBounds2D().getCenterY(),
                 radarRange);
 
         if (!extents.contains(shapeRadar.getBounds2D())) {
@@ -429,13 +429,13 @@ public class World {
 
     public void radarDetectLandmark(Robot robot, double radarX, double radarY, double radarRange) {
         // get a instance of the agent shape
-        Rectangle2D agentShape = (Rectangle2D) robot.getShape().clone();
+        Path2D agentShape = (Path2D) robot.getShape().clone();
 
         // get and create shape radar with current data
-        Path2D shapeRadar = robot.calcShapeRadar(agentShape.getCenterX(), agentShape.getCenterY(), radarRange);
+        Path2D shapeRadar = robot.calcShapeRadar(agentShape.getBounds2D().getCenterX(), agentShape.getBounds2D().getCenterY(), radarRange);
 
         // simulate a move with the radar positions
-        agentShape.setFrameFromCenter(radarX, radarY, radarX + robot.getShapeWidth(), radarY + robot.getShapeHeight());
+        // agentShape.setFrameFromCenter(radarX, radarY, radarX + robot.getShapeWidth(), radarY + robot.getShapeHeight());
 
         // check if the agent will reach/hit any landmark with the current landmark
         // positions (aka if radar can see and agent can hit the landmark)

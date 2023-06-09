@@ -51,8 +51,8 @@ public class MemoryResponder extends MemoryListener {
                                                         MemoryEnum.MINIMUM_BOUNDING_BOX.getName(), null),
                                         robot.getShapeArea());
 
-                        final double x = robot.getShape().getCenterX();
-                        final double y = robot.getShape().getCenterY();
+                        final double x = robot.getShape().getBounds2D().getCenterX();
+                        final double y = robot.getShape().getBounds2D().getCenterY();
 
                         // X position
                         qMemory.setDouble(
