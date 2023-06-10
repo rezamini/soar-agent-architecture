@@ -235,14 +235,14 @@ public class MapLoader {
         //check to fit the obstacle to top and edge in correspond to height smooth of 0.
         //map matrix is used only to check if y is the max y
         if(y == mapMatrix.length - 1){
-            obstacleY = obstacleY + 0.2;
+            obstacleY = obstacleY + 0.3;
         }
-        Rectangle2D obstacle = new Rectangle2D.Double(startX * CELL_SIZE, obstacleY, w, CELL_SIZE - 0.2); // smooth
+        Rectangle2D obstacle = new Rectangle2D.Double(startX * CELL_SIZE, obstacleY, w, CELL_SIZE - 0.3); // smooth
                                                                                                               // the
                                                                                                               // height
                                                                                                               // of
                                                                                                               // rectangle
-        
+                
         world.addObstacle(obstacle);
 
         // complete matrix
