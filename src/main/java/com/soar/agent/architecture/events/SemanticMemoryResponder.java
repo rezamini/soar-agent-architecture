@@ -163,10 +163,10 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
     @Override
     public Set<String> getAttributeValues(String attributeName) {
         Set<String> result = new HashSet<String>();
-        attributeName = attributeName.toLowerCase();
 
-        if (robotAgent != null) {
+        if (robotAgent != null && attributeName != null) {
             try {
+                attributeName = attributeName.toLowerCase();
 
                 StringWriter sw = new StringWriter();
                 robotAgent.getThreadedAgent().getPrinter().pushWriter(sw);
@@ -185,15 +185,35 @@ public class SemanticMemoryResponder extends SemanticMemoryEvent {
 
                 for (int i = split.length - 1; i >= 0; i--) {
                     String current = split[i];
-
                     // for example contains ^color
                     if (current.contains("^" + attributeName)) {
-                        if (i + 1 < split.length) {
-                            String value = split[i + 1].toLowerCase();
-                            result.add(value.replace("|", ""));
+
+                        int j = i + 1;
+                        while (j < split.length) {
+                            String attributeValue = split[j].toLowerCase();
+
+                            if (attributeValue.startsWith("|")) {
+                                attributeValue = attributeValue.toLowerCase().replace("|", "");
+                                result.add(attributeValue);
+
+                            } else {
+                                break;
+                            }
+                            j++;
                         }
                     }
                 }
+                // for (int i = split.length - 1; i >= 0; i--) {
+                //     String current = split[i];
+
+                //     // for example contains ^color
+                //     if (current.contains("^" + attributeName)) {
+                //         if (i + 1 < split.length) {
+                //             String value = split[i + 1].toLowerCase();
+                //             result.add(value.replace("|", ""));
+                //         }
+                //     }
+                // }
             } catch (SoarException e) {
                 e.printStackTrace();
             }
