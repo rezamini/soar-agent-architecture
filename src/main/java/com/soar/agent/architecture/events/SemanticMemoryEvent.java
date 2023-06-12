@@ -1,11 +1,7 @@
 package com.soar.agent.architecture.events;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.jsoar.runtime.ThreadedAgent;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.soar.agent.architecture.api.entity.SemanticMemoryEntity;

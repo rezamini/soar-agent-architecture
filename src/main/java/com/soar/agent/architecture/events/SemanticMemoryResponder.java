@@ -3,11 +3,8 @@ package com.soar.agent.architecture.events;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -27,7 +24,6 @@ import com.soar.agent.architecture.robot.RobotAgent;
 
 @Service
 public class SemanticMemoryResponder extends SemanticMemoryEvent {
-    private final String DEFAULT_SMEM_DB_NAME = "smem-default-db";
     private Connection conn;
     private SemanticMemory smem;
 

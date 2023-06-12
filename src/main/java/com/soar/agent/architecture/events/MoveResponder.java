@@ -7,13 +7,9 @@ import com.soar.agent.architecture.beans.Move;
 import com.soar.agent.architecture.enums.DirectionEnum;
 import com.soar.agent.architecture.robot.Robot;
 import com.soar.agent.architecture.robot.RobotAgent;
-import com.soar.agent.architecture.world.WorldPanel;
 
 @Service
 public class MoveResponder implements MoveListenerEvent{
-
-    // @Autowired
-    // private WorldPanel worldPanel;
     
     DirectionEnum currentDirection;
 
@@ -24,10 +20,6 @@ public class MoveResponder implements MoveListenerEvent{
         if(currentDirection != null){
             robot.setYaw(Math.toRadians(currentDirection.getAngle()));
             robot.getWorld().updateAndMoveAgents(0);
-    
-            // worldPanel.repaint();
-
-            // robotAgent.getEvents().fireEvent(areaResponder);
             
         }else{
             System.out.println("The move command direction is not found !");
