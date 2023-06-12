@@ -35,7 +35,7 @@ public class WorldPanel extends JPanel {
     private double panX = 0.0;
     private double panY = 0.0;
     private Robot follow = null;
-    
+
     @Autowired
     private World world;
     private Robot selection = null;
@@ -90,7 +90,7 @@ public class WorldPanel extends JPanel {
         }
 
         // for (Landmark w : world.getLandmarks()) {
-        //     drawLandmark(g2d, w);
+        // drawLandmark(g2d, w);
         // }
 
         for (Entry<Landmark, Boolean> entry : world.getLandmarkMap().entrySet()) {
@@ -143,11 +143,11 @@ public class WorldPanel extends JPanel {
         transform.rotate(robot.getYaw());
         g2d.transform(transform);
 
-        //draw ranges/radar if the radar need to be on
-        if(robot.isToggleRadar()){
+        // draw ranges/radar if the radar need to be on
+        if (robot.isToggleRadar()) {
             drawRanges(g2d, robot);
         }
-        
+
         if (robot == selection) {
             final double selR = robot.getShapeArea() * 1.4;
             final Ellipse2D sel = new Ellipse2D.Double(-selR, -selR, selR * 2.0, selR * 2.0);
@@ -168,7 +168,7 @@ public class WorldPanel extends JPanel {
 
         drawCar(g2d, body, firstWheel, secondWheel, roof, Color.YELLOW, Color.BLACK);
 
-        //for testing purposes of shapes only
+        // for testing purposes of shapes only
         // drawShape(g2dIn, robot.getTempShape(), Color.RED, Color.RED);
         // drawShape(g2dIn, robot.getShape(), Color.BLUE, Color.BLUE);
 
@@ -203,8 +203,31 @@ public class WorldPanel extends JPanel {
     private void drawObstacle(Graphics2D g2dIn, Shape shape) {
         final Graphics2D g2d = (Graphics2D) g2dIn.create();
 
-        drawShape(g2d, shape, Color.GRAY, Color.BLACK);
+        // drawShape(g2d, shape, Color.GRAY, Color.BLACK);
+        drawShapeWithShadow(g2d, shape, Color.GRAY, 0.1, 0.1);
         g2d.dispose();
+    }
+
+    private void drawShapeWithShadow(Graphics2D g2d, Shape shape, Color mainColor, double shadowOffsetX, double shadowOffsetY) {
+        // Define the main color and shadow color
+        // Color mainColor = color;
+        Color shadowColor = mainColor.darker();
+
+        // Draw the shadows on all sides of the rectangle
+        g2d.setColor(shadowColor);
+
+        // Draw the top shadow
+        g2d.translate(-shadowOffsetX, -shadowOffsetY);
+        g2d.fill(shape);
+        g2d.translate(shadowOffsetX, shadowOffsetY);
+
+        // g2d.translate(shadowOffsetX, shadowOffsetY);
+        // g2d.fill(shape);
+        // g2d.translate(-shadowOffsetX, -shadowOffsetY);
+
+        // Draw the main shape
+        g2d.setColor(mainColor);
+        g2d.fill(shape);
     }
 
     private void drawRanges(Graphics2D g2dIn, Robot robot) {
@@ -214,7 +237,7 @@ public class WorldPanel extends JPanel {
                     Math.toDegrees(-range.getRadarAngle()) - 10.0, 25.0, Arc2D.PIE);
 
             drawShape(g2dIn, arc, Color.GREEN, Color.GREEN);
-            
+
             // draw radar battearcry level
             if (arc.getWidth() > 4) {
                 double fontHeight = 0.2 * 1.5;
@@ -261,7 +284,7 @@ public class WorldPanel extends JPanel {
         // p.getY()));
     }
 
-    //* Method overloading for drawing landmark */
+    // * Method overloading for drawing landmark */
     private void drawLandmark(Graphics2D g2dIn, Landmark landmark, Boolean isReached) {
         final Graphics2D g2d = (Graphics2D) g2dIn.create();
         final Point2D p = landmark.getLocation();
