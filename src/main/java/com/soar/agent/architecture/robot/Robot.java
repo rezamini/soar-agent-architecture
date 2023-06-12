@@ -65,17 +65,7 @@ public class Robot {
         ranges[0].setRadarRange(0);
     }
 
-    public void move(double newX, double newY, Path2D simulatedShape) {
-        // shape.setFrameFromCenter(newX, newY, newX + radius, newY + radius);
-        
-        // if(simulatedShape == null){
-        //     // shape.setFrameFromCenter(newX, newY, newX + shapeWidth, newY + shapeHeight);
-        //     shape.moveTo(newX, newY);
-        // }else{
-        //     shape = null;
-        //     shape = simulatedShape;
-        // }
-
+    public void move(double newX, double newY) {
         shape.moveTo(newX, newY);
         
 
@@ -116,7 +106,7 @@ public class Robot {
         if (!world.willCollide(this, newX, newY, tempAgentShape)) {
             // tempShape = new Path2D.Double();
             // tempShape = tempAgentShape;
-            move(newX, newY, tempAgentShape);
+            move(newX, newY);
             
 
             updateMapMatrix(newX, newY);
