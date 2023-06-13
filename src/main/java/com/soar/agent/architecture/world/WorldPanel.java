@@ -34,7 +34,11 @@ public class WorldPanel extends JPanel {
     private double pixelsPerMeter = 55;
     private double panX = 0.0;
     private double panY = 0.0;
-    private Robot follow = null;
+    private boolean followAgent = false;
+
+    public void setFollowAgent(boolean followAgent) {
+        this.followAgent = followAgent;
+    }
 
     @Autowired
     private World world;
@@ -108,10 +112,11 @@ public class WorldPanel extends JPanel {
         final AffineTransform transform = new AffineTransform();
         transform.translate(getWidth() / 2.0, getHeight() / 2.0);
         transform.scale(pixelsPerMeter, -pixelsPerMeter);
-        if (follow != null) {
+        if (followAgent) {
+            Robot follow = world.getRobots().iterator().next();
             panX = -follow.getShape().getBounds2D().getCenterX();
             panY = -follow.getShape().getBounds2D().getCenterY();
-            transform.rotate(-(follow.getYaw() - Math.toRadians(90)));
+            // transform.rotate(-(follow.getYaw() - Math.toRadians(90)));
         }
         transform.translate(panX, panY);
 
@@ -180,7 +185,7 @@ public class WorldPanel extends JPanel {
                 dirR * 2.0);
         drawShape(g2d, dir, Color.RED, Color.BLACK);
 
-        g2d.rotate(follow == null ? -robot.getYaw() : Math.toRadians(-90.0));
+        // g2d.rotate(followAgent ? -robot.getYaw() : Math.toRadians(-90.0));
 
         // final double fontHeight = robot.getRadius() * 1.5;
         // prepareFont(g2d, fontHeight);

@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
@@ -44,10 +45,10 @@ public class PanelUI extends JPanel {
 
     // @Autowired
     // private World worldAuto;
-    
+
     @Autowired
     private MapLoader mapLoader;
-    
+
     @Autowired
     private WorldPanel worldPanel;
 
@@ -70,19 +71,19 @@ public class PanelUI extends JPanel {
 
     @Autowired
     private MoveResponder moveResponder;
-    
+
     private NodeGraphUI graph;
     private ShortestPathGraphUI matrixGraph;
 
     // @Autowired
     // ApplicationContext context;
-    
+
     // @Autowired
     // DefaultListableBeanFactory beanFactory;
 
     @Autowired
-    private ConfigurableApplicationContext context; 
-    
+    private ConfigurableApplicationContext context;
+
     public PanelUI() throws IOException {
         super(new BorderLayout());
         mainFrame = new JFrame();
@@ -90,7 +91,7 @@ public class PanelUI extends JPanel {
     }
 
     @PostConstruct
-    private void init(){
+    private void init() {
 
         try {
             mapLoader.load(getClass().getResource("/map/map.txt"));
@@ -114,11 +115,10 @@ public class PanelUI extends JPanel {
                 mainFrame.setSize(800, 800);
                 mainFrame.setVisible(true);
 
-                
                 worldPanel.fit();
                 worldPanel.repaint();
                 worldPanel.revalidate();
-                
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -147,11 +147,11 @@ public class PanelUI extends JPanel {
     }
 
     public void setSimulationToolbar(WorldPanel worldPanel) {
-        
+
         toolBar.setFloatable(true);
         toolBar.setOpaque(true);
         add(toolBar, BorderLayout.SOUTH);
-        add(worldPanel, BorderLayout.CENTER);     
+        add(worldPanel, BorderLayout.CENTER);
         setBackground(Color.LIGHT_GRAY);
 
         // Run button
@@ -254,13 +254,19 @@ public class PanelUI extends JPanel {
         JToggleButton resetButton = createButton("reset", "reset-clicked", false);
         resetButton.addActionListener((event) -> {
             try {
-               reInitializeAgent();
+                reInitializeAgent();
             } catch (Exception e) {
                 // TODO: handle exception
             }
         });
         graphButton2.setToolTipText("Re-Initialize Map & Agent State");
         toolBar.add(resetButton);
+
+        JCheckBox follow = new JCheckBox("Follow");
+        follow.addActionListener(e -> {
+            worldPanel.setFollowAgent(follow.isSelected());
+        });
+        toolBar.add(follow);
 
         // bar.add(new AbstractAction("Graph") {
         // @Override
@@ -299,14 +305,14 @@ public class PanelUI extends JPanel {
     }
 
     // public void loadMap(World worldResult) throws IOException {
-    //     // world = worldResult;
-    //     // worldPanel.setWorld(world);
-    //     worldPanel.fit();
-    //     updateAgents();
+    // // world = worldResult;
+    // // worldPanel.setWorld(world);
+    // worldPanel.fit();
+    // updateAgents();
     // }
 
     // public static WorldPanel getWorldPanel() {
-    //     return worldPanel;
+    // return worldPanel;
     // }
 
     public void updateAgents() {
@@ -379,8 +385,7 @@ public class PanelUI extends JPanel {
         // initUI();
 
         restart();
-        
-        
+
         // jpanel
         revalidate();
         repaint();
@@ -418,13 +423,13 @@ public class PanelUI extends JPanel {
         restartThread.start();
     }
 
-    private void restartApp(){
+    private void restartApp() {
         // close previous context
         context.close();
 
         // ApplicationArguments args = context.getBean(ApplicationArguments.class);
 
-        //build a new one
+        // build a new one
         SpringApplicationBuilder builder = new SpringApplicationBuilder(AppMain.class);
         builder.headless(false);
         context = builder.run();
@@ -480,7 +485,7 @@ public class PanelUI extends JPanel {
     }
 
     // public static World getWorld() {
-    //     return world;
+    // return world;
     // }
 
     public JFrame getMainFrame() {
