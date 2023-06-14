@@ -250,6 +250,13 @@ public class PanelUI extends JPanel {
         // push the rest of the icons/button to the end of the toolbar; right of toolbar
         toolBar.add(Box.createGlue());
 
+        // JCheckBox follow = new JCheckBox("Follow");
+        JToggleButton followAgentButton = createButton("follow", "follow-clicked", true);
+        followAgentButton.addActionListener(e -> {
+            worldPanel.setFollowAgent(followAgentButton.isSelected());
+        });
+        toolBar.add(followAgentButton);
+
         // Re-Initialize / Reset
         JToggleButton resetButton = createButton("reset", "reset-clicked", false);
         resetButton.addActionListener((event) -> {
@@ -262,11 +269,6 @@ public class PanelUI extends JPanel {
         graphButton2.setToolTipText("Re-Initialize Map & Agent State");
         toolBar.add(resetButton);
 
-        JCheckBox follow = new JCheckBox("Follow");
-        follow.addActionListener(e -> {
-            worldPanel.setFollowAgent(follow.isSelected());
-        });
-        toolBar.add(follow);
 
         // bar.add(new AbstractAction("Graph") {
         // @Override
