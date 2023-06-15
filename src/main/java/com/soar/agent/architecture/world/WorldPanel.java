@@ -11,8 +11,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
@@ -22,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Map.Entry;
 
 import org.jsoar.debugger.util.SwingTools;
+import org.jsoar.kernel.PerformanceTimer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +38,7 @@ public class WorldPanel extends JPanel {
     private double panX = 0.0;
     private double panY = 0.0;
     private boolean followAgent = false;
+    private Point lastDrag = null;
 
     public void setFollowAgent(boolean followAgent) {
         this.followAgent = followAgent;
@@ -62,6 +66,32 @@ public class WorldPanel extends JPanel {
                         pixelsPerMeter = 1;
                     }
                     repaint();
+                }
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                lastDrag = null;
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (lastDrag != null) {
+                    int dx = e.getPoint().x - lastDrag.x;
+                    int dy = e.getPoint().y - lastDrag.y;
+
+                    panX += dx / pixelsPerMeter;
+                    panY += -dy / pixelsPerMeter;
+
+                    lastDrag.setLocation(e.getPoint());
+                    repaint();
+                } else {
+                    lastDrag = new Point(e.getPoint());
                 }
             }
         });
@@ -213,7 +243,8 @@ public class WorldPanel extends JPanel {
         g2d.dispose();
     }
 
-    private void drawShapeWithShadow(Graphics2D g2d, Shape shape, Color mainColor, double shadowOffsetX, double shadowOffsetY) {
+    private void drawShapeWithShadow(Graphics2D g2d, Shape shape, Color mainColor, double shadowOffsetX,
+            double shadowOffsetY) {
         // Define the main color and shadow color
         // Color mainColor = color;
         Color shadowColor = mainColor.darker();
@@ -313,6 +344,7 @@ public class WorldPanel extends JPanel {
                 (float) (p.getY() - fontHeight / 3.0));
 
         g2d.dispose();
+
 
         /* This is to add + line on the landmark */
         // g2d.draw(new Line2D.Double(p.getX(), p.getY() - 1.5 * r, p.getX(), p.getY()+
