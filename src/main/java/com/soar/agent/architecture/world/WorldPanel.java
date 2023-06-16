@@ -49,7 +49,7 @@ public class WorldPanel extends JPanel {
     private Robot selection = null;
 
     public WorldPanel() {
-        setBackground(Color.BLACK);
+        setBackground(Color.WHITE);
 
         addMouseWheelListener(new MouseAdapter() {
             /*
@@ -117,7 +117,7 @@ public class WorldPanel extends JPanel {
 
         g2d.setStroke(new BasicStroke(2 * (1.0f / (float) pixelsPerMeter)));
 
-        drawShape(g2d, world.extents, Color.LIGHT_GRAY, Color.BLUE);
+        drawShape(g2d, world.extents, Color.LIGHT_GRAY, Color.BLACK);
 
         for (Robot robot : world.getRobots()) {
             drawRobot(g2d, robot);
