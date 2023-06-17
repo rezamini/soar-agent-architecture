@@ -115,6 +115,7 @@ public class PanelUI extends JPanel {
                 mainFrame.setSize(800, 800);
 
                 mainFrame.setIconImage(new ImageIcon(PanelUI.class.getResource("/images/2d-logo.png")).getImage());
+                mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
 
                 worldPanel.fit();
