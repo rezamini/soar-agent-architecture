@@ -1,5 +1,9 @@
 package com.soar.agent.architecture.events;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jsoar.kernel.SoarProperties;
 import org.jsoar.kernel.events.AfterDecisionCycleEvent;
 import org.jsoar.kernel.events.AfterInitSoarEvent;
 import org.jsoar.kernel.events.InputEvent;
@@ -27,6 +31,11 @@ import com.soar.agent.architecture.world.WorldPanel;
 
 @Service
 public class UtilityResponder extends UtilityListener {
+
+    private List<Double> cpuTimes = new ArrayList<Double>();
+    private List<Double> kernelTimes = new ArrayList<Double>();
+    private List<Integer> decisionCycles = new ArrayList<Integer>();
+    private List<Long> totalMemory = new ArrayList<Long>();
 
     @Autowired
     private Move move;
@@ -78,6 +87,18 @@ public class UtilityResponder extends UtilityListener {
                 robotAgent.getEvents().fireEvent(memoryResponder);
                 robotAgent.getEvents().fireEvent(areaResponder);
                 worldPanel.repaint();
+
+
+                //calculate the required performances after every decision and UI update and them to their respective list
+                double cpuTime = robotAgent.getThreadedAgent().getAgent().getTotalCpuTimer().getTotalSeconds();
+                double kernelTime = robotAgent.getThreadedAgent().getAgent().getTotalKernelTimer().getTotalSeconds();
+                int dc = robotAgent.getThreadedAgent().getAgent().getProperties().get(SoarProperties.D_CYCLE_COUNT).intValue();
+                long mem = Runtime.getRuntime().totalMemory();
+                
+                cpuTimes.add(cpuTime);
+                kernelTimes.add(kernelTime);
+                decisionCycles.add(dc);
+                totalMemory.add(mem);
             }
         });
     }
