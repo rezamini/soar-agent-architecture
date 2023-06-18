@@ -113,8 +113,10 @@ public class PanelUI extends JPanel {
                 // PanelUI content = new PanelUI();
                 mainFrame.setContentPane(this);
                 mainFrame.setSize(800, 800);
-
+                mainFrame.setTitle("Simulation Environment");
                 mainFrame.setIconImage(new ImageIcon(PanelUI.class.getResource("/images/2d-logo.png")).getImage());
+
+                //set the position to center
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
 
