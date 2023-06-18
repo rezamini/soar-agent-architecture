@@ -1,6 +1,7 @@
 package com.soar.agent.architecture.events;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jsoar.kernel.SoarProperties;
@@ -63,7 +64,7 @@ public class UtilityResponder extends UtilityListener {
         });
 
         // robotAgent.getEvents().addListener(AreaResponder.class, event -> {
-        //     areaResponder.updateAreaMemory();
+        // areaResponder.updateAreaMemory();
         // });
 
         robotAgent.getEvents().addListener(AreaResponder.class, event -> {
@@ -88,17 +89,20 @@ public class UtilityResponder extends UtilityListener {
                 robotAgent.getEvents().fireEvent(areaResponder);
                 worldPanel.repaint();
 
-
-                //calculate the required performances after every decision and UI update and them to their respective list
+                // calculate the required performances after every decision and UI update and
+                // them to their respective list
                 double cpuTime = robotAgent.getThreadedAgent().getAgent().getTotalCpuTimer().getTotalSeconds();
                 double kernelTime = robotAgent.getThreadedAgent().getAgent().getTotalKernelTimer().getTotalSeconds();
-                int dc = robotAgent.getThreadedAgent().getAgent().getProperties().get(SoarProperties.D_CYCLE_COUNT).intValue();
+                int dc = robotAgent.getThreadedAgent().getAgent().getProperties().get(SoarProperties.D_CYCLE_COUNT)
+                        .intValue();
                 long mem = Runtime.getRuntime().totalMemory();
-                
+
                 cpuTimes.add(cpuTime);
                 kernelTimes.add(kernelTime);
+                System.out.println("XXX "+dc);
                 decisionCycles.add(dc);
                 totalMemory.add(mem);
+                printPerformanceStatistics();
             }
         });
     }
@@ -122,7 +126,6 @@ public class UtilityResponder extends UtilityListener {
                 // converted yaw which is the angle degree
                 DirectionEnum startingDirection = DirectionEnum.findByAngleDegree((int) Math.toDegrees(currentYaw));
 
-                
                 move.setDirection(startingDirection.getName());
                 robotAgent.getEvents().fireEvent(areaResponder);
             }
@@ -285,6 +288,35 @@ public class UtilityResponder extends UtilityListener {
 
     @Override
     public void startWorkingMemoryChangedEventListener() {
+
+    }
+
+    public void printPerformanceStatistics() {
+        Collections.sort(cpuTimes);
+        Collections.sort(kernelTimes);
+        Collections.sort(decisionCycles);
+        Collections.sort(totalMemory);
+
+        System.out.println("-------------------- Agent Performance Statistics -------------------- ");
+        System.out.printf("   CPU: min %f, med %f, max %f\n",
+                cpuTimes.get(0),
+                cpuTimes.get(cpuTimes.size() / 2),
+                cpuTimes.get(cpuTimes.size() - 1));
+
+        System.out.printf("Kernel: min %f, med %f, max %f\n", 
+                kernelTimes.get(0),
+                kernelTimes.get(kernelTimes.size() / 2), 
+                kernelTimes.get(kernelTimes.size() - 1));
+
+        System.out.printf("DecCyc: min %8d, med %8d, max %8d\n", 
+                decisionCycles.get(0),
+                decisionCycles.get(decisionCycles.size() / 2), 
+                decisionCycles.get(decisionCycles.size() - 1));
+
+        System.out.printf("TotMem: min %8d, med %8d, max %8d\n", 
+                totalMemory.get(0),
+                totalMemory.get(totalMemory.size() / 2), 
+                totalMemory.get(totalMemory.size() - 1));
 
     }
 
