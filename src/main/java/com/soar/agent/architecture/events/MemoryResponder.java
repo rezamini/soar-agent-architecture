@@ -25,6 +25,7 @@ import com.soar.agent.architecture.robot.RobotAgent;
 @Service
 public class MemoryResponder extends MemoryListener {
         private int landmarkCycleCount = 0;
+        private boolean allLandmarksReached = false;
 
         QMemory qMemory = robotAgent.getQMemory();
 
@@ -216,9 +217,10 @@ public class MemoryResponder extends MemoryListener {
                         // set the status of the overal landmarks
                         // Alternative way:
                         // robot.getWorld().getLandmarkMap().values().stream().allMatch(value -> true)
+                        allLandmarksReached = !robot.getWorld().getLandmarkMap().containsValue(false);
+
                         landmarks.setString(UtilitiesEnum.MEMORYSTATUS.getName(),
-                                        !robot.getWorld().getLandmarkMap().containsValue(false)
-                                                        ? UtilitiesEnum.INACTIVESTATUS.getName()
+                                        allLandmarksReached ? UtilitiesEnum.INACTIVESTATUS.getName()
                                                         : UtilitiesEnum.ACTIVESTATUS.getName());
                         // add total landmarks
                         landmarks.setInteger(MemoryEnum.TOTAL_LANDMARKS.getName(),
@@ -589,6 +591,10 @@ public class MemoryResponder extends MemoryListener {
                                 .append(arg3 != null ? arg3 : "");
 
                 return sb.toString();
+        }
+
+        public boolean isAllLandmarksReached() {
+                return allLandmarksReached;
         }
 
 }
