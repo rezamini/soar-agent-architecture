@@ -99,10 +99,12 @@ public class UtilityResponder extends UtilityListener {
 
                 cpuTimes.add(cpuTime);
                 kernelTimes.add(kernelTime);
-                System.out.println("XXX "+dc);
                 decisionCycles.add(dc);
                 totalMemory.add(mem);
-                printPerformanceStatistics();
+
+                if(memoryResponder.isAllLandmarksReached()){
+                    printPerformanceStatistics();
+                }
             }
         });
     }
