@@ -23,6 +23,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.*;
 import org.jsoar.debugger.util.SwingTools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -84,6 +85,9 @@ public class PanelUI extends JPanel {
     @Autowired
     private ConfigurableApplicationContext context;
 
+    @Value("${map.file.name}")
+    private String mapFileName;
+
     public PanelUI() throws IOException {
         super(new BorderLayout());
         mainFrame = new JFrame();
@@ -94,7 +98,7 @@ public class PanelUI extends JPanel {
     private void init() {
 
         try {
-            mapLoader.load(getClass().getResource("/map/map.txt"));
+            mapLoader.load(getClass().getResource("/map/"+mapFileName));
             worldPanel.fit();
             updateAgents();
             setSimulationToolbar(worldPanel);
