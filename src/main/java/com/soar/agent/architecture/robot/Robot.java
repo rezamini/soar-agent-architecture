@@ -84,7 +84,8 @@ public class Robot {
 
     }
 
-    public void updateAndMove(double dt) {
+    public boolean updateAndMove(double dt) {
+        boolean agentMoved = false;
         yaw += dt * turnRate;
 
         while (yaw < 0.0)
@@ -111,7 +112,10 @@ public class Robot {
 
             updateMapMatrix(newX, newY);
             updateCompleteMapMatrix(newX, newY, dx, dy, tempAgentShape);
+            agentMoved = true;
         }
+
+        return agentMoved;
     }
 
     public void updateMapMatrix(double newX, double newY) {
