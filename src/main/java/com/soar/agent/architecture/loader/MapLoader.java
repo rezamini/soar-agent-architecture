@@ -56,7 +56,7 @@ public class MapLoader {
         }
     }
 
-    private World load(InputStream in) throws IOException {
+    public World load(InputStream in) throws IOException {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         final ByRef<Integer> maxLine = ByRef.create(0);
         final String[] lines = readLines(reader, maxLine);

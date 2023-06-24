@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -42,34 +43,43 @@ public class AgentTest {
 
     @Autowired
     private World world;
-    
+
     @Autowired
     private Robot robot;
-    
+
     @BeforeAll
     public static void setUp() {
         System.setProperty("java.awt.headless", "false");
-        // mapLoader.load(getClass().getResource("/map/map-test.txt"));
-        // worldPanel.fit();
-        // updateAgents();
     }
-    
-    @Test
-    @DisplayName("Move agent to east with obstacle")
-    public void testAgentCollisionWithEastObstacle() throws IOException {
-        world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
+
+    private void createNewWorld(String worldString) throws IOException{
+        // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
+        world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
+
         worldPanel.fit();
         utilityResponder.addAllListeners();
         robot = world.getRobots().iterator().next();
         robotAgent.setRobot(robot);
         worldPanel.repaint();
+    }
 
-        //set the yaw to east direction
+    @Test
+    @DisplayName("Test that the agent correctly responds to an obstacle in the east")
+    public void testAgentCollisionWithEastObstacle() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+        .append(" ###### ").append("\n")
+        .append("    R## ").append("\n")
+        .append("  ");
+
+        createNewWorld(sb.toString());
+        
+        // set the yaw to east direction
         robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
-        //get the result of the new move if agent has successfuly moved or not
+        // get the result of the new move if agent has successfuly moved or not
         boolean result = robot.updateAndMove(0);
 
-        assertFalse(result, "Agent Collision and Awareness with obstacle on east side. Agent should not move to east and hit the obstacle");
+        assertFalse(result);
     }
 }
