@@ -52,7 +52,7 @@ public class AgentTest {
         System.setProperty("java.awt.headless", "false");
     }
 
-    private void createNewWorld(String worldString) throws IOException{
+    private void createNewWorld(String worldString) throws IOException {
         // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
         world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
 
@@ -64,22 +64,90 @@ public class AgentTest {
     }
 
     @Test
-    @DisplayName("Test that the agent correctly responds to an obstacle in the east")
-    public void testAgentCollisionWithEastObstacle() throws IOException {
+    @DisplayName("Verify the accurate response of the agent when encountering an obstacle in the EAST. " +
+            "The objective is to ensure that when an obstacle exists in the EAST, the agent refrains from moving in that direction.")
+    public void testAgentResponseToEastObstacle() throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append(" ").append("\n")
-        .append(" ###### ").append("\n")
-        .append("    R## ").append("\n")
-        .append("  ");
+                .append(" ###### ").append("\n")
+                .append("    R## ").append("\n")
+                .append("  ");
 
         createNewWorld(sb.toString());
-        
+
         // set the yaw to east direction
         robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
         // get the result of the new move if agent has successfuly moved or not
         boolean result = robot.updateAndMove(0);
 
+        //make sure the agent did not move and assert is false
+        assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Verify the accurate response of the agent when encountering an obstacle in the WEST. " +
+            "The objective is to ensure that when an obstacle exists in the WEST, the agent refrains from moving in that direction.")
+    public void testAgentResponseToWestObstacle() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append(" ###### ").append("\n")
+                .append("    ##R  ").append("\n")
+                .append("  ");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to west direction
+        robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
+
+        // get the result of the new move if agent has successfuly moved or not
+        boolean result = robot.updateAndMove(0);
+
+        //make sure the agent did not move and assert is false
+        assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Verify the accurate response of the agent when encountering an obstacle in the NORTH. " +
+            "The objective is to ensure that when an obstacle exists in the NORTH, the agent refrains from moving in that direction.")
+    public void testAgentResponseToNorthObstacle() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append(" ###### ").append("\n")
+                .append("    R  ").append("\n")
+                .append("  ");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to north direction
+        robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
+
+        // get the result of the new move if agent has successfuly moved or not
+        boolean result = robot.updateAndMove(0);
+
+        //make sure the agent did not move and assert is false
+        assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Verify the accurate response of the agent when encountering an obstacle in the SOUTH. " +
+            "The objective is to ensure that when an obstacle exists in the SOUTH, the agent refrains from moving in that direction.")
+    public void testAgentResponseToSouthObstacle() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append(" ").append("\n")
+                .append("    R  ").append("\n")
+                .append("  ######");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to south direction
+        robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
+
+        // get the result of the new move if agent has successfuly moved or not
+        boolean result = robot.updateAndMove(0);
+
+        //make sure the agent did not move and assert is false
         assertFalse(result);
     }
 }
