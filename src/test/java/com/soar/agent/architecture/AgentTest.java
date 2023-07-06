@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.soar.agent.architecture.enums.DirectionEnum;
@@ -54,6 +55,7 @@ public class AgentTest {
 
     private void createNewWorld(String worldString) throws IOException {
         // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
+        
         world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
 
         worldPanel.fit();
@@ -147,6 +149,93 @@ public class AgentTest {
         // get the result of the new move if agent has successfuly moved or not
         boolean result = robot.updateAndMove(0);
 
+        //make sure the agent did not move and assert is false
+        assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Verify the accurate response of the agent when encountering an obstacle in the NORTH-EAST. " +
+            "The objective is to ensure that when an obstacle exists in the NORTH-EAST, the agent refrains from moving in that direction.")
+    public void testAgentResponseToNorthEastObstacle() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append("  #######").append("\n")
+                .append("    R  ").append("\n")
+                .append("  ");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to north-east direction
+        robot.setYaw(Math.toRadians(DirectionEnum.NORTHEAST.getAngle()));
+
+        // get the result of the new move if agent has successfuly moved or not
+        boolean result = robot.updateAndMove(0);
+
+        //make sure the agent did not move and assert is false
+        assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Verify the accurate response of the agent when encountering an obstacle in the NORTH-WEST. " +
+            "The objective is to ensure that when an obstacle exists in the NORTH-WEST, the agent refrains from moving in that direction.")
+    public void testAgentResponseToNorthWestObstacle() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append(" ####### ").append("\n")
+                .append("    R  ").append("\n")
+                .append("  ");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to north-west direction
+        robot.setYaw(Math.toRadians(DirectionEnum.NORTHEAST.getAngle()));
+
+        // get the result of the new move if agent has successfuly moved or not
+        boolean result = robot.updateAndMove(0);
+
+        //make sure the agent did not move and assert is false
+        assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Verify the accurate response of the agent when encountering an obstacle in the SOUTH-EAST. " +
+            "The objective is to ensure that when an obstacle exists in the SOUTH-EAST, the agent refrains from moving in that direction.")
+    public void testAgentResponseToSouthEastObstacle() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append("  ").append("\n")
+                .append("    R  ").append("\n")
+                .append(" ##########");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to south-east direction
+        robot.setYaw(Math.toRadians(DirectionEnum.SOUTHEAST.getAngle()));
+
+        // get the result of the new move if agent has successfuly moved or not
+        boolean result = robot.updateAndMove(0);
+
+        //make sure the agent did not move and assert is false
+        assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Verify the accurate response of the agent when encountering an obstacle in the SOUTH-WEST. " +
+            "The objective is to ensure that when an obstacle exists in the SOUTH-WEST, the agent refrains from moving in that direction.")
+    public void testAgentResponseToSouthWestObstacle() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append("  ").append("\n")
+                .append("    R  ").append("\n")
+                .append("   ####### ");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to south-west direction
+        robot.setYaw(Math.toRadians(DirectionEnum.SOUTHWEST.getAngle()));
+
+        // get the result of the new move if agent has successfuly moved or not
+        boolean result = robot.updateAndMove(0);
         //make sure the agent did not move and assert is false
         assertFalse(result);
     }
