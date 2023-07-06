@@ -55,7 +55,7 @@ public class AgentTest {
 
     private void createNewWorld(String worldString) throws IOException {
         // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
-        
+        world.reset();
         world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
 
         worldPanel.fit();

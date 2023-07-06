@@ -1,7 +1,6 @@
 package com.soar.agent.architecture.world;
 
 import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,6 +38,30 @@ public class World {
     private Integer agentMapMatrixY2 = null;
     private Integer secondAgentMapMatrixX2 = null;
     private Integer secondAgentMapMatrixY2 = null;
+
+        // the boolean value is to indicate if landmark is reached by the agent
+    private final Map<Landmark, Boolean> landmarkMap = new LinkedHashMap<Landmark, Boolean>();
+
+    // the Boolean value is to indicate if the landmark is within radar/if its live
+    private Map<Landmark, Boolean> detectedRadarLandmarks = new HashMap<Landmark, Boolean>();
+
+    private ShortestPathGraph shortestPathGraph;
+    private ShortestPathGraph shortestPathGraphComplete;
+    private Map<Landmark, List<String>> shortestLandmarkDirections = new LinkedHashMap<Landmark, List<String>>();
+
+
+    public void reset() {
+        obstacles.clear();
+        robots.clear();
+        landmarks.clear();
+        smemAttributes.clear();
+        mapMatrix = new int[0][0];
+        completeMapMatrix = new int[0][0];
+        landmarkMap.clear();
+        detectedRadarLandmarks.clear();
+        shortestLandmarkDirections.clear();
+
+    }
 
     public Integer getAgentMapMatrixX2() {
         return agentMapMatrixX2;
@@ -88,15 +111,6 @@ public class World {
         this.secondAgentMapMatrixY = secondAgentMapMatrixY;
     }
 
-    // the boolean value is to indicate if landmark is reached by the agent
-    private final Map<Landmark, Boolean> landmarkMap = new LinkedHashMap<Landmark, Boolean>();
-
-    // the Boolean value is to indicate if the landmark is within radar/if its live
-    private Map<Landmark, Boolean> detectedRadarLandmarks = new HashMap<Landmark, Boolean>();
-
-    private ShortestPathGraph shortestPathGraph;
-    private ShortestPathGraph shortestPathGraphComplete;
-    private Map<Landmark, List<String>> shortestLandmarkDirections = new LinkedHashMap<Landmark, List<String>>();
 
     public World() {
 
