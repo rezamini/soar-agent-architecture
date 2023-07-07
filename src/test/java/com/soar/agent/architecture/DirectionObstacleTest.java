@@ -29,7 +29,7 @@ import com.soar.agent.architecture.world.WorldPanel;
 @ExtendWith(SpringExtension.class) // junit 5, jupiter
 // @SpringBootTest(properties = "map.file.name=map-test.txt")
 @SpringBootTest
-public class AgentTest {
+public class DirectionObstacleTest {
     @Autowired
     public MapLoader mapLoader;
 
