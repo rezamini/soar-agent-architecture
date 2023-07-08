@@ -78,7 +78,8 @@ public class ShortestPathGraph extends SwingWorker {
 
             landmarkNodes.forEach((key, value) -> {
                 // skip the reached landmarks
-                if (world.getLandmarkMap().get(key) == true) {
+                if (world.getLandmarkMap() != null && world.getLandmarkMap().size() > 0 
+                && world.getLandmarkMap().get(key) == true) {
                     if (computedPaths.containsKey(key)) {
                         computedPaths.remove(key);
                     }
