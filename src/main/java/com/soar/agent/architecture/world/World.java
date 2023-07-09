@@ -60,6 +60,8 @@ public class World {
         landmarkMap.clear();
         detectedRadarLandmarks.clear();
         shortestLandmarkDirections.clear();
+        shortestPathGraph = null;
+        shortestPathGraphComplete = null;
 
     }
 

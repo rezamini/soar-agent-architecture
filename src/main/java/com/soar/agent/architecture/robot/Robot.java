@@ -109,10 +109,16 @@ public class Robot {
             // tempShape = tempAgentShape;
             move(newX, newY);
             
-
-            updateMapMatrix(newX, newY);
-            updateCompleteMapMatrix(newX, newY, dx, dy, tempAgentShape);
             agentMoved = true;
+
+            if(world.getShortestPathGraph() != null){
+                updateMapMatrix(newX, newY);
+                
+            }
+            
+            if(world.getShortestPathGraphComplete() != null){
+                updateCompleteMapMatrix(newX, newY, dx, dy, tempAgentShape);
+            }
         }
 
         return agentMoved;
