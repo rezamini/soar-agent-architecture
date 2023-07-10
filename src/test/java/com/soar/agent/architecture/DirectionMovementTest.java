@@ -235,4 +235,118 @@ public class DirectionMovementTest {
                 // make sure the agent successful moved and assert is true
                 assertTrue(result);
         }
+
+        //multiple movements tests
+        @Test
+        @DisplayName("Verify multiple movements of the agent to the EAST without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the EAST, the agent can move in that direction multiple times and reach its destination effectively.")
+        public void testAgentMultipleMovementToEastWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R #").append("\n")
+                                .append("       ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to east direction
+                robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
+
+                // first move
+                robot.updateAndMove(0);
+
+                // second move
+                robot.updateAndMove(0);
+
+                //third move and the result
+                boolean result = robot.updateAndMove(0);
+
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
+
+        @Test
+        @DisplayName("Verify multiple movements of the agent to the WEST without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the WEST, the agent can move in that direction multiple times and reach its destination effectively.")
+        public void testAgentMultipleMovementToWestWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   # R   ").append("\n")
+                                .append("       ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to west direction
+                robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
+
+                // first move
+                robot.updateAndMove(0);
+
+                // second move
+                robot.updateAndMove(0);
+
+                //third move and the result
+                boolean result = robot.updateAndMove(0);
+
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
+
+        @Test
+        @DisplayName("Verify multiple movements of the agent to the NORTH without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the NORTH, the agent can move in that direction multiple times and reach its destination effectively.")
+        public void testAgentMultipleMovementToNorthWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("    #   ").append("\n")
+                                .append("       ").append("\n")
+                                .append("    R   ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to north direction
+                robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
+
+                // first move
+                robot.updateAndMove(0);
+
+                // second move
+                robot.updateAndMove(0);
+
+                //third move and the result
+                boolean result = robot.updateAndMove(0);
+
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }        
+
+        @Test
+        @DisplayName("Verify multiple movements of the agent to the SOUTH without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the SOUTH, the agent can move in that direction multiple times and reach its destination effectively.")
+        public void testAgentMultipleMovementToSouthWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("    R   ").append("\n")
+                                .append("        ").append("\n")
+                                .append("    #   ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to south direction
+                robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
+
+                // first move
+                robot.updateAndMove(0);
+
+                // second move
+                robot.updateAndMove(0);
+
+                //third move and the result
+                boolean result = robot.updateAndMove(0);
+
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
+        
 }
