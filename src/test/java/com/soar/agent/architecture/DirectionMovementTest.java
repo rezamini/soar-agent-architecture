@@ -25,126 +25,214 @@ import com.soar.agent.architecture.world.WorldPanel;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class DirectionMovementTest {
-    @Autowired
-    public MapLoader mapLoader;
+        @Autowired
+        public MapLoader mapLoader;
 
-    @Autowired
-    private WorldPanel worldPanel;
+        @Autowired
+        private WorldPanel worldPanel;
 
-    @Autowired
-    private RobotAgent robotAgent;
+        @Autowired
+        private RobotAgent robotAgent;
 
-    @Autowired
-    private UtilityResponder utilityResponder;
+        @Autowired
+        private UtilityResponder utilityResponder;
 
-    @Autowired
-    private World world;
+        @Autowired
+        private World world;
 
-    @Autowired
-    private Robot robot;
+        @Autowired
+        private Robot robot;
 
-    @BeforeAll
-    public static void setUp() {
-        System.setProperty("java.awt.headless", "false");
-    }
+        @BeforeAll
+        public static void setUp() {
+                System.setProperty("java.awt.headless", "false");
+        }
 
-    private void createNewWorld(String worldString) throws IOException {
-        // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
-        world.reset();
-        world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
+        private void createNewWorld(String worldString) throws IOException {
+                // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
+                world.reset();
+                world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
 
-        worldPanel.fit();
-        utilityResponder.addAllListeners();
-        robot = world.getRobots().iterator().next();
-        robotAgent.setRobot(robot);
-        worldPanel.repaint();
-    }
+                worldPanel.fit();
+                utilityResponder.addAllListeners();
+                robot = world.getRobots().iterator().next();
+                robotAgent.setRobot(robot);
+                worldPanel.repaint();
+        }
 
-    @Test
-    @DisplayName("Verify the successful movement of the agent to the EAST without encountering any obstacles. " +
-            "The goal is to ensure that when no obstacles exist in the EAST, the agent can move in that direction and reach its destination effectively.")
-    public void testAgentMovementToEastWithoutObstacle() throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" ").append("\n")
-                .append("       ").append("\n")
-                .append("   R   ").append("\n")
-                .append("       ");
+        @Test
+        @DisplayName("Verify the successful movement of the agent to the EAST without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the EAST, the agent can move in that direction and reach its destination effectively.")
+        public void testAgentMovementToEastWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("       ");
 
-        createNewWorld(sb.toString());
+                createNewWorld(sb.toString());
 
-        // set the yaw to east direction
-        robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
+                // set the yaw to east direction
+                robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
-        // get the result of the new move if agent has successfuly moved or not
-        boolean result = robot.updateAndMove(0);
+                // get the result of the new move if agent has successfuly moved or not
+                boolean result = robot.updateAndMove(0);
 
-        // make sure the agent successful moved and assert is true
-        assertTrue(result);
-    }
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
 
-    @Test
-    @DisplayName("Verify the successful movement of the agent to the WEST without encountering any obstacles. " +
-            "The goal is to ensure that when no obstacles exist in the WEST, the agent can move in that direction and reach its destination effectively.")
-    public void testAgentMovementToWestWithoutObstacle() throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" ").append("\n")
-                .append("       ").append("\n")
-                .append("   R   ").append("\n")
-                .append("       ");
+        @Test
+        @DisplayName("Verify the successful movement of the agent to the WEST without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the WEST, the agent can move in that direction and reach its destination effectively.")
+        public void testAgentMovementToWestWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("       ");
 
-        createNewWorld(sb.toString());
+                createNewWorld(sb.toString());
 
-        // set the yaw to west direction
-        robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
+                // set the yaw to west direction
+                robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
 
-        // get the result of the new move if agent has successfuly moved or not
-        boolean result = robot.updateAndMove(0);
+                // get the result of the new move if agent has successfuly moved or not
+                boolean result = robot.updateAndMove(0);
 
-        // make sure the agent successful moved and assert is true
-        assertTrue(result);
-    }
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
 
-    @Test
-    @DisplayName("Verify the successful movement of the agent to the NORTH without encountering any obstacles. " +
-            "The goal is to ensure that when no obstacles exist in the NORTH, the agent can move in that direction and reach its destination effectively.")
-    public void testAgentMovementToNorthWithoutObstacle() throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" ").append("\n")
-                .append("       ").append("\n")
-                .append("   R   ").append("\n")
-                .append("       ");
+        @Test
+        @DisplayName("Verify the successful movement of the agent to the NORTH without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the NORTH, the agent can move in that direction and reach its destination effectively.")
+        public void testAgentMovementToNorthWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("       ");
 
-        createNewWorld(sb.toString());
+                createNewWorld(sb.toString());
 
-        // set the yaw to north direction
-        robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
+                // set the yaw to north direction
+                robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
 
-        // get the result of the new move if agent has successfuly moved or not
-        boolean result = robot.updateAndMove(0);
+                // get the result of the new move if agent has successfuly moved or not
+                boolean result = robot.updateAndMove(0);
 
-        // make sure the agent successful moved and assert is true
-        assertTrue(result);
-    }
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
 
-    @Test
-    @DisplayName("Verify the successful movement of the agent to the SOUTH without encountering any obstacles. " +
-            "The goal is to ensure that when no obstacles exist in the SOUTH, the agent can move in that direction and reach its destination effectively.")
-    public void testAgentMovementToSouthWithoutObstacle() throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" ").append("\n")
-                .append("       ").append("\n")
-                .append("   R   ").append("\n")
-                .append("       ");
+        @Test
+        @DisplayName("Verify the successful movement of the agent to the SOUTH without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the SOUTH, the agent can move in that direction and reach its destination effectively.")
+        public void testAgentMovementToSouthWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("       ");
 
-        createNewWorld(sb.toString());
+                createNewWorld(sb.toString());
 
-        // set the yaw to south direction
-        robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
+                // set the yaw to south direction
+                robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
 
-        // get the result of the new move if agent has successfuly moved or not
-        boolean result = robot.updateAndMove(0);
+                // get the result of the new move if agent has successfuly moved or not
+                boolean result = robot.updateAndMove(0);
 
-        // make sure the agent successful moved and assert is true
-        assertTrue(result);
-    }
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
+
+        @Test
+        @DisplayName("Verify the successful movement of the agent to the NORTH-EAST without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the NORTH-EAST, the agent can move in that direction and reach its destination effectively.")
+        public void testAgentMovementToNorthEastWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("       ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to north-east direction
+                robot.setYaw(Math.toRadians(DirectionEnum.NORTHEAST.getAngle()));
+
+                // get the result of the new move if agent has successfuly moved or not
+                boolean result = robot.updateAndMove(0);
+
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
+
+        @Test
+        @DisplayName("Verify the successful movement of the agent to the NORTH-WEST without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the NORTH-WEST, the agent can move in that direction and reach its destination effectively.")
+        public void testAgentMovementToNorthWestWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("       ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to north-west direction
+                robot.setYaw(Math.toRadians(DirectionEnum.NORTHWEST.getAngle()));
+
+                // get the result of the new move if agent has successfuly moved or not
+                boolean result = robot.updateAndMove(0);
+
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
+
+        @Test
+        @DisplayName("Verify the successful movement of the agent to the SOUTH-EAST without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the SOUTH-EAST, the agent can move in that direction and reach its destination effectively.")
+        public void testAgentMovementToSouthEastWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("       ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to south-east direction
+                robot.setYaw(Math.toRadians(DirectionEnum.SOUTHEAST.getAngle()));
+
+                // get the result of the new move if agent has successfuly moved or not
+                boolean result = robot.updateAndMove(0);
+
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
+
+        @Test
+        @DisplayName("Verify the successful movement of the agent to the SOUTH-WEST without encountering any obstacles. " +
+                        "The goal is to ensure that when no obstacles exist in the SOUTH-WEST, the agent can move in that direction and reach its destination effectively.")
+        public void testAgentMovementToSouthWestWithoutObstacle() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("       ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to south-west direction
+                robot.setYaw(Math.toRadians(DirectionEnum.SOUTHWEST.getAngle()));
+
+                // get the result of the new move if agent has successfuly moved or not
+                boolean result = robot.updateAndMove(0);
+
+                // make sure the agent successful moved and assert is true
+                assertTrue(result);
+        }
 }
