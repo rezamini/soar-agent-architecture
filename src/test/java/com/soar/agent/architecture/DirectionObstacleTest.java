@@ -63,6 +63,9 @@ public class DirectionObstacleTest {
                 robot = world.getRobots().iterator().next();
                 robotAgent.setRobot(robot);
                 worldPanel.repaint();
+
+                //add other specific values
+                robot.setSpeed(0.5);
         }
 
         @Test
