@@ -573,4 +573,12 @@ public class Robot {
     public void setTempShape2(Rectangle2D tempShape2) {
         this.tempShape2 = tempShape2;
     }
+
+    public double getBatteryDeduction() {
+        return batteryDeduction;
+    }
+
+    public void setBatteryDeduction(double batteryDeduction) {
+        this.batteryDeduction = batteryDeduction;
+    }
 }
