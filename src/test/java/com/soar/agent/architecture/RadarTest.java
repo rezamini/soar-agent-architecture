@@ -164,5 +164,110 @@ public class RadarTest {
 
         // make sure the agent battery result and expected result are same
         assertEquals(batteryResult, expectedBattery);
-    }     
+    }
+    
+    @Test
+    @DisplayName("Verify the battery percentage of the agent after performing one movement with one battery reduction. " +
+            "The objective is to ensure that the agent's radar accurately updates the battery percentage based on the" +
+            "energy consumed during movement. This test will check if the battery percentage decreases by the expected amount after the agent moves.")
+    public void testAgentRadarBatteryAfterOneMovementWithOneReduction() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append("        ").append("\n")
+                .append("    R   ").append("\n")
+                .append("        ");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to east direction
+        robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
+
+        //reset the batery redction values 
+        robot.setBatteryDeduction(1);
+
+        // expected battery, original battery before movement - deduction
+        double expectedBattery = robot.getRadarBattery() - robot.getBatteryDeduction();
+        
+        // move the agent
+        robot.updateAndMove(0);
+
+        //get the battery result
+        double batteryResult = robot.getRadarBattery();        
+        
+        // make sure the agent battery result and expected result are same
+        assertEquals(batteryResult, expectedBattery);
+    }
+
+    @Test
+    @DisplayName("Verify the battery percentage of the agent after performing two movements with one battery reduction. " +
+            "The objective is to ensure that the agent's radar accurately updates the battery percentage based on the" +
+            "energy consumed during movement. This test will check if the battery percentage decreases by the expected amount after the agent moves.")
+    public void testAgentRadarBatteryAfterTwoMovementsWithOneReduction() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append("        ").append("\n")
+                .append("    R   ").append("\n")
+                .append("        ");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to east direction
+        robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
+
+        //reset the batery redction values 
+        robot.setBatteryDeduction(1);
+
+        // original battery percentage before any movement
+        double originalBattery = robot.getRadarBattery();
+
+        // move the agent 2 times
+        robot.updateAndMove(0);
+        robot.updateAndMove(0);
+
+        //get the battery result
+        double batteryResult = robot.getRadarBattery();        
+        
+        //expected battery after all movements
+        double expectedBattery = originalBattery - ( robot.getBatteryDeduction() * 2);
+
+        // make sure the agent battery result and expected result are same
+        assertEquals(batteryResult, expectedBattery);
+    } 
+
+    @Test
+    @DisplayName("Verify the battery percentage of the agent after performing three movements with one battery reduction. " +
+            "The objective is to ensure that the agent's radar accurately updates the battery percentage based on the" +
+            "energy consumed during movement. This test will check if the battery percentage decreases by the expected amount after the agent moves.")
+    public void testAgentRadarBatteryAfterThreeMovementsWithOneReduction() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ").append("\n")
+                .append("         ").append("\n")
+                .append("    R    ").append("\n")
+                .append("         ");
+
+        createNewWorld(sb.toString());
+
+        // set the yaw to east direction
+        robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
+
+        //reset the batery redction values 
+        robot.setBatteryDeduction(1);
+
+        // original battery percentage before any movement
+        double originalBattery = robot.getRadarBattery();
+
+        // move the agent 3 times
+        robot.updateAndMove(0);
+        robot.updateAndMove(0);
+        robot.updateAndMove(0);
+
+        //get the battery result
+        double batteryResult = robot.getRadarBattery();        
+        
+        //expected battery after all movements
+        double expectedBattery = originalBattery - ( robot.getBatteryDeduction() * 3);
+
+        // make sure the agent battery result and expected result are same
+        assertEquals(batteryResult, expectedBattery);
+    }
 }
