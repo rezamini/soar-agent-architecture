@@ -286,11 +286,12 @@ public class RadarTest {
         }
 
         @Test
-        @DisplayName("Verify the number of landmarks detected by the agent's radar for one landmark. " +
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for one landmark in east direction. "
+                        +
                         "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
                         +
                         "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
-        public void testRadarLandmarkDetectionCountForOneLandmark() throws IOException {
+        public void testRadarLandmarkDetectionCountForOneLandmarkInEastDirection() throws IOException {
                 StringBuilder sb = new StringBuilder();
                 sb.append(" ").append("\n")
                                 .append("        ").append("\n")
@@ -303,6 +304,9 @@ public class RadarTest {
                 // set the yaw to east direction
                 robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
 
@@ -312,11 +316,12 @@ public class RadarTest {
         }
 
         @Test
-        @DisplayName("Verify the number of landmarks detected by the agent's radar for two landmarks. " +
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for two landmarks in east direction. "
+                        +
                         "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
                         +
                         "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
-        public void testRadarLandmarkDetectionCountForTwoLandmarks() throws IOException {
+        public void testRadarLandmarkDetectionCountForTwoLandmarksInEastDirection() throws IOException {
                 StringBuilder sb = new StringBuilder();
                 sb.append(" ").append("\n")
                                 .append("        ").append("\n")
@@ -329,20 +334,24 @@ public class RadarTest {
                 // set the yaw to east direction
                 robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
 
                 // assert that detected landmark size and actual number of landmarks in the test
                 // map are same
                 assertEquals(detectedLandmarks.size(), 2);
-        } 
-        
+        }
+
         @Test
-        @DisplayName("Verify the number of landmarks detected by the agent's radar for three landmarks. " +
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for three landmarks in east direction. "
+                        +
                         "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
                         +
                         "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
-        public void testRadarLandmarkDetectionCountForThreeLandmarks() throws IOException {
+        public void testRadarLandmarkDetectionCountForThreeLandmarksInEastDirection() throws IOException {
                 StringBuilder sb = new StringBuilder();
                 sb.append(" ").append("\n")
                                 .append("        ").append("\n")
@@ -355,11 +364,286 @@ public class RadarTest {
                 // set the yaw to east direction
                 robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
 
                 // assert that detected landmark size and actual number of landmarks in the test
                 // map are same
                 assertEquals(detectedLandmarks.size(), 3);
-        }        
+        }
+
+        @Test
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for one landmark in west direction. "
+                        +
+                        "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
+                        +
+                        "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
+        public void testRadarLandmarkDetectionCountForOneLandmarkInWestDirection() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("        ").append("\n")
+                                .append("   a  R   ").append("\n")
+                                .append("        ").append("\n")
+                                .append("        ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to west direction
+                robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
+
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
+                // get the detected landmarks map
+                Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
+
+                // assert that detected landmark size and actual number of landmarks in the test
+                // map are same
+                assertEquals(detectedLandmarks.size(), 1);
+        }
+
+        @Test
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for two landmarks in west direction. "
+                        +
+                        "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
+                        +
+                        "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
+        public void testRadarLandmarkDetectionCountForTwoLandmarksInWestDirection() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("        ").append("\n")
+                                .append("  a b  R   ").append("\n")
+                                .append("        ").append("\n")
+                                .append("        ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to west direction
+                robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
+
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
+                // get the detected landmarks map
+                Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
+
+                // assert that detected landmark size and actual number of landmarks in the test
+                // map are same
+                assertEquals(detectedLandmarks.size(), 2);
+        }
+
+        @Test
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for three landmarks in west direction. "
+                        +
+                        "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
+                        +
+                        "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
+        public void testRadarLandmarkDetectionCountForThreeLandmarksInWestDirection() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("        ").append("\n")
+                                .append("  a b c  R   ").append("\n")
+                                .append("        ").append("\n")
+                                .append("        ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to west direction
+                robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
+
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
+                // get the detected landmarks map
+                Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
+
+                // assert that detected landmark size and actual number of landmarks in the test
+                // map are same
+                assertEquals(detectedLandmarks.size(), 3);
+        }
+
+        @Test
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for one landmark in north direction. "
+                        +
+                        "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
+                        +
+                        "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
+        public void testRadarLandmarkDetectionCountForOneLandmarkInNorthDirection() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("   a     ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("        ").append("\n")
+                                .append("        ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to north direction
+                robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
+
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
+                // get the detected landmarks map
+                Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
+
+                // assert that detected landmark size and actual number of landmarks in the test
+                // map are same
+                assertEquals(detectedLandmarks.size(), 1);
+        }
+
+        @Test
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for two landmarks in north direction. "
+                        +
+                        "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
+                        +
+                        "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
+        public void testRadarLandmarkDetectionCountForTwoLandmarksInNorthDirection() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("   b     ").append("\n")
+                                .append("   a     ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("        ").append("\n")
+                                .append("        ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to north direction
+                robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
+
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
+                // get the detected landmarks map
+                Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
+
+                // assert that detected landmark size and actual number of landmarks in the test
+                // map are same
+                assertEquals(detectedLandmarks.size(), 2);
+        }
+
+        @Test
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for three landmarks in north direction. "
+                        +
+                        "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
+                        +
+                        "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
+        public void testRadarLandmarkDetectionCountForThreeLandmarksInNorthDirection() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("    c    ").append("\n")
+                                .append("    b    ").append("\n")
+                                .append("    a    ").append("\n")
+                                .append("    R   ").append("\n")
+                                .append("        ").append("\n")
+                                .append("        ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to north direction
+                robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
+
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
+                // get the detected landmarks map
+                Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
+
+                // assert that detected landmark size and actual number of landmarks in the test
+                // map are same
+                assertEquals(detectedLandmarks.size(), 3);
+        }
+
+        @Test
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for one landmark in south direction. "
+                        +
+                        "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
+                        +
+                        "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
+        public void testRadarLandmarkDetectionCountForOneLandmarkInSouthDirection() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("        ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("   a     ").append("\n")
+                                .append("        ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to south direction
+                robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
+
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
+                // get the detected landmarks map
+                Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
+
+                // assert that detected landmark size and actual number of landmarks in the test
+                // map are same
+                assertEquals(detectedLandmarks.size(), 1);
+        }
+
+        @Test
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for two landmarks in south direction. "
+                        +
+                        "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
+                        +
+                        "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
+        public void testRadarLandmarkDetectionCountForTwoLandmarksInSouthDirection() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("   R   ").append("\n")
+                                .append("   a    ").append("\n")
+                                .append("   b     ").append("\n");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to south direction
+                robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
+
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
+                // get the detected landmarks map
+                Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
+
+                // assert that detected landmark size and actual number of landmarks in the test
+                // map are same
+                assertEquals(detectedLandmarks.size(), 2);
+        }
+
+        @Test
+        @DisplayName("Verify the number of landmarks detected by the agent's radar for three landmarks in south direction. "
+                        +
+                        "The objective is to ensure that the radar accurately identifies the correct number of landmarks within its range."
+                        +
+                        "This test will check if the reported count of landmarks matches the expected number, providing confidence in the radar's ability to detect and identify landmarks..")
+        public void testRadarLandmarkDetectionCountForThreeLandmarksInSouthDirection() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("    R   ").append("\n")
+                                .append("    a    ").append("\n")
+                                .append("    b    ").append("\n")
+                                .append("    c    ").append("\n");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to south direction
+                robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
+
+                // move the agent so the yaw will get updated
+                robot.updateAndMove(0);
+
+                // get the detected landmarks map
+                Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
+
+                // assert that detected landmark size and actual number of landmarks in the test
+                // map are same
+                assertEquals(detectedLandmarks.size(), 3);
+        }
 }
