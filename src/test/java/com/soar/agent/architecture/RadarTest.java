@@ -1272,4 +1272,62 @@ public class RadarTest {
                 assertEquals(detectedLandmarks.size(), 1);
         }
 
+        @Test
+        @DisplayName("Verify the on functionality of the agent's radar.  "
+                        +
+                        "The objective is to ensure that when the radar is turned on, it can accurately detect landmarks within its range."
+                        +
+                        "This test will check if the radar's status correctly toggles between on and off, and if its detection behavior aligns with the specified state.")
+        public void testRadarOnToggleFunctionality() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   a ").append("\n")
+                                .append("       ").append("\n")
+                                .append("       ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to east direction
+                robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
+
+                // set the radar toggle to on
+                robot.setToggleRadar(true);
+
+                // move the agent
+                robot.updateAndMove(0);
+
+                // assert that the radar status is on
+                assertTrue(robot.isToggleRadar());
+        }
+
+        @Test
+        @DisplayName("Verify the off functionality of the agent's radar.  "
+                        +
+                        "The objective is to ensure that when the radar is turned off, it does not detect any landmarks within its range. "
+                        +
+                        "This test will check if the radar's status correctly toggles between on and off, and if its detection behavior aligns with the specified state.")
+        public void testRadarOffToggleFunctionality() throws IOException {
+                StringBuilder sb = new StringBuilder();
+                sb.append(" ").append("\n")
+                                .append("       ").append("\n")
+                                .append("   R   a ").append("\n")
+                                .append("       ").append("\n")
+                                .append("       ");
+
+                createNewWorld(sb.toString());
+
+                // set the yaw to east direction
+                robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
+
+                // set the radar toggle to false/off
+                robot.setToggleRadar(false);
+
+                // move the agent
+                robot.updateAndMove(0);
+
+                // assert that the radar status is off
+                assertFalse(robot.isToggleRadar());
+        }
+
 }
