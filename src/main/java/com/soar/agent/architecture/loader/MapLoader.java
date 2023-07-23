@@ -172,11 +172,11 @@ public class MapLoader {
                         cx = cx - 0.5;
                     }
 
-                    robot.move(cx, cy);
                     robot.setSpeed(0.5);
                     robot.setTurnRate(Math.toRadians(25));
                     robot.setYaw(0);
-
+                    robot.move(cx, cy);
+                    
                     world.addRobot(robot);
                     
                     mapMatrix[y][x] = 3;
