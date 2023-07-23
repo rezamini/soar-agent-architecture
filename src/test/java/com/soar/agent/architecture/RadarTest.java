@@ -69,6 +69,7 @@ public class RadarTest {
 
                 // add other specific values
                 robot.setSpeed(0.5);
+                robot.setToggleRadar(true);
                 robot.setBatteryDeduction(0.1);
         }
 
