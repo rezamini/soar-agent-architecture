@@ -11,5 +11,5 @@ import com.soar.agent.architecture.api.entity.SemanticMemoryEntity;
 public interface SemanticMemoryRepository {
     
     public Map<String, Set<String>> getSemanticMemoryAttributes();
-    public void saveSemanticMemoryAttributes(SemanticMemoryEntity semanticMemoryEntity);
+    public SemanticMemoryEntity saveSemanticMemoryAttributes(SemanticMemoryEntity semanticMemoryEntity);
 }
