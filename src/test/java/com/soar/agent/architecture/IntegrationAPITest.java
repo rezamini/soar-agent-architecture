@@ -3,6 +3,7 @@ package com.soar.agent.architecture;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -66,4 +67,24 @@ public class IntegrationAPITest {
                 // .andDo(print()) // to see the result in the console
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void testPostMappingStatusWithWrongarameterDataType() throws Exception {
+        mockMvc.perform(post("/smemAttributes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{semanticMemoryEntity:testValue}"))
+                // .andDo(print()) // to see the result in the console
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testPostMappingStatusWithoutParameterData() throws Exception {
+        mockMvc.perform(post("/smemAttributes")
+                .contentType(MediaType.APPLICATION_JSON))
+                // .andDo(print()) // to see the result in the console
+                .andExpect(status().isBadRequest());
+    }
+
+
+
 }
