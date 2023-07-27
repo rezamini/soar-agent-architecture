@@ -19,7 +19,7 @@ public class MoveResponder implements MoveListenerEvent{
         
         if(currentDirection != null){
             robot.setYaw(Math.toRadians(currentDirection.getAngle()));
-            robot.getWorld().updateAndMoveAgents(0);
+            robot.getWorld().updateAndMoveAgents();
             
         }else{
             System.out.println("The move command direction is not found !");

@@ -95,7 +95,7 @@ public class RadarTest {
                                 batteryDecimalFormat.format(robot.getRadarBattery() - robot.getBatteryDeduction()));
 
                 // move the agent
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the battery result
                 double batteryResult = robot.getRadarBattery();
@@ -125,8 +125,8 @@ public class RadarTest {
                 double originalBattery = robot.getRadarBattery();
 
                 // move the agent 2 times
-                robot.updateAndMove(0);
-                robot.updateAndMove(0);
+                robot.updateAndMove();
+                robot.updateAndMove();
 
                 // get the battery result
                 double batteryResult = robot.getRadarBattery();
@@ -160,9 +160,9 @@ public class RadarTest {
                 double originalBattery = robot.getRadarBattery();
 
                 // move the agent 3 times
-                robot.updateAndMove(0);
-                robot.updateAndMove(0);
-                robot.updateAndMove(0);
+                robot.updateAndMove();
+                robot.updateAndMove();
+                robot.updateAndMove();
 
                 // get the battery result
                 double batteryResult = robot.getRadarBattery();
@@ -200,7 +200,7 @@ public class RadarTest {
                 double expectedBattery = Double.valueOf(robot.getRadarBattery() - robot.getBatteryDeduction());
 
                 // move the agent
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the battery result
                 double batteryResult = robot.getRadarBattery();
@@ -234,8 +234,8 @@ public class RadarTest {
                 double originalBattery = robot.getRadarBattery();
 
                 // move the agent 2 times
-                robot.updateAndMove(0);
-                robot.updateAndMove(0);
+                robot.updateAndMove();
+                robot.updateAndMove();
 
                 // get the battery result
                 double batteryResult = robot.getRadarBattery();
@@ -273,9 +273,9 @@ public class RadarTest {
                 double originalBattery = robot.getRadarBattery();
 
                 // move the agent 3 times
-                robot.updateAndMove(0);
-                robot.updateAndMove(0);
-                robot.updateAndMove(0);
+                robot.updateAndMove();
+                robot.updateAndMove();
+                robot.updateAndMove();
 
                 // get the battery result
                 double batteryResult = robot.getRadarBattery();
@@ -307,7 +307,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -337,7 +337,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -367,7 +367,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -397,7 +397,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -427,7 +427,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -457,7 +457,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -487,7 +487,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -518,7 +518,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -550,7 +550,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -580,7 +580,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -609,7 +609,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -639,7 +639,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -671,7 +671,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHEAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -703,7 +703,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHWEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -734,7 +734,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHEAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -764,7 +764,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHWEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -796,7 +796,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHEAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -828,7 +828,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHWEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -859,7 +859,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHEAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -889,7 +889,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHWEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -921,7 +921,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHEAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -953,7 +953,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHWEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -984,7 +984,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHEAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1014,7 +1014,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHWEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1044,7 +1044,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1074,7 +1074,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1106,7 +1106,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1137,7 +1137,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1169,7 +1169,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHEAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1201,7 +1201,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHWEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1232,7 +1232,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHEAST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1263,7 +1263,7 @@ public class RadarTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHWEST.getAngle()));
 
                 // move the agent so the yaw will get updated
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // get the detected landmarks map
                 Map<Landmark, Boolean> detectedLandmarks = world.getDetectedRadarLandmarks();
@@ -1296,7 +1296,7 @@ public class RadarTest {
                 robot.setToggleRadar(true);
 
                 // move the agent
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // assert that the radar status is on
                 assertTrue(robot.isToggleRadar());
@@ -1325,7 +1325,7 @@ public class RadarTest {
                 robot.setToggleRadar(false);
 
                 // move the agent
-                robot.updateAndMove(0);
+                robot.updateAndMove();
 
                 // assert that the radar status is off
                 assertFalse(robot.isToggleRadar());

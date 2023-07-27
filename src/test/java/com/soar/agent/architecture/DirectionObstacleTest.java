@@ -84,7 +84,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
 
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
@@ -106,7 +106,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
 
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
@@ -128,7 +128,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
 
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
@@ -150,7 +150,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
 
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
@@ -172,7 +172,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHEAST.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
 
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
@@ -194,7 +194,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTHEAST.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
 
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
@@ -216,7 +216,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHEAST.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
 
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
@@ -238,7 +238,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTHWEST.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
         }
@@ -260,7 +260,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.EAST.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
         }
@@ -282,7 +282,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.WEST.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
         }
@@ -304,7 +304,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.NORTH.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
         }
@@ -326,7 +326,7 @@ public class DirectionObstacleTest {
                 robot.setYaw(Math.toRadians(DirectionEnum.SOUTH.getAngle()));
 
                 // get the result of the new move if agent has successfuly moved or not
-                boolean result = robot.updateAndMove(0);
+                boolean result = robot.updateAndMove();
                 // make sure the agent did not move and assert is false
                 assertFalse(result);
         }

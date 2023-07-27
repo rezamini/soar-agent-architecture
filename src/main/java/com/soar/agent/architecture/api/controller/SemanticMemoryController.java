@@ -27,7 +27,8 @@ public class SemanticMemoryController {
 
     @PostMapping(value = "smemAttributes")
     public ResponseEntity<SemanticMemoryEntity> saveSemanticMemoryAttributes(@RequestBody SemanticMemoryEntity semanticMemoryEntity){
-        return ResponseEntity.ok(semanticMemoryService.saveSemanticMemoryAttributes(semanticMemoryEntity));
+        SemanticMemoryEntity result = semanticMemoryService.saveSemanticMemoryAttributes(semanticMemoryEntity);
+        return ResponseEntity.ok(result);
     }
 
 }

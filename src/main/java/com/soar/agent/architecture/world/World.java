@@ -234,9 +234,9 @@ public class World {
         this.smemAttributes = smemAttributes;
     }
 
-    public void updateAndMoveAgents(double dt) {
+    public void updateAndMoveAgents() {
         for (Robot robot : robots) {
-            robot.updateAndMove(dt);
+            robot.updateAndMove();
         }
     }
 

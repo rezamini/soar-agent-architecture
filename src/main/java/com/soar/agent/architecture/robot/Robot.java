@@ -84,9 +84,9 @@ public class Robot {
 
     }
 
-    public boolean updateAndMove(double dt) {
+    public boolean updateAndMove() {
         boolean agentMoved = false;
-        yaw += dt * turnRate;
+        yaw += 0 * turnRate;
 
         while (yaw < 0.0)
             yaw += 2.0 * Math.PI;
