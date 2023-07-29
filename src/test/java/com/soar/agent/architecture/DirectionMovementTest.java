@@ -24,44 +24,7 @@ import com.soar.agent.architecture.world.WorldPanel;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class DirectionMovementTest {
-        @Autowired
-        public MapLoader mapLoader;
-
-        @Autowired
-        private WorldPanel worldPanel;
-
-        @Autowired
-        private RobotAgent robotAgent;
-
-        @Autowired
-        private UtilityResponder utilityResponder;
-
-        @Autowired
-        private World world;
-
-        @Autowired
-        private Robot robot;
-
-        @BeforeAll
-        public static void setUp() {
-                System.setProperty("java.awt.headless", "false");
-        }
-
-        private void createNewWorld(String worldString) throws IOException {
-                // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
-                world.reset();
-                world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
-
-                worldPanel.fit();
-                utilityResponder.addAllListeners();
-                robot = world.getRobots().iterator().next();
-                robotAgent.setRobot(robot);
-                worldPanel.repaint();
-
-                //add other specific values
-                robot.setSpeed(0.5);
-        }
+public class DirectionMovementTest extends SoarTestUtility {
 
         @Test
         @DisplayName("Verify the successful movement of the agent to the EAST without encountering any obstacles. " +

@@ -30,48 +30,7 @@ import com.soar.agent.architecture.world.WorldPanel;
 @ExtendWith(SpringExtension.class) // junit 5, jupiter
 // @SpringBootTest(properties = "map.file.name=map-test.txt")
 @SpringBootTest
-public class RadarTest {
-        @Autowired
-        public MapLoader mapLoader;
-
-        @Autowired
-        private WorldPanel worldPanel;
-
-        @Autowired
-        private RobotAgent robotAgent;
-
-        @Autowired
-        private UtilityResponder utilityResponder;
-
-        @Autowired
-        private World world;
-
-        @Autowired
-        private Robot robot;
-
-        private DecimalFormat batteryDecimalFormat = new DecimalFormat("0.#");
-
-        @BeforeAll
-        public static void setUp() {
-                System.setProperty("java.awt.headless", "false");
-        }
-
-        private void createNewWorld(String worldString) throws IOException {
-                // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
-                world.reset();
-                world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
-
-                worldPanel.fit();
-                utilityResponder.addAllListeners();
-                robot = world.getRobots().iterator().next();
-                robotAgent.setRobot(robot);
-                worldPanel.repaint();
-
-                // add other specific values
-                robot.setSpeed(0.5);
-                robot.setToggleRadar(true);
-                robot.setBatteryDeduction(0.1);
-        }
+public class RadarTest extends SoarTestUtility {
 
         @Test
         @DisplayName("Verify the battery percentage of the agent after performing one movement. " +
