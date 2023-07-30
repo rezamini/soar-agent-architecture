@@ -2,6 +2,7 @@ package com.soar.agent.architecture;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,8 @@ import com.soar.agent.architecture.world.WorldPanel;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class SoarTestUtility {
+    protected DecimalFormat batteryDecimalFormat = new DecimalFormat("0.#");
+
     @Autowired
     protected MapLoader mapLoader;
 
@@ -39,21 +42,23 @@ public class SoarTestUtility {
 
     @BeforeAll
     public static void setUp() {
-            System.setProperty("java.awt.headless", "false");
+        System.setProperty("java.awt.headless", "false");
     }
 
     protected void createNewWorld(String worldString) throws IOException {
-            // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
-            world.reset();
-            world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
+        // world = mapLoader.load(getClass().getResource("/map/map-test.txt"));
+        world.reset();
+        world = mapLoader.load(new ByteArrayInputStream(worldString.getBytes()));
 
-            worldPanel.fit();
-            utilityResponder.addAllListeners();
-            robot = world.getRobots().iterator().next();
-            robotAgent.setRobot(robot);
-            worldPanel.repaint();
+        worldPanel.fit();
+        utilityResponder.addAllListeners();
+        robot = world.getRobots().iterator().next();
+        robotAgent.setRobot(robot);
+        worldPanel.repaint();
 
-            //add other specific values
-            robot.setSpeed(0.5);
+        // add other specific values
+        robot.setSpeed(0.5);
+        robot.setToggleRadar(true);
+        robot.setBatteryDeduction(0.1);
     }
 }
