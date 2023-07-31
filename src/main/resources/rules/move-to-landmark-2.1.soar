@@ -13,7 +13,7 @@ sp {initialize*state*directions
 #
 sp {propose*move-to-landmark
    (state <s> ^io.input-link.landmarks.<landmarks> <lnd>     
-              ^io.input-link.self.pose <e>
+              ^io.input-link.agent.pose <e>
               ^io.input-link.area.<view> <area-view> 
               ^directions <d>
              -^last-direction <o-dir>)
@@ -92,7 +92,7 @@ sp {select*move-to-landmark*pick-landmark-with-shortest-distance
 #
 
 sp {propose*move-random
-   (state <s> ^io.input-link.self.pose <e>
+   (state <s> ^io.input-link.agent.pose <e>
               ^io.input-link.area.view.<direction>.type 
                  { <cell-type> <> block }
               ^io.input-link.landmarks.<landmarks> <lnd> 

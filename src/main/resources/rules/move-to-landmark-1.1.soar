@@ -1,7 +1,7 @@
 sp {propose*move-to-landmark
    (state <s> ^io.input-link.landmarks.<landmarks> <lnd> 
                 
-              ^io.input-link.self.pose <e>)
+              ^io.input-link.agent.pose <e>)
    (<e> ^x <x> ^y <y>)
    (<lnd> ^direction-command { <direction-command> <> reached })
    (<lnd> ^distance <distance-agent> )

@@ -99,7 +99,7 @@ public class NodeGraph {
         // set parent node values; parent node is the one calling this method. for
         // example I2
         // nodeValue : it is the memory value such as L1, I2 or actual value...
-        // node id : it is be the actual name such as self, pose, landmark
+        // node id : it is be the actual name such as agent, pose, landmark
 
         Node parentNode = graph.addNode(parent.getAttribute().toString());
         parentNode.setAttribute("nodeValue", parent.getValue().toString());

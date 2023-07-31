@@ -1,7 +1,7 @@
 sp {wander*propose*move-landmark
    (state <s> ^name wander
               ^io.input-link.landmarks.<landmarks> <lnd>     
-              ^io.input-link.self.pose <e>
+              ^io.input-link.agent.pose <e>
               ^io.input-link.area.<view> <area-view> )
    (<e> ^x <x> ^y <y>)
    (<lnd> ^direction-command <direction-command> )

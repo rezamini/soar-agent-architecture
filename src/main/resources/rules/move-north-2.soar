@@ -6,7 +6,7 @@
 # If I am at some location, then propose the move-north operator.
 
 sp {propose*move-north
-   (state <s> ^io.input-link.self.pose <e>)
+   (state <s> ^io.input-link.agent.pose <e>)
    (<e> ^x <x> ^y <y>)
 -->
    (<s> ^operator <o> +)
