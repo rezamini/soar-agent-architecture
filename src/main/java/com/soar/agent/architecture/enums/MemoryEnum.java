@@ -3,7 +3,7 @@ package com.soar.agent.architecture.enums;
 public enum MemoryEnum {
   // General
   BASIC_NAME("name"),
-  IDENTITY("self"),
+  IDENTITY("agent"),
   MINIMUM_BOUNDING_BOX("mbb"),
   POSITION("pose"),
   POSITION_X("x"),
