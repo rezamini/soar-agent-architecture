@@ -18,7 +18,7 @@ sp {propose*move-to-landmark
               ^directions <d>
              -^last-direction <o-dir>)
    (<e> ^x <x> ^y <y>)
-   (<lnd> ^direction-command { <direction-command> <> here })
+   (<lnd> ^direction-command { <direction-command> <> reached })
    (<lnd> ^distance <distance-agent> )
    (<area-view> ^<direction-command>.type <cell-type>)
    (<d> ^value <direction-command>
@@ -99,7 +99,7 @@ sp {propose*move-random
               ^directions <d>
              -^last-direction <o-dir>)
     (<e> ^x <x> ^y <y>)
-    (<lnd> ^direction-command { <direction-command> <> here })
+    (<lnd> ^direction-command { <direction-command> <> reached })
     (<d> ^value <direction>
         ^opposite <o-dir>)
 -->

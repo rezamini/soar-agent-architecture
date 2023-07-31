@@ -20,7 +20,7 @@ sp {propose*move-to-landmark
               ^io.input-link.area.<view> <area-view> 
 )
    (<e> ^x <x> ^y <y>)
-   (<lnd> ^direction-command { <direction-command> <> here })
+   (<lnd> ^direction-command { <direction-command> <> reached })
    (<lnd> ^distance <distance-agent> )
    (<area-view> ^<direction-command>.type <cell-type>)
 -->
@@ -98,7 +98,7 @@ sp {propose*move-random
               ^io.input-link.landmarks.<landmarks> <lnd> 
 )
     (<e> ^x <x> ^y <y>)
-    (<lnd> ^direction-command { <direction-command> <> here })
+    (<lnd> ^direction-command { <direction-command> <> reached })
 
 -->
    (<s> ^operator <o> + =)

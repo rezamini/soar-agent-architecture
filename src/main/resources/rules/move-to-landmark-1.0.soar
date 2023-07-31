@@ -1,6 +1,6 @@
 sp {propose*move-to-landmark
    (state <s> ^io.input-link.landmarks.<landmarks>.direction-command 
-                { <direction-command> <> here }
+                { <direction-command> <> reached }
               ^io.input-link.self.pose <e>)
    (<e> ^x <x> ^y <y>)
 -->

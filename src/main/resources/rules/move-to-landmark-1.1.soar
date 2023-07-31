@@ -3,7 +3,7 @@ sp {propose*move-to-landmark
                 
               ^io.input-link.self.pose <e>)
    (<e> ^x <x> ^y <y>)
-   (<lnd> ^direction-command { <direction-command> <> here })
+   (<lnd> ^direction-command { <direction-command> <> reached })
    (<lnd> ^distance <distance-agent> )
 -->
    (<s> ^operator <o> + =)

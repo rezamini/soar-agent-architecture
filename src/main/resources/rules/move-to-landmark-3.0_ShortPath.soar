@@ -56,7 +56,7 @@ sp {propose*move-random
                { <landmarks-status> <> inactive } )
     (<e> ^x <x> ^y <y>)
     (<landmark> ^path <shortest-path> )
-    -(<shortest-path> ^|0| here )
+    -(<shortest-path> ^|0| reached )
     (<v-directions> ^ { << north northeast northwest east west south southeast southwest >> <n-dir> } )
     (<v-directions> ^<n-dir>.type <> block )
     
