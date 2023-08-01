@@ -5,7 +5,7 @@ public enum MemoryEnum {
   BASIC_NAME("name"),
   IDENTITY("agent"),
   MINIMUM_BOUNDING_BOX("mbb"),
-  POSITION("pose"),
+  POSITION("position"),
   POSITION_X("x"),
   POSITION_Y("y"),
   YAW("yaw"),
