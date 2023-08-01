@@ -45,7 +45,7 @@ sp {initialize*state*preferable*directions
 
 sp {propose*move-to-landmark
    (state <s> ^io.input-link.landmarks.<landmarks> <lnd>     
-              ^io.input-link.agent.pose <e>
+              ^io.input-link.agent.position <e>
               ^io.input-link.area.<view> <area-view> )
    (<e> ^x <x> ^y <y>)
    (<lnd> ^direction-command <direction-command> )
@@ -63,7 +63,7 @@ sp {propose*move-to-landmark
 
 
 sp {propose*move-random
-   (state <s> ^io.input-link.agent.pose <e>
+   (state <s> ^io.input-link.agent.position <e>
               ^io.input-link.area.<view> <v-directions> 
               ^io.input-link.landmarks.status 
                { <landmarks-status> <> inactive } )

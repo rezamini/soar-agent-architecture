@@ -5,7 +5,7 @@
 sp {propose*move-forward
    (state <s> ^io.input-link.area.view <area-view>
               ^io.input-link.area.locale.direction <current-direction>
-              ^io.input-link.agent.pose <e>  )
+              ^io.input-link.agent.position <e>  )
    (<area-view> ^<current-direction>.type <> block )
    (<e> ^x <x> ^y <y>)
 -->
@@ -20,7 +20,7 @@ sp {propose*move-forward
  sp {propose*turn
    (state <s> ^io.input-link.area.view <area-view>
               ^io.input-link.area.locale.direction <current-direction>
-              ^io.input-link.agent.pose <e> )
+              ^io.input-link.agent.position <e> )
    (<area-view> ^<current-direction>.type block
                 ^<turn-direction>.type normal )
 

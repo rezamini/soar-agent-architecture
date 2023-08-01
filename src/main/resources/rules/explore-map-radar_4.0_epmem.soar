@@ -66,7 +66,7 @@ sp {initialize*state*preferable*turn-directions
 sp {propose*move-forward
    (state <s> ^io.input-link.area.view <area-view>
               ^io.input-link.area.locale.direction <current-direction>
-              ^io.input-link.agent.pose <e>  )
+              ^io.input-link.agent.position <e>  )
    (<area-view> ^<current-direction>.type <> block )
    (<e> ^x <x> ^y <y>)
 -->
@@ -79,7 +79,7 @@ sp {propose*move-forward
  sp {propose*turn
    (state <s> ^io.input-link.area.view <area-view>
               ^io.input-link.area.locale.direction <current-direction>
-              ^io.input-link.agent.pose <e> )
+              ^io.input-link.agent.position <e> )
    (<area-view> ^<current-direction>.type block
                 ^<turn-direction>.type normal )
 -->
@@ -90,7 +90,7 @@ sp {propose*move-forward
 
 
 sp {propose*move-radar-landmark
-   (state <s> ^io.input-link.agent.pose <e>
+   (state <s> ^io.input-link.agent.position <e>
               ^io.input-link.radar.live.landmarks.<radar-landmarks> <live-landmark>
               ^io.input-link.area.view <area-view>)
    (<e> ^x <x> ^y <y>)
@@ -147,20 +147,20 @@ sp {propose*radar-off-when-epmem-exists
 
 # sp {apply*get-epmem
 #    (state <s> ^epmem.command <cmd>
-#               ^io.input-link.agent.pose <e> 
+#               ^io.input-link.agent.position <e> 
 #               ^io.input-link.radar.live.landmarks <radar-landmarks> )
 #    (<e> ^x <x> ^y <y>)
 # -->
 # (write | apply [get-epmem]  | <e>)
 #    (<cmd> ^query <q>)
-#    (<q> ^agent.pose <e>
+#    (<q> ^agent.position <e>
 #         ^radar.live.landmarks <radar-landmarks> )
 # }
 
 sp {apply*query-epmem-check-total-landmarks
    (state <s> ^io.input-link.cycle-count 2
               ^epmem.command <cmd>
-              ^io.input-link.agent.pose <e> 
+              ^io.input-link.agent.position <e> 
               ^io.input-link.landmarks.total <total-landmarks> )
    (<e> ^x <x> ^y <y>)
 -->
@@ -199,17 +199,17 @@ sp {apply*second-query-epmem-if-previous-query-is-matched
             #   ^epmem.result.graph-match 1
             #   ^epmem.result.success <success-query> 
               ^epmem-checked true
-              ^io.input-link.agent.pose <e>
+              ^io.input-link.agent.position <e>
               ^io.input-link.radar.live.landmarks <radar-landmarks>  )
 -->
 (write | Starting next epmem query based on current situation |)
    (<cmd> ^query <q> - )
    (<cmd> ^query <q2>)
-   (<q2> ^agent.pose <e>
+   (<q2> ^agent.position <e>
         ^radar.live.landmarks <radar-landmarks> )}
 
 sp {epmem*query*result*move-radar-landmark-epmem
-   (state <s> ^io.input-link.agent.pose <e>
+   (state <s> ^io.input-link.agent.position <e>
               ^io.input-link.area.view <area-view>
               ^epmem.result <epmem-result>
               ^io.input-link.radar.live.landmarks.<current-radar-landmarks> <current-landmarks>)

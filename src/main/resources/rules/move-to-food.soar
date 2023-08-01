@@ -23,7 +23,7 @@
 
 # sp {propose*move-to-food
 #    (state <s> ^io.input-link.view.<direction>.type << normal >>
-#               ^io.input-link.agent.pose <e>)
+#               ^io.input-link.agent.position <e>)
 #    (<e> ^x <x> ^y <y>)
 # -->
 #    (<s> ^operator <o> + =)
