@@ -1,10 +1,12 @@
 ^input-link
-    ^cycle-count <int> numberof time the agent run or step
+    ^cycle-count <int> number of times the agent run or step
     
-    ^self
+    ^landmark-cycle-count dynamic cycle count that is used to execute Astar algorithm landmark paths sequences to reach the destination
+
+    ^agent
         ^name <string> name of the agent or robot
-        ^radius <float> radius or the area of the agent
-        ^pose
+        ^mbb <float> minimum bounding box or the area of the agent
+        ^position
             ^x <float> current grid column
             ^y <float> current grid row
             ^yaw <float> direction the agent is facing
@@ -20,26 +22,58 @@
 
         ^view the surrounding of the agent or the next cell - based on the agent speed of 0.5
             ^north
-                ^type [none normal obstacleCell]
+                ^type [normal block]
                 ^obstacle [true false] is the next cell obstacle?
             ^south
-                ^type [none normal obstacleCell]
+                ^type [normal block]
                 ^obstacle [true false]
             ^east
-                ^type [none normal obstacleCell]
+                ^type [normal block]
                 ^obstacle [true false]
             ^west
-                ^type [none normal obstacleCell]
+                ^type [normal block]
                 ^obstacle [true false]	
 
         ^landmarks all the landmark points on the map. Each sub landmark has its own name and info.
             ^status [active inactive] overall status of the landmarks. if all is reached then it will be set to inactive
+            ^total total number of landmarks
             ^landmark-[name] landmark name
                 ^name name of the landmark
+                ^status [active inactive] status of landmark if it has been reached or not
                 ^x the position of landmark on x axis
                 ^y the position of landmark on y axis
                 ^distance distance between this specific landmark to the agent
                 ^direction-command the direction from the current agent position that need to be taken to this specific landmark
+                ^relative-direction-command the relative direction from the current agent position that need to be taken to this specific landmark
+                ^path the path planning sequence using the Astar algorithm
+                    ^|0 - ∞| sequential direction from agent to the destination landmark or 
+                    ^|0| single sequence with reached status indicating the path is completed
+        
+        ^radar information regarding agent radar, detected landmarks and live landmarks by the radar
+            ^id the id of the radar
+            ^status [off on] current status of the radar if its on or off
+            ^angle  direction or angle of the radar
+            ^battery current battery percentage of the radar
+            ^distance total current range of the radar
+            ^landmarks landmark(s) that were previously detected by the radar
+                ^landmark-[name] landmark name
+                    ^name name of the landmark
+                    ^status [active inactive] status of landmark if it has been reached or not
+                    ^x the position of landmark on x axis
+                    ^y the position of landmark on y axis
+                    ^distance distance between this specific landmark to the agent
+                    ^direction-command the direction from the current agent position that need to be taken to this specific landmark
+                    ^relative-direction-command the relative direction from the current agent position that need to be taken to this specific landmark
+            ^live current landmark(s) that are being seen by the radar or are within the radar range
+                ^landmarks the live landmarks hierarchy and path
+                    ^name name of the landmark
+                    ^status [active inactive] status of landmark if it has been reached or not
+                    ^x the position of landmark on x axis
+                    ^y the position of landmark on y axis
+                    ^distance distance between this specific landmark to the agent
+                    ^direction-command the direction from the current agent position that need to be taken to this specific landmark
+                    ^relative-direction-command the relative direction from the current agent position that need to be taken to this specific landmark
+
 
 ^output-link
     ^move
