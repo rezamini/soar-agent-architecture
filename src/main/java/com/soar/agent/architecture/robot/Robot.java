@@ -402,13 +402,15 @@ public class Robot {
             // check the toggle again maybe battery has level has changed it
             if (toggleRadar) {
                 for (Radar range : ranges) {
-                    range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw, true));
+                    range.setRadarAngle(yaw);
+                    range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle(), true));
                     // world.radarDetectLandmark(this, range);
                 }
             }
         } else {
             for (Radar range : ranges) {
-                range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle() + yaw, false));
+                range.setRadarAngle(yaw);
+                range.setRadarRange(world.getCollisionRange(this, range.getRadarAngle(), false));
                 // world.radarDetectLandmark(this, range);
             }
             // world.getDetectedRadarLandmarks().replaceAll((k, v) -> v = false);
