@@ -52,7 +52,7 @@
         ^radar information regarding agent radar, detected landmarks and live landmarks by the radar
             ^id the id of the radar
             ^status [off on] current status of the radar if its on or off
-            ^angle  direction or angle of the radar
+            ^angle  direction or angle of the radar in degrees
             ^battery current battery percentage of the radar
             ^distance total current range of the radar
             ^landmarks landmark(s) that were previously detected by the radar
@@ -78,4 +78,7 @@
 ^output-link
     ^move
         ^direction [north south east west]
+        ^status [complete error]
+    ^radar
+        ^toggleRadar [on off]
         ^status [complete error]
