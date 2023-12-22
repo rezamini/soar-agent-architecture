@@ -459,7 +459,8 @@ public class World {
         // perform better detections
 
         for (Landmark landmark : landmarks) {
-            if (agentShape.contains(landmark.getLocation()) || shapeRadar.contains(landmark.getLocation())) {
+            if (isLandmarkReached(landmark, robot) || shapeRadar.contains(landmark.getLocation())) {
+            // if (agentShape.contains(landmark.getLocation()) || shapeRadar.contains(landmark.getLocation())) {
 
                 //check for color
 
