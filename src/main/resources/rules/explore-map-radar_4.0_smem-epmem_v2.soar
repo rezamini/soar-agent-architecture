@@ -261,38 +261,113 @@ sp {apply*second-query-epmem-if-previous-query-is-matched
    (<q2> ^radar <radar>)
    (<radar> ^landmarks.total <total-landmarks> )}
 
-sp {epmem*query*result*move-radar-landmark-epmem
-   (state <s> ^io.input-link.agent.position <e>
-              ^io.input-link.area.view <area-view>
-              ^epmem.result <epmem-result>
-              ^io.input-link.landmarks.<landmarks> <lnd> 
-              ^io.input-link.area.locale.direction <current-direction>
-            #   ^io.input-link.radar.live.landmarks.<current-radar-landmarks> <current-landmarks>
-              )
-   (<e> ^x <x> ^y <y>)
-   (<epmem-result> ^success <success>
-            ^retrieved <epmem-retrieved-result>)
-   (<area-view> ^<current-direction>.type <> block )
-   (<lnd> ^direction-command <direction-command> )
-   (<lnd> ^distance <landmark-distance> )
-   (<lnd> ^name <landmark-name> )
-   (<area-view> ^<direction-command>.type <> block)
+# sp {epmem*query*result*move-radar-landmark-epmem
+#    (state <s> ^io.input-link.agent.position <e>
+#               ^io.input-link.area.view <area-view>
+#               ^epmem.result <epmem-result>
+#               ^io.input-link.landmarks.<landmarks> <lnd> 
+#               ^io.input-link.area.locale.direction <current-direction>
+#             #   ^io.input-link.radar.live.landmarks.<current-radar-landmarks> <current-landmarks>
+#               )
+#    (<e> ^x <x> ^y <y>)
+#    (<epmem-result> ^success <success>
+#             ^retrieved <epmem-retrieved-result>)
+#    (<area-view> ^<current-direction>.type <> block )
+#    (<lnd> ^direction-command <direction-command> )
+#    (<lnd> ^distance <landmark-distance> )
+#    (<lnd> ^name <landmark-name> )
+#    (<area-view> ^<direction-command>.type <> block)
 
-   (<epmem-retrieved-result> ^radar.landmarks.<detected-radar-landmarks> <detected-epmem-landmark>)
-   (<detected-epmem-landmark> ^name <landmark-name>)
-   #  (<epmem-retrieved-result> ^radar.live.landmarks.<current-radar-landmarks> <live-landmark>)
-   # (<live-landmark> ^direction-command <direction-command> )
-   # (<live-landmark> ^distance <landmark-distance> )
-   # (<area-view> ^<direction-command>.type <> block )
+#    (<epmem-retrieved-result> ^radar.landmarks.<detected-radar-landmarks> <detected-epmem-landmark>)
+#    (<detected-epmem-landmark> ^name <landmark-name>)
+#    #  (<epmem-retrieved-result> ^radar.live.landmarks.<current-radar-landmarks> <live-landmark>)
+#    # (<live-landmark> ^direction-command <direction-command> )
+#    # (<live-landmark> ^distance <landmark-distance> )
+#    # (<area-view> ^<direction-command>.type <> block )
    
--->
-   (<s> ^operator <o> + > )
-   (<o> ^name move-radar-landmark-epmem
-        ^distance <landmark-distance>
-        ^landmark-name <landmark-name>
-        ^actions <a>)
-   (<a> ^move.direction <direction-command> )}
+# -->
+#    (<s> ^operator <o> + > )
+#    (<o> ^name move-radar-landmark-epmem
+#         ^distance <landmark-distance>
+#         ^landmark-name <landmark-name>
+#         ^actions <a>)
+#    (<a> ^move.direction <direction-command> )}
 
+
+
+
+
+
+sp {propose*move-radar-landmark-epmem
+   (state <s> ^io.input-link.landmarks.<landmarks> <landmark>     
+              ^io.input-link.agent.position <e>
+              ^io.input-link.area.<view> <area-view>
+              ^io.input-link.landmark-cycle-count <landmark-cycle-count>
+              ^epmem.result <epmem-result> )
+   (<e> ^x <x> ^y <y>)
+    (<epmem-result> ^success <success>
+                    ^retrieved <epmem-retrieved-result>)
+   (<landmark> ^path <shortest-path> )
+   (<landmark> ^name <landmark-name> )
+   (<shortest-path> ^<landmark-cycle-count> <computed-path>)
+
+   (<area-view> ^<computed-path>.type <cell-type>)
+-->
+# (write (crlf) |<move-index>-| <move-index> (crlf) | : |  <landmarks>)
+   (<s> ^operator <o> + = )
+   (<o> ^name move-radar-landmark-epmem
+        ^landmark <landmark>
+        ^direction-command <computed-path>
+        ^path-size (size <shortest-path> ) 
+        ^cell-type <cell-type>
+        ^actions <a>)
+        (<a> ^move.direction <computed-path> )}
+
+sp {apply*move*create*current-landmark-name
+   (state <s> ^operator <o>)
+   (<o> ^name { <name> move-radar-landmark-epmem }
+        ^landmark.name <landmark-name>)
+-->
+   (<s> ^current-landmark-name <landmark-name>)}
+
+sp {apply*move*remove*current-landmark-name
+   (state <s> ^operator <o>
+              ^current-landmark-name <current-landmark-name> )
+   (<o> ^name move-radar-landmark-epmem
+        ^landmark.name <> <current-landmark-name>)
+-->
+   (<s> ^current-landmark-name <current-landmark-name> - )}
+
+
+sp {select*move-to-landmark*pick-landmark-with-shortest-distance
+    (state <s> ^operator <o1> + 
+                ^operator <o2> + )
+    (<o1> ^name move-radar-landmark-epmem
+            ^path-size <path-size1> )
+    (<o2> ^name move-radar-landmark-epmem
+            ^path-size  <path-size2> > <path-size1> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+sp {select*move-to-landmark*pick-current-landmark-if-shortest-distance-is-same
+    (state <s> ^operator <o1> + 
+                ^operator <o2> +
+                ^current-landmark-name <current-landmark-name> )
+    (<o1> ^name move-radar-landmark-epmem
+            ^path-size <path-size1>
+            ^landmark.name <current-landmark-name> )
+    (<o2> ^name move-radar-landmark-epmem
+            ^path-size <path-size2> <path-size1>
+            ^landmark.name <other-landmark-name> )
+-->
+(<s> ^operator <o1> > <o2>)}
+
+sp {select*move-to-landmark*pick-original-landmark-direction
+    (state <s> ^operator <o1> + )
+    (<o1> ^name move-radar-landmark-epmem
+        ^cell-type << normal >> )
+-->
+(<s> ^operator <o1> > )}
 
 ## Selection rules
 
@@ -312,15 +387,15 @@ sp {select*move-radar-landmark-epmem
 -->
    (<s> ^operator <o1> > <o2>)}
 
-sp {select*move-radar-landmark-epmem*shortest-distance
-    (state <s> ^operator <o1> + 
-                ^operator <o2> + )
-    (<o1> ^name move-radar-landmark-epmem
-            ^distance <distance1> )
-    (<o2> ^name move-radar-landmark-epmem
-            ^distance <distance2> > <distance1> )
--->
-(<s> ^operator <o1> > <o2>)}
+# sp {select*move-radar-landmark-epmem*shortest-distance
+#     (state <s> ^operator <o1> + 
+#                 ^operator <o2> + )
+#     (<o1> ^name move-radar-landmark-epmem
+#             ^distance <distance1> )
+#     (<o2> ^name move-radar-landmark-epmem
+#             ^distance <distance2> > <distance1> )
+# -->
+# (<s> ^operator <o1> > <o2>)}
 
 sp {select*turn*pick-prefered-turn-directions
     (state <s> ^operator <o1> + 
