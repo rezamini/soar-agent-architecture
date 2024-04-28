@@ -165,10 +165,36 @@ sp {propose*radar-on
    (<radar> ^status off
          -^battery <= 0
          -^live.landmarks <live-landmarks>)
+   (^io.input-link.area.locale.direction <current-direction>)
+   (^io.input-link.area.former-locale.direction <former-direction> <> <current-direction>)
 -->
    (<s> ^operator <o> + =)
    (<o> ^name radar-on
         ^actions.radar.toggleRadar on )}
+
+sp {propose*radar-on2
+   (state <s> ^io.input-link.radar <radar>)
+   (<radar> ^status off
+         -^battery <= 0)
+   (^io.input-link.area.locale.direction <current-direction>)
+   (^io.input-link.area.former-locale.direction <former-direction> <> <current-direction>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name radar-on
+        ^actions.radar.toggleRadar on )}
+
+# sp {propose*radar-on2
+#    (state <s> ^io.input-link.radar <radar>)
+#    (<radar> ^status off
+#          -^battery <= 0
+#          -^live.landmarks <live-landmarks>)
+#    (^io.input-link.area.locale.direction <current-direction>)
+#    (^io.input-link.area.former-locale.direction <former-direction> <> <current-direction>)
+#    # (<current-direction> ^<current-direction>.type <> block )
+# -->
+#    (<s> ^operator <o> )
+#    (<o> ^name radar-on2
+#         ^actions.radar.toggleRadar on )}        
 
 # sp {propose*radar-off
 #    (state <s> ^io.input-link.radar <radar>)
